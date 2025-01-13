@@ -12,8 +12,6 @@ export const config = {
     },
 };
 
-console.log(promisePool);
-
 export async function GET() {
     try {
         const [results] = await promisePool.promise().query("SELECT * FROM tb_project");
