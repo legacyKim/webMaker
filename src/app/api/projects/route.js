@@ -14,12 +14,14 @@ export const config = {
 
 export async function GET() {
     try {
+        console.log('Starting database query...');
         const [results] = await promisePool.query("SELECT * FROM tb_project");
+        console.log('Query successful:', results);
         return NextResponse.json(results);
     } catch (error) {
-        console.error("Error fetching projects:", error);
+        console.error('Database query failed:', error);
         return NextResponse.json(
-            { error: "Failed to fetch projects" },
+            { error: 'Failed to fetch projects', details: error.message },
             { status: 500 }
         );
     }

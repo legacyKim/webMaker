@@ -13,6 +13,7 @@ const pool = mysql.createPool({
     user: user,            
     password: password,    
     database: database,
+    port: 3306,
 });
 
 export const promisePool = pool.promise();
