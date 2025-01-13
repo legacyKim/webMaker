@@ -14,9 +14,7 @@ export const config = {
 
 export async function GET() {
     try {
-        console.log('Starting database query...');
         const [results] = await promisePool.query("SELECT * FROM tb_project");
-        console.log('Query successful:', results);
         return NextResponse.json(results);
     } catch (error) {
         console.error('Database query failed:', error);
