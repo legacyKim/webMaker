@@ -2,6 +2,7 @@ import axios from 'axios';
 
 export const fetchProjects = async () => {
     try {
+        console.log('API URL:', process.env.NEXT_PUBLIC_API_URL);
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/projects`);
         return response.data;
     } catch (err) {
