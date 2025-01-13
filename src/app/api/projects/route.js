@@ -14,7 +14,7 @@ export const config = {
 
 export async function GET() {
     try {
-        const [results] = await promisePool.promise().query("SELECT * FROM tb_project");
+        const [results] = await promisePool.query("SELECT * FROM tb_project");
         return NextResponse.json(results);
     } catch (error) {
         console.error("Error fetching projects:", error);
@@ -46,7 +46,7 @@ export async function POST(req) {
         await writeFile(filepath, buffer);
 
         const imgPath = `/uploads/${filename}`;
-        const [result] = await promisePool.promise().query(
+        const [result] = await promisePool.query(
             'INSERT INTO tb_project (project, company, imgsrc, link) VALUES (?, ?, ?, ?)',
             [projectName, company, imgPath, link]
         );
