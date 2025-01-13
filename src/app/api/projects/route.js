@@ -12,7 +12,7 @@ export const config = {
     },
 };
 
-export async function GET(req) {
+export async function GET() {
     try {
         const [results] = await promisePool.promise().query("SELECT * FROM tb_project");
         return NextResponse.json(results);
