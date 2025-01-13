@@ -1,6 +1,3 @@
-import mysql from 'mysql2';
-import dotenv from 'dotenv';
-
 import { promisePool } from './db.js';
 
 import { NextResponse } from 'next/server';
