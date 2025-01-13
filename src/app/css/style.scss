@@ -1,0 +1,282 @@
+$main-color: #3498db;
+
+@mixin relative_block {
+    position: relative;
+    display: block;
+}
+
+@mixin flex-start {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+@mixin flex-end {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+@mixin flex-sb {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+@mixin flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@mixin page_1300 {
+    max-width: 1300px;
+    padding: 0 16px;
+    margin: 0 auto;
+}
+
+@mixin maxWidth_732 {
+    max-width: 732px;
+    width: 100%;
+    margin: 0 16px;
+}
+
+@mixin font_basic {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.6;
+    color: rgba($color: #000000, $alpha: 1.0)
+}
+
+@mixin font_small {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.6;
+    color: rgba($color: #000000, $alpha: 1.0)
+}
+
+@mixin font_ssmall {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.6;
+    color: rgba($color: #000000, $alpha: 1.0)
+}
+
+@mixin font_tit {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.6;
+    color: rgba($color: #000000, $alpha: 1.0)
+}
+
+header {
+    @include flex-end;
+    @include page_1300;
+
+    padding: 20px 16px;
+}
+
+nav {
+    @include flex-start;
+}
+
+nav a {
+    @include font_small;
+    margin-left: 12px;
+}
+
+.project {
+    @include page_1300;
+}
+
+.project_list {
+    @include flex-start;
+    flex-wrap: wrap;
+}
+
+.page_header {
+    @include flex-sb;
+    align-items: flex-start;
+}
+
+.page_header_tit h4 {
+    @include font_tit;
+}
+
+.new_project {
+    @include relative_block;
+    padding: 6px 24px;
+    border: 1px solid rgba($color: #000000, $alpha: 0.3);
+    border-radius: 4px;
+    color: rgba($color: #000000, $alpha: 0.3);
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background-color: $main-color;
+        transition: all 0.3s ease-in-out;
+    }
+
+    &:hover {
+        border: 1px solid $main-color;
+    }
+
+    &:hover::before {
+        left: 0%;
+    }
+
+    span {
+        position: relative;
+        display: block;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.4;
+        z-index: 9;
+        transition: all 0.3s ease-in-out;
+    }
+
+    &:hover span {
+        color: #fff;
+    }
+}
+
+.modal {
+    @include relative_block;
+    @include maxWidth_732;
+}
+
+.modal_header {
+    h2 {
+        @include font_tit;
+    }
+}
+
+.modal_form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.modal_input_box {
+
+    @include relative_block;
+    margin-bottom: 12px;
+    width: 100%;
+
+    span {
+        @include relative_block;
+        @include font_small;
+        min-width: 140px;
+        margin-bottom: 4px;
+        opacity: 0.4;
+    }
+
+    .file_custom {
+        @include flex-start;
+
+        * {
+            margin-right: 4px;
+
+            &:last-child {
+                margin-right: 0;
+            }
+        }
+    }
+
+    input,
+    .file_name {
+        @include flex-start;
+        @include font_small;
+
+        border: 1px solid #eee;
+        padding-left: 8px;
+        min-height: 40px;
+        width: calc(100% - 8px);
+        border-radius: 8px;
+        flex: 1;
+
+        &:focus {
+            border: 1px solid $main-color;
+            outline: none;
+            box-shadow: none;
+
+            +span {
+                border: 1px solid $main-color;
+            }
+        }
+
+        .file_name.active {
+            border: 1px solid $main-color;
+            outline: none;
+            box-shadow: none;
+        }
+
+        b {
+            @include font_basic;
+        }
+    }
+
+    input[type="file"] {
+        display: none;
+    }
+
+    label {
+        @include flex-start;
+
+        width: 100%;
+        cursor: pointer;
+
+        .file_upload_btn {
+            @include flex-center;
+
+            min-width: 32px;
+            min-height: 32px;
+            border-radius: 50%;
+            background-color: #fff;
+            border: 1px solid #eee;
+
+            &:hover {
+                background-color: $main-color;
+                border: 1px solid $main-color;
+                i {
+                    color: #fff
+                }
+            }
+
+            i {
+                @include font_small;
+                margin-left: -2px;
+                color: #eee;
+            }
+        }
+    }
+
+    button {
+        color: #eee;
+        transition: all 0.3s ease-in-out;
+
+        &:hover {
+            color: $main-color;
+        }
+    }
+}
+
+button[type='submit'] {
+    @include flex-center;
+    @include font_small;
+
+    min-height: 40px;
+    border-radius: 8px;
+    background-color: $main-color;
+    color: #fff;
+    cursor: pointer;
+
+    &:hover {
+        background-color: darken($main-color, 10%);
+    }
+}
