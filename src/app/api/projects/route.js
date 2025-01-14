@@ -1,5 +1,7 @@
 import { promisePool } from './db.js';
-import { bucketName, s3 } from './s3.js';
+
+import s3Config from './s3.js';
+const { bucketName, s3 } = s3Config;
 
 import { NextResponse } from 'next/server';
 
@@ -23,6 +25,8 @@ export async function GET() {
         );
     }
 }
+
+console.log(s3);
 
 export async function POST(req) {
     try {
