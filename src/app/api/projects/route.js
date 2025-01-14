@@ -48,6 +48,7 @@ export async function POST(req) {
             Key: filename,
             Body: buffer,
             ContentType: file.type || 'image/png',
+            ACL: 'public-read',
         };
 
         const uploadResult = await s3.upload(s3Params).promise();
