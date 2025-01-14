@@ -5,8 +5,8 @@ dotenv.config();
 
 let promisePool;
 
-if (!promisePool && process.env.MYSQL_URL) {
-    const dbUrl = process.env.MYSQL_PUBLIC_URL || process.env.MYSQL_URL;
+if (!promisePool && process.env.MYSQL_PUBLIC_URL) {
+    const dbUrl = process.env.MYSQL_PUBLIC_URL;
     const pool = mysql.createPool(dbUrl);
     promisePool = pool.promise();
 }
