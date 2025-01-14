@@ -51,11 +51,11 @@ export async function POST(req) {
         );
 
         return NextResponse.json({
-            message: 'Project created successfully',
             insertedId: result.insertId
         });
 
     } catch (error) {
+        console.error('post failed:', error);
         return NextResponse.json(
             { error: 'Failed to create project' },
             { status: 500 }
