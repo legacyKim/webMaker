@@ -1,4 +1,4 @@
-import mysql from 'mysql2/promise';
+import mysql from 'mysql2';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -15,6 +15,5 @@ const pool = mysql.createPool({
     database,
     port: 3306,
 });
-
 
 export const promisePool = pool.promise();
