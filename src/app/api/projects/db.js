@@ -9,10 +9,10 @@ const password = process.env.MYSQL_PASSWORD;
 const database = process.env.MYSQL_DATABASE;
 
 const pool = mysql.createPool({
-    host: host,            
-    user: user,            
-    password: password,    
-    database: database,
+    host,
+    user,
+    password,
+    database,
     port: 3306,
 });
 

@@ -1,5 +1,4 @@
 import { promisePool } from './db.js';
-
 import { NextResponse } from 'next/server';
 import { writeFile } from 'fs/promises';
 import path from 'path';
