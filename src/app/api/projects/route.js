@@ -26,8 +26,6 @@ export async function GET() {
     }
 }
 
-console.log(s3);
-
 export async function POST(req) {
     try {
         const data = await req.formData();
@@ -50,7 +48,6 @@ export async function POST(req) {
             Key: filename,
             Body: buffer,
             ContentType: file.type,
-            ACL: 'public-read',
         };
 
         const uploadResult = await s3.upload(s3Params).promise();
