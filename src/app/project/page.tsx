@@ -43,7 +43,7 @@ export default function Project() {
                 {
                     projectList.map((p) => (
                         <li key={p.project}>
-                            <a href={p.link}>
+                            <a href={p.link} target="_blank">
                                 <div className='project_img'>
                                     <Image
                                         src={p.imgsrc} 

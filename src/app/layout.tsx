@@ -25,8 +25,11 @@ export default function RootLayout({
       <body>
 
         <header>
+          <Link href="/">
+            <div className="img_logo"></div>
+          </Link>
+
           <nav>
-            <Link href="/">Home</Link>
             <Link href="/project">Project</Link>
           </nav>
         </header>

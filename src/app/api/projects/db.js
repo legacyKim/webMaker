@@ -3,7 +3,12 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const url = process.env.MYSQL_URL;
-const pool = mysql.createPool(url);
+let promisePool = null;
 
-export const promisePool = pool.promise();
+if (typeof process !== 'undefined' && process.env.MYSQL_URL) {
+    const url = process.env.MYSQL_URL;
+    const pool = mysql.createPool(url);
+    promisePool = pool.promise();
+}
+
+export { promisePool };
