@@ -1,7 +1,7 @@
 import { promisePool } from './db.js';
+import { bucketName, s3 } from './s3.js';
+
 import { NextResponse } from 'next/server';
-import { writeFile } from 'fs/promises';
-import path from 'path';
 
 export const config = {
     api: {
@@ -41,19 +41,25 @@ export async function POST(req) {
         const buffer = Buffer.from(bytes);
 
         const filename = `${Date.now()}-${file.name}`;
-        const filepath = path.join(process.cwd(), 'public/uploads', filename);
-        await writeFile(filepath, buffer);
+        const s3Params = {
+            Bucket: bucketName,
+            Key: filename,
+            Body: buffer,
+            ContentType: file.type,
+            ACL: 'public-read',
+        };
 
-        const imgPath = `/uploads/${filename}`;
+        const uploadResult = await s3.upload(s3Params).promise();
+        const imgPath = uploadResult.Location;
+
         const [result] = await promisePool.query(
             'INSERT INTO tb_project (project, company, imgsrc, link) VALUES (?, ?, ?, ?)',
             [projectName, company, imgPath, link]
         );
 
         return NextResponse.json({
-            insertedId: result.insertId
+            insertedId: result.insertId,
         });
-
     } catch (error) {
         console.error('post failed:', error);
         return NextResponse.json(
@@ -62,3 +68,4 @@ export async function POST(req) {
         );
     }
 }
+
