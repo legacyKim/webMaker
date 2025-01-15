@@ -1,5 +1,5 @@
 import { promisePool } from './db.js';
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";  
+import { PutObjectCommand } from "@aws-sdk/client-s3";  
 
 import s3 from './s3.js';
 
