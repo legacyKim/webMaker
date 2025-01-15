@@ -47,8 +47,7 @@ export async function POST(req) {
             Bucket: bucketName,
             Key: filename,
             Body: buffer,
-            ContentType: file.type || 'image/png',
-            ACL: 'public-read',
+            ContentType: file.type || 'application/octet-stream',
         };
 
         const uploadResult = await s3.upload(s3Params).promise();
