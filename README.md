@@ -13,7 +13,7 @@ npm install axios
 ** mysql 연동
 npm install mysql2
 
-** npm install aws-sdk
-정적 파일 업로드를 위한 AWS S3 서비스 사용
+** npm install aws-sdk => npm install @aws-sdk/client-s3
+이미지 파일 업로드를 위한 AWS S3 서비스 사용
 
 

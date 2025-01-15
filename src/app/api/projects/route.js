@@ -1,7 +1,7 @@
 import { promisePool } from './db.js';
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";  
 
-import s3Config from './s3.js';
-const { bucketName, s3 } = s3Config;
+import s3 from './s3.js';
 
 import { NextResponse } from 'next/server';
 
@@ -43,16 +43,21 @@ export async function POST(req) {
         const buffer = Buffer.from(bytes);
 
         const filename = `${Date.now()}-${file.name}`;
+
         const s3Params = {
             Bucket: bucketName,
             Key: filename,
             Body: buffer,
             ContentType: file.type || 'application/octet-stream',
+            ACL: 'public-read',
         };
 
-        const uploadResult = await s3.upload(s3Params).promise();
-        const imgPath = uploadResult.Location;
+        const uploadCommand = new PutObjectCommand(s3Params);
+        await s3.send(uploadCommand);
 
+        const imgPath = `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${filename}`;
+
+        // 데이터베이스에 프로젝트 정보 삽입
         const [result] = await promisePool.query(
             'INSERT INTO tb_project (project, company, imgsrc, link) VALUES (?, ?, ?, ?)',
             [projectName, company, imgPath, link]
@@ -69,4 +74,3 @@ export async function POST(req) {
         );
     }
 }
-
