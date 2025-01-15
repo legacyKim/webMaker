@@ -54,7 +54,7 @@ export async function POST(req) {
             Key: filename,
             Body: buffer,
             ContentType: file.type || 'application/octet-stream',
-            ACL: 'public-read',
+            // ACL: 'public-read',
         };
 
         const uploadCommand = new PutObjectCommand(s3Params);
