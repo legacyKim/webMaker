@@ -1,9 +1,14 @@
+import { NextResponse } from 'next/server';
+
 import { promisePool } from './db.js';
-import { PutObjectCommand } from "@aws-sdk/client-s3";  
+import { PutObjectCommand } from "@aws-sdk/client-s3";
 
 import s3 from './s3.js';
 
-import { NextResponse } from 'next/server';
+import dotenv from 'dotenv';
+dotenv.config();
+
+export const bucketName = process.env.AWS_BUCKET_NAME;
 
 export const config = {
     api: {
