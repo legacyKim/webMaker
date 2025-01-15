@@ -8,7 +8,7 @@ import s3 from './s3.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
-export const bucketName = process.env.AWS_BUCKET_NAME;
+const bucketName = process.env.AWS_BUCKET_NAME;
 
 export const config = {
     api: {
