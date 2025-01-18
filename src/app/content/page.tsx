@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState, useMemo, useCallback, useRef } from "react";
 import ReactFlow, {
     NodeChange,
@@ -13,24 +11,21 @@ import ReactFlow, {
 } from "react-flow-renderer";
 
 import { useQuery } from "react-query";
-
 import { fetchContent } from './api/api.js';
 import CustomNode from "./CustomNode.tsx";
-import Loading from "../component/Loading.js"
-
+import Loading from "../component/Loading.js";
 import Link from 'next/link';
 import axios from 'axios';
 
-const debounce = (func: Function, delay: number) => {
+const debounce = <T extends (...args: any[]) => void>(func: T, delay: number) => {
     let timer: ReturnType<typeof setTimeout>;
-    return (...args: any[]) => {
+    return (...args: Parameters<T>) => {
         clearTimeout(timer);
         timer = setTimeout(() => func(...args), delay);
     };
 };
 
 export default function ContentMap() {
-
     const { data, isLoading } = useQuery("contentData", fetchContent, {
         refetchInterval: 120000,
     });
@@ -38,11 +33,9 @@ export default function ContentMap() {
     const [nodes, setNodes] = useState<Node[]>([]);
     const [edges, setEdges] = useState<Edge[]>([]);
 
-    console.log(data);
-
     useMemo(() => {
         if (data) {
-            const fetchedNodes = data.contentData.map((item: any) => ({
+            const fetchedNodes = data.contentData.map((item: { id: string; data: { title: string, date: string, subtitle: string, content: string }; position: { x: number, y: number } }) => ({
                 id: `${item.id}`,
                 type: "custom",
                 data: {
@@ -55,11 +48,12 @@ export default function ContentMap() {
                 position: item.position,
             }));
 
-            const fetchedEdge = data.edgeData.map((item: any) => ({
+            const fetchedEdge = data.edgeData.map((item: { id: string; source: string; target: string }) => ({
                 id: `${item.id}`,
                 source: item.source,
                 target: item.target,
             }));
+
             setNodes(fetchedNodes);
             setEdges(fetchedEdge);
         }
@@ -167,7 +161,7 @@ export default function ContentMap() {
         }
     }, []);
 
-    const deleteEdge = useCallback(async (edgeId: any) => {
+    const deleteEdge = useCallback(async (edgeId: string) => { 
         setEdges((eds) => eds.filter((edge) => edge.id !== edgeId));
         try {
             await axios.delete(`/content/api`, {
