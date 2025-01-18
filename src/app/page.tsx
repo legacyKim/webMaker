@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import GridLayout, { Responsive, WidthProvider } from "react-grid-layout";
+import { Responsive, WidthProvider } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
+
+import { saveToLocalStorage, getFromLocalStorage } from "./utils/localstorage";
 import Link from "next/link";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -33,41 +35,22 @@ interface Layout {
 
 export default function Home() {
 
-  useEffect(() => {
-    const loadStorageFunctions = async () => {
-      const localStorageModule = await import('./utils/localstorage');
-      localStorageModule.saveToLocalStorage('key', 'value');
-    };
-
-    loadStorageFunctions();
-  }, []);
-
   const [layouts, setLayouts] = useState<{ lg: Layout[]; md: Layout[] }>(defaultLayouts);
   const [isFirstRender, setIsFirstRender] = useState(true);
 
   useEffect(() => {
-    const loadAndSetLayouts = async () => {
-      const localStorageModule = await import('./utils/localstorage');
-      const savedLayouts = localStorageModule.getFromLocalStorage(LAYOUT_KEY, defaultLayouts);
-      
-      setLayouts(savedLayouts);
-      setIsFirstRender(false);
-    };
-
-    loadAndSetLayouts();
+    const savedLayouts = getFromLocalStorage(LAYOUT_KEY, defaultLayouts);
+    setLayouts(savedLayouts);
+    setIsFirstRender(false);
   }, []);
 
-
-  const handleLayoutChange = async (
+  const handleLayoutChange = (
     currentLayout: Layout[],
     allLayouts: { lg: Layout[]; md: Layout[] },
   ) => {
     if (isFirstRender) return;
     setLayouts(allLayouts);
-
-    const localStorageModule = await import('./utils/localstorage');
-    localStorageModule.saveToLocalStorage(LAYOUT_KEY, allLayouts);
-
+    saveToLocalStorage(LAYOUT_KEY, allLayouts);
   };
 
   return (

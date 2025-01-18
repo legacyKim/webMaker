@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import React, { useState, useMemo, useCallback, useRef } from "react";
 import ReactFlow, {
     NodeChange,
     EdgeChange,
@@ -42,7 +42,7 @@ export default function ContentMap() {
 
     useMemo(() => {
         if (data) {
-            const fetchedNodes = data.contentData.map((item: any, index: number) => ({
+            const fetchedNodes = data.contentData.map((item: any) => ({
                 id: `${item.id}`,
                 type: "custom",
                 data: {
@@ -55,7 +55,7 @@ export default function ContentMap() {
                 position: item.position,
             }));
 
-            const fetchedEdge = data.edgeData.map((item: any, index: number) => ({
+            const fetchedEdge = data.edgeData.map((item: any) => ({
                 id: `${item.id}`,
                 source: item.source,
                 target: item.target,
