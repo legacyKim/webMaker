@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useMemo, useCallback, useRef } from "react";
 import ReactFlow, { NodeChange, EdgeChange, Connection, applyNodeChanges, applyEdgeChanges, addEdge, Node, Edge } from "react-flow-renderer";
 import { useQuery } from "react-query";
