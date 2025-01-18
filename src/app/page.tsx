@@ -35,7 +35,7 @@ export default function Home() {
 
   useEffect(() => {
     const loadStorageFunctions = async () => {
-      const localStorageModule = await import('./utils/localStorage');
+      const localStorageModule = await import('./utils/localstorage');
       localStorageModule.saveToLocalStorage('key', 'value');
     };
 
@@ -47,7 +47,7 @@ export default function Home() {
 
   useEffect(() => {
     const loadAndSetLayouts = async () => {
-      const localStorageModule = await import('./utils/localStorage');
+      const localStorageModule = await import('./utils/localstorage');
       const savedLayouts = localStorageModule.getFromLocalStorage(LAYOUT_KEY, defaultLayouts);
       
       setLayouts(savedLayouts);
@@ -65,7 +65,7 @@ export default function Home() {
     if (isFirstRender) return;
     setLayouts(allLayouts);
 
-    const localStorageModule = await import('./utils/localStorage');
+    const localStorageModule = await import('./utils/localstorage');
     localStorageModule.saveToLocalStorage(LAYOUT_KEY, allLayouts);
 
   };
