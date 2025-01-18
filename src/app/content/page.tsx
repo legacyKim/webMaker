@@ -1,17 +1,5 @@
-"use client";
-
 import React, { useState, useMemo, useCallback, useRef } from "react";
-import ReactFlow, {
-    NodeChange,
-    EdgeChange,
-    Connection,
-    applyNodeChanges,
-    applyEdgeChanges,
-    addEdge,
-    Node,
-    Edge,
-} from "react-flow-renderer";
-
+import ReactFlow, { NodeChange, EdgeChange, Connection, applyNodeChanges, applyEdgeChanges, addEdge, Node, Edge } from "react-flow-renderer";
 import { useQuery } from "react-query";
 import { fetchContent } from './api/api.js';
 import CustomNode from "./CustomNode.tsx";
@@ -26,8 +14,28 @@ type NodePosition = {
 
 type EdgeData = {
     id: string;
-    source: string | null; 
-    target: string | null; 
+    source: string | null;
+    target: string | null;
+};
+
+const debounceNodesFunc = (func: (updatedNodes: NodePosition[]) => Promise<void>, delay: number) => {
+    let timer: ReturnType<typeof setTimeout>;
+    return (updatedNodes: NodePosition[]) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            func(updatedNodes).catch(console.error);
+        }, delay);
+    };
+};
+
+const debounceEdgesFunc = (func: (updatedEdges: EdgeData[]) => Promise<void>, delay: number) => {
+    let timer: ReturnType<typeof setTimeout>;
+    return (updatedEdges: EdgeData[]) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            func(updatedEdges).catch(console.error);
+        }, delay);
+    };
 };
 
 export default function ContentMap() {
@@ -40,7 +48,7 @@ export default function ContentMap() {
 
     useMemo(() => {
         if (data) {
-            const fetchedNodes = data.contentData.map((item: { id: string; data: { title: string; date: string; subtitle: string; content: string }; position: { x: number; y: number } }) => ({
+            const fetchedNodes = data.contentData.map((item: any) => ({
                 id: `${item.id}`,
                 type: "custom",
                 data: {
@@ -53,14 +61,13 @@ export default function ContentMap() {
                 position: item.position,
             }));
 
-            const fetchedEdges = data.edgeData.map((item: { id: string; source: string; target: string }) => ({
+            const fetchedEdge = data.edgeData.map((item: any) => ({
                 id: `${item.id}`,
                 source: item.source,
                 target: item.target,
             }));
-
             setNodes(fetchedNodes);
-            setEdges(fetchedEdges);
+            setEdges(fetchedEdge);
         }
     }, [data]);
 
@@ -68,43 +75,38 @@ export default function ContentMap() {
         custom: CustomNode,
     }), []);
 
+    // Debounce 함수 외부에서 선언
     const debounceNodes = useRef(
-        (async (updatedNodes: NodePosition[]) => {
-            const timer = useRef<NodeJS.Timeout | null>(null);
+        debounceNodesFunc(async (updatedNodes: NodePosition[]) => {
             try {
-                if (timer.current) clearTimeout(timer.current);
-                timer.current = setTimeout(async () => {
-                    for (const node of updatedNodes) {
-                        await axios.put(`/content/api`, {
-                            id: node.id,
-                            position: node.position,
-                        }, {
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                        });
-                    }
-                }, 300);
+                for (const node of updatedNodes) {
+                    await axios.put(`/content/api`, {
+                        id: node.id,
+                        position: node.position,
+                    }, {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                }
             } catch (error) {
                 console.error('Failed to update node position:', error);
             }
-        })
+        }, 300)
     ).current;
 
     const onNodesChange = useCallback(async (changes: NodeChange[]) => {
         setNodes((nds) => applyNodeChanges(changes, nds));
 
-        const updatedNodes: NodePosition[] = changes
-            .map((change) => {
-                if (change.type === 'position' && change.dragging === true) {
-                    return {
-                        id: change.id,
-                        position: change.position,
-                    };
-                }
-                return null;
-            })
-            .filter((node): node is NodePosition => node !== null);
+        const updatedNodes = changes.map((change) => {
+            if (change.type === 'position' && change.dragging === true) {
+                return {
+                    id: change.id,
+                    position: change.position,
+                };
+            }
+            return null;
+        }).filter((node): node is NodePosition => node !== null);
 
         if (updatedNodes.length > 0) {
             debounceNodes(updatedNodes);
@@ -112,33 +114,29 @@ export default function ContentMap() {
     }, []);
 
     const debounceEdges = useRef(
-        (async (updatedEdges: EdgeData[]) => {
-            const timer = useRef<NodeJS.Timeout | null>(null);
+        debounceEdgesFunc(async (updatedEdges: EdgeData[]) => {
             try {
-                if (timer.current) clearTimeout(timer.current);
-                timer.current = setTimeout(async () => {
-                    for (const edge of updatedEdges) {
-                        await axios.put(`/edge/api`, {
-                            id: edge.id,
-                            source: edge.source,
-                            target: edge.target,
-                        }, {
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                        });
-                    }
-                }, 300);
+                for (const edge of updatedEdges) {
+                    await axios.put(`/edge/api`, {
+                        id: edge.id,
+                        source: edge.source,
+                        target: edge.target,
+                    }, {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                }
             } catch (error) {
                 console.error('Failed to update edge position:', error);
             }
-        })
+        }, 300)
     ).current;
 
     const onEdgesChange = useCallback(async (changes: EdgeChange[]) => {
         setEdges((eds) => applyEdgeChanges(changes, eds));
 
-        const updatedEdges: EdgeData[] = changes
+        const updatedEdges = changes
             .map((change) => {
                 if (change.type === 'add' || change.type === 'remove') {
                     if ('source' in change && 'target' in change) {
@@ -160,11 +158,9 @@ export default function ContentMap() {
     }, []);
 
     const onConnect = useCallback(async (connection: Connection) => {
-        const newEdge: Edge = {
+        const newEdge = {
             ...connection,
             id: `${connection.source}-${connection.target}`,
-            source: connection.source || '',
-            target: connection.target || '',
         };
         setEdges((eds) => addEdge(newEdge, eds));
 
@@ -199,7 +195,7 @@ export default function ContentMap() {
                 </div>
                 <Link
                     className="customBtn"
-                    href={{ pathname: "/content/write" }}>
+                    href={{ pathname: "/content/write" }} >
                     <span>New Content</span>
                 </Link>
             </div>
