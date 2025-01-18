@@ -13,23 +13,35 @@ import ReactFlow, {
 } from "react-flow-renderer";
 
 import { useQuery } from "react-query";
+
 import { fetchContent } from './api/api.js';
 import CustomNode from "./CustomNode.tsx";
-import Loading from "../component/Loading.js";
+import Loading from "../component/Loading.js"
+
 import Link from 'next/link';
 import axios from 'axios';
 
-const debounce = <T extends (...args: any[]) => Promise<void>>(func: T, delay: number) => {
+type NodePosition = {
+    id: string;
+    position: { x: number; y: number };
+};
+
+type EdgeData = {
+    id: string;
+    source: string;
+    target: string;
+};
+
+const debounce = <T extends (...args: any[]) => void>(func: T, delay: number) => {
     let timer: ReturnType<typeof setTimeout>;
     return (...args: Parameters<T>) => {
         clearTimeout(timer);
-        timer = setTimeout(() => {
-            func(...args).catch(console.error);
-        }, delay);
+        timer = setTimeout(() => func(...args), delay);
     };
 };
 
 export default function ContentMap() {
+
     const { data, isLoading } = useQuery("contentData", fetchContent, {
         refetchInterval: 120000,
     });
@@ -39,7 +51,7 @@ export default function ContentMap() {
 
     useMemo(() => {
         if (data) {
-            const fetchedNodes = data.contentData.map((item: { id: string; data: { title: string, date: string, subtitle: string, content: string }; position: { x: number, y: number } }) => ({
+            const fetchedNodes = data.contentData.map((item: any) => ({
                 id: `${item.id}`,
                 type: "custom",
                 data: {
@@ -52,12 +64,11 @@ export default function ContentMap() {
                 position: item.position,
             }));
 
-            const fetchedEdge = data.edgeData.map((item: { id: string; source: string; target: string }) => ({
+            const fetchedEdge = data.edgeData.map((item: any) => ({
                 id: `${item.id}`,
                 source: item.source,
                 target: item.target,
             }));
-
             setNodes(fetchedNodes);
             setEdges(fetchedEdge);
         }
@@ -67,9 +78,8 @@ export default function ContentMap() {
         custom: CustomNode,
     }), []);
 
-    // Debounced node update
     const debounceNodes = useRef(
-        debounce(async (updatedNodes: { id: string, position: { x: number, y: number } }[]) => {
+        debounce(async (updatedNodes: NodePosition[]) => {
             try {
                 for (const node of updatedNodes) {
                     await axios.put(`/content/api`, {
@@ -77,7 +87,7 @@ export default function ContentMap() {
                         position: node.position,
                     }, {
                         headers: {
-                            'Content-Type': 'application/json',
+                            'Content-Type': 'application/json'
                         }
                     });
                 }
@@ -98,16 +108,15 @@ export default function ContentMap() {
                 };
             }
             return null;
-        }).filter((node): node is { id: string, position: { x: number, y: number } } => node !== null);
+        }).filter((node): node is NodePosition => node !== null);
 
         if (updatedNodes.length > 0) {
             debounceNodes(updatedNodes);
         }
     }, []);
 
-    // Debounced edge update
-    const debounceEdges = useRef(
-        debounce(async (updatedEdges: { id: string, source: string, target: string }[]) => {
+    const debounceEdegs = useRef(
+        debounce(async (updatedEdges: EdgeData[]) => {
             try {
                 for (const edge of updatedEdges) {
                     await axios.put(`/edge/api`, {
@@ -116,7 +125,7 @@ export default function ContentMap() {
                         target: edge.target,
                     }, {
                         headers: {
-                            'Content-Type': 'application/json',
+                            'Content-Type': 'application/json'
                         }
                     });
                 }
@@ -143,10 +152,10 @@ export default function ContentMap() {
                 }
                 return null;
             })
-            .filter((edge): edge is { id: string, source: string, target: string } => edge !== null);
+            .filter((edge): edge is EdgeData => edge !== null);
 
         if (updatedEdges.length > 0) {
-            debounceEdges(updatedEdges);
+            debounceEdegs(updatedEdges);
         }
     }, []);
 
@@ -167,7 +176,7 @@ export default function ContentMap() {
         }
     }, []);
 
-    const deleteEdge = useCallback(async (edgeId: string) => {
+    const deleteEdge = useCallback(async (edgeId: any) => {
         setEdges((eds) => eds.filter((edge) => edge.id !== edgeId));
         try {
             await axios.delete(`/content/api`, {
