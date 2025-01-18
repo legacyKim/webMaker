@@ -50,7 +50,7 @@ export default function ContentMap() {
 
     useMemo(() => {
         if (data) {
-            const fetchedNodes = data.contentData.map((item: any) => ({
+            const fetchedNodes = data.contentData.map((item: { id: string; data: { title: string, date: string, subtitle: string, content: string }; position: { x: number, y: number } }) => ({
                 id: `${item.id}`,
                 type: "custom",
                 data: {
@@ -63,7 +63,7 @@ export default function ContentMap() {
                 position: item.position,
             }));
 
-            const fetchedEdge = data.edgeData.map((item: any) => ({
+            const fetchedEdge = data.edgeData.map((item: { id: string; source: string; target: string }) => ({
                 id: `${item.id}`,
                 source: item.source,
                 target: item.target,
