@@ -1,4 +1,6 @@
 $main-color: #3498db;
+$font-color: rgba($color: #2a2e30, $alpha: 1.0);
+$font-color: rgba($color: #2a2e30, $alpha: 1.0);
 
 @mixin relative_block {
     position: relative;
@@ -29,10 +31,10 @@ $main-color: #3498db;
     align-items: center;
 }
 
-@mixin page_1300 {
-    max-width: 1300px;
-    padding: 0 16px;
+@mixin page_1320 {
+    max-width: 1320px;
     margin: 0 auto;
+    padding: 0 16px;
 }
 
 @mixin maxWidth_732 {
@@ -62,6 +64,13 @@ $main-color: #3498db;
     color: rgba($color: #000000, $alpha: 1.0)
 }
 
+@mixin font_sssmall {
+    font-size: 11px;
+    font-weight: 300;
+    line-height: 1.6;
+    color: rgba($color: #000000, $alpha: 1.0)
+}
+
 @mixin font_tit {
     font-size: 24px;
     font-weight: 700;
@@ -69,13 +78,20 @@ $main-color: #3498db;
     color: rgba($color: #000000, $alpha: 1.0)
 }
 
+@mixin oneline {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
 header {
-    @include flex-end;
-    @include page_1300;
+    @include page_1320;
     @include flex-sb;
 
     padding: 12px 16px;
-    margin-bottom: 32px
+    margin-bottom: 32px;
+    position: relative;
+    z-index: 99999999;
 }
 
 nav {
@@ -90,7 +106,7 @@ nav a {
 
     &::after {
         content: '';
-        
+
         position: absolute;
         top: calc(100% + 1px);
         left: 50%;
@@ -115,8 +131,8 @@ nav a {
 
 }
 
-.project {
-    @include page_1300;
+.page {
+    @include page_1320;
 }
 
 .project_list {
@@ -125,19 +141,39 @@ nav a {
 }
 
 .page_header {
+    @include page_1320;
     @include flex-sb;
+    position: relative;
+    z-index: 99999;
+
     align-items: flex-start;
+
+    opacity: 0;
+    animation: 0.3s page_header 0.3s forwards ease-in;
+
+    @keyframes page_header {
+        0% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
 }
 
 .page_header_tit h4 {
     @include font_tit;
 }
 
-.new_project {
+.customBtn {
+
     @include relative_block;
+
     padding: 6px 24px;
     border: 1px solid rgba($color: #000000, $alpha: 0.3);
     border-radius: 4px;
+
     color: rgba($color: #000000, $alpha: 0.3);
     overflow: hidden;
 
@@ -273,6 +309,7 @@ nav a {
             &:hover {
                 background-color: $main-color;
                 border: 1px solid $main-color;
+
                 i {
                     color: #fff
                 }
@@ -308,5 +345,179 @@ button[type='submit'] {
 
     &:hover {
         background-color: darken($main-color, 10%);
+    }
+}
+
+.layout {
+
+    div {
+        opacity: 0;
+        border: 1px solid rgba($color: #000000, $alpha: 0.3);
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    div.active {
+        animation: 0.3s ease-in layout_opacity 0.3s forwards;
+    }
+
+    @keyframes layout_opacity {
+        0% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+}
+
+.content {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    animation: 0.3s reactflow 0.3s forwards ease-in-out;
+
+    @keyframes reactflow {
+        0% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .react-flow__attribution.right {
+        display: none;
+    }
+}
+
+.content_factor {
+
+    @include relative_block;
+
+    padding: 8px 12px;
+    border-radius: 4px;
+
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+
+    &:hover {
+        box-shadow: 0 2px 14px rgba(0, 0, 0, 0.25), 0 4px 10px rgba(0, 0, 0, 0.22);
+    }
+
+    .content_factor_top {
+
+        @include flex-sb;
+
+        h3 {
+            @include font_ssmall;
+            @include oneline;
+            min-width: 180px;
+        }
+
+        span {
+            @include font_sssmall;
+        }
+
+    }
+
+    p {
+        @include font_ssmall;
+    }
+}
+
+.write {
+    @include relative_block;
+    @include page_1320;
+
+    input {
+        @include relative_block;
+        height: 40px;
+        width: 100%;
+
+        outline: none;
+        margin-bottom: 8px;
+    }
+
+    .write_title {
+        font-size: 24px;
+    }
+
+    .write_subtitle {
+        font-size: 18px;
+    }
+
+    .write_content {
+        @include font_small;
+        width: 100%;
+        height: calc(100vh - 266px);
+        margin-bottom: 12px;
+        resize: none;
+        border: none;
+    }
+}
+
+.view_content {
+    @include relative_block;
+    @include page_1320;
+
+    padding-top: 12px;
+    height: calc(100vh - 180px);
+
+    .view_content_header {
+        @include flex-sb;
+
+        .view_content_title {
+            @include font_basic;
+        }
+
+        .view_content_date {
+            @include font_basic;
+        }
+
+        .view_content_subtitle {
+            @include font_basic;
+        }
+
+        p {
+            @include font_basic;
+        }
+    }
+}
+
+.loading {
+
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba($color: #000000, $alpha: 0.3);
+
+    @include flex-center;
+
+    .loading_icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: conic-gradient(#0000 10%, $main-color);
+        -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
+        animation: s3 1s infinite linear;
+
+        @keyframes s3 {
+            to {
+                transform: rotate(1turn)
+            }
+        }
     }
 }

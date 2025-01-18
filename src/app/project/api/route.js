@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 
-import { promisePool } from './db.js';
+import { promisePool } from '../../api/db.js';
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 
-import s3 from './s3.js';
+import s3 from '../../api/s3.js';
 
 import dotenv from 'dotenv';
 dotenv.config();
@@ -20,8 +20,10 @@ export const config = {
 
 export async function GET() {
     try {
-        const [results] = await promisePool.query("SELECT * FROM tb_project");
-        return NextResponse.json(results);
+        const [projects] = await promisePool.query("SELECT * FROM tb_project");
+        return NextResponse.json({
+            projects,
+        });
     } catch (error) {
         console.error('Database query failed:', error);
         return NextResponse.json(
@@ -54,7 +56,6 @@ export async function POST(req) {
             Key: filename,
             Body: buffer,
             ContentType: file.type || 'application/octet-stream',
-            // ACL: 'public-read',
         };
 
         const uploadCommand = new PutObjectCommand(s3Params);
@@ -62,7 +63,6 @@ export async function POST(req) {
 
         const imgPath = `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${filename}`;
 
-        // 데이터베이스에 프로젝트 정보 삽입
         const [result] = await promisePool.query(
             'INSERT INTO tb_project (project, company, imgsrc, link) VALUES (?, ?, ?, ?)',
             [projectName, company, imgPath, link]

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { fetchProjects } from '../api/projects/api.js';
+import { fetchProjects } from './api/api.js';
 
 import Image from 'next/image';
 
@@ -12,41 +12,49 @@ interface Project {
     link: string;
 }
 
-import Modal from '../Modal.js';
+import Modal from './components/Modal.js';
+import { useQuery } from "react-query";
+
+import Loading from "../component/Loading.js"
 
 export default function Project() {
 
     const [projectList, setProjectList] = useState<Project[]>([]);
+
+    const { data, isLoading } = useQuery("projectData", fetchProjects, {
+        refetchInterval: 120000,
+    });
+
     useEffect(() => {
-        const loadProjects = async () => {
-            const data = await fetchProjects();
-            setProjectList(data);
-        };
-        loadProjects();
-    }, []);
+        if (data) {
+            setProjectList(data.projects);
+        }
+    }, [data]);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+    if (isLoading) return <Loading />;
+
     return (
-        <div className='project'>
+        <div className='page'>
 
             <div className='page_header'>
                 <div className='page_header_tit'>
                     <h4>Projects</h4>
                 </div>
-                <button className='new_project' onClick={() => setIsModalOpen(true)}>
+                <button className='customBtn' onClick={() => setIsModalOpen(true)}>
                     <span>New Project</span>
                 </button>
             </div>
 
             <ul className='project_list'>
                 {
-                    projectList.map((p) => (
-                        <li key={p.project}>
+                    projectList.map((p, i) => (
+                        <li key={i}>
                             <a href={p.link} target="_blank">
                                 <div className='project_img'>
                                     <Image
-                                        src={p.imgsrc} 
+                                        src={p.imgsrc}
                                         alt={p.project}
                                         width={500}
                                         height={300}
