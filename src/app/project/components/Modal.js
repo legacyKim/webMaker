@@ -45,7 +45,7 @@ export default function Modal({ setIsModalOpen }) {
         formData.append('image', image);
 
         try {
-            const response = await axios.post('/api/projects', formData);
+            const response = await axios.post('/project/api', formData);
 
             setProjectName('');
             setCompany('');
