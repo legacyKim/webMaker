@@ -77,7 +77,6 @@ export default function ContentMap() {
         custom: CustomNode,
     }), []);
 
-    // Debounce 함수 외부에서 선언
     const debounceNodes = useRef(
         debounceNodesFunc(async (updatedNodes: NodePosition[]) => {
             try {

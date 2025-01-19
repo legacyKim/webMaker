@@ -13,19 +13,26 @@ export default function ViewPage() {
 
 function ViewContent() {
     const searchParams = useSearchParams();
-    
+
     const title = searchParams.get("title");
     const date = searchParams.get("date");
     const content = searchParams.get("content");
 
     return (
         <div>
-            <div className="content_header">
-                <div className="page_header">
-                    <div className="page_header_tit">
-                        <h4>Content</h4>
-                    </div>
+            <div className="page_header">
+                <div className="page_header_tit">
+                    <h4>View Content</h4>
                 </div>
+                <div className="btn_wrap">
+                    <button className="customBtn">
+                        <span>Delete</span>
+                    </button>
+                    <button className="customBtn">
+                        <span>Correct</span>
+                    </button>
+                </div>
+
             </div>
             <div className="view_content">
                 <div className="view_content_header">

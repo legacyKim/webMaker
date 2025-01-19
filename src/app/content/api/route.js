@@ -27,8 +27,8 @@ export async function POST(req) {
         let contentResult = null;
         if (position) {
             const [contentInsertResult] = await promisePool.query(
-                'INSERT INTO tb_content (id, type, data, position) VALUES (?, ?, ?, ?)',
-                [id, 'custom', JSON.stringify({ title, date, content, subtitle }), JSON.stringify(position)]
+                'INSERT INTO tb_content (type, data, position) VALUES (?, ?, ?)',
+                ['custom', JSON.stringify({ title, date, content, subtitle }), JSON.stringify(position)]
             );
             contentResult = contentInsertResult;
         }

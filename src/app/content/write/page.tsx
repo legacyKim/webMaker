@@ -23,7 +23,7 @@ export default function Write() {
         const dataToSend = {
             ...formData,
             date: currentDate,
-            position : { x: Math.random() * 400, y: Math.random() * 400 },
+            position: { x: Math.random() * 400, y: Math.random() * 400 },
         };
 
         try {
@@ -46,17 +46,21 @@ export default function Write() {
     };
 
     return (
-        <form onSubmit={(e) => { handleSubmit(e) }} className="write">
-            <div>
-                <input className="write_title" type="text" name="title" value={formData.title} placeholder="title" onChange={handleChange} />
-            </div>
-            <div>
-                <input className="write_subtitle" type="text" name="subtitle" value={formData.subtitle} placeholder="subtitle" onChange={handleChange} />
-            </div>
-            <div>
-                <textarea className="write_content" name="content" value={formData.content} onChange={handleChange} placeholder="content" />
-            </div>
-            <button className="customBtn" type="submit">Submit</button>
-        </form>
+        <div>
+            <form onSubmit={(e) => { handleSubmit(e) }} className="write">
+                <button className="customBtn abs" type="submit">
+                    <span>Submit</span>
+                </button>
+                <div>
+                    <input className="write_title" type="text" name="Yitle" value={formData.title} placeholder="Title" onChange={handleChange} />
+                </div>
+                <div>
+                    <input className="write_subtitle" type="text" name="subtitle" value={formData.subtitle} placeholder="Subtitle" onChange={handleChange} />
+                </div>
+                <div>
+                    <textarea className="write_content" name="content" value={formData.content} onChange={handleChange} placeholder="Content" />
+                </div>
+            </form>
+        </div>
     );
 };

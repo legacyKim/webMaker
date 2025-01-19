@@ -209,6 +209,13 @@ nav a {
     &:hover span {
         color: #fff;
     }
+    
+    &.abs {
+        position: absolute;
+        top: 0;
+        right: 16px;
+        z-index: 999;
+    }
 }
 
 .modal {
@@ -333,7 +340,7 @@ nav a {
     }
 }
 
-button[type='submit'] {
+.btn_all {
     @include flex-center;
     @include font_small;
 
@@ -342,6 +349,7 @@ button[type='submit'] {
     background-color: $main-color;
     color: #fff;
     cursor: pointer;
+    transition: all 0.3s ease-in-out;
 
     &:hover {
         background-color: darken($main-color, 10%);
@@ -460,11 +468,13 @@ button[type='submit'] {
 
     .write_content {
         @include font_small;
-        width: 100%;
+        width: calc(100% - 16px);
         height: calc(100vh - 266px);
         margin-bottom: 12px;
         resize: none;
-        border: none;
+        border: 1px solid rgba($color: #000000, $alpha: 0.3);
+        padding: 8px;
+        border-radius: 4px;
     }
 }
 

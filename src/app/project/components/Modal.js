@@ -141,7 +141,7 @@ export default function Modal({ setIsModalOpen }) {
                         </div>
 
                     </div>
-                    <button type="submit">Add Project</button>
+                    <button className='btn_all' type="submit">New Project</button>
                 </form>
             </div>
         </div>

@@ -71,9 +71,6 @@ export default function Project() {
                                     <span>Company</span>
                                     <p>{p.company}</p>
                                 </div>
-                                <button onClick={() => { console.log("correct") }}>
-                                    <i className=""></i>
-                                </button>
                             </a>
                         </li>
                     ))
