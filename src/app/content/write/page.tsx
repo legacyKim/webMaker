@@ -52,7 +52,7 @@ export default function Write() {
                     <span>Submit</span>
                 </button>
                 <div>
-                    <input className="write_title" type="text" name="Yitle" value={formData.title} placeholder="Title" onChange={handleChange} />
+                    <input className="write_title" type="text" name="title" value={formData.title} placeholder="Title" onChange={handleChange} />
                 </div>
                 <div>
                     <input className="write_subtitle" type="text" name="subtitle" value={formData.subtitle} placeholder="Subtitle" onChange={handleChange} />
