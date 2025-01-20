@@ -47,8 +47,7 @@ export default function Correct() {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
 
-        let content = editorRef.current?.value() || "";
-
+        const content = editorRef.current?.value() || "";
         const contentId = searchParams.get("id");
 
         const dataToSend = {

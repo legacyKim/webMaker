@@ -178,7 +178,7 @@ export default function ContentMap() {
     const deleteEdge = useCallback(async (edgeId: string) => {
         setEdges((eds) => eds.filter((edge) => edge.id !== edgeId));
         try {
-            const response = await axios.delete(`/content/api`, {
+            await axios.delete(`/content/api`, {
                 data: { id: edgeId, type: "edge" },
             });
         } catch (error) {
