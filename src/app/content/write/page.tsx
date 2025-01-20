@@ -36,7 +36,7 @@ export default function Write() {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
 
-        let content = editorRef.current?.value() || "";
+        const content = editorRef.current?.value() || "";
 
         const dataToSend = {
             ...formData,
