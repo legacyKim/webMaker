@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { Suspense, useState, useEffect, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+
 import dynamic from 'next/dynamic';
 import "easymde/dist/easymde.min.css";
 import { ChangeEvent, FormEvent } from "react";
@@ -10,6 +11,14 @@ import type SimpleMDEEditor from 'easymde';
 const SimpleMDE = dynamic(() => import('react-simplemde-editor'), { ssr: false });
 
 export default function Correct() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <CorrectContent />
+        </Suspense>
+    );
+}
+
+function CorrectContent() {
 
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -30,7 +39,7 @@ export default function Correct() {
         setFormData({
             title,
             subtitle,
-            content: content.replace(/\\n/g, '\n'),
+            content: content ? content.replace(/\\n/g, '\n') : "",  // Ensure content is handled safely
         });
     }, [searchParams]);
 
