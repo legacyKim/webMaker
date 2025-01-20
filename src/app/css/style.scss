@@ -213,12 +213,20 @@ nav a {
     &:hover span {
         color: #fff;
     }
-    
+
     &.abs {
         position: absolute;
         top: 0;
         right: 16px;
         z-index: 999;
+    }
+}
+
+.btn_wrap {
+    @include flex-start;
+
+    & * {
+        margin-left: 6px;
     }
 }
 
@@ -452,6 +460,9 @@ nav a {
 .write {
     @include relative_block;
     @include page_1320;
+    
+    opacity: 0;
+    animation: 0.3s content_opacity 0.3s forwards ease-in-out;
 
     input {
         @include relative_block;
@@ -483,11 +494,14 @@ nav a {
 }
 
 .view_content {
+
     @include relative_block;
     @include page_1320;
 
     padding-top: 12px;
     height: calc(100vh - 180px);
+    opacity: 0;
+    animation: 0.3s content_opacity 0.3s forwards ease-in-out;
 
     .view_content_header {
         @include flex-sb;
@@ -507,6 +521,16 @@ nav a {
         p {
             @include font_basic;
         }
+    }
+}
+
+@keyframes content_opacity {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
     }
 }
 

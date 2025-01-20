@@ -58,7 +58,7 @@ export async function POST(req) {
 export async function PUT(req) {
     try {
         const data = await req.json();
-        const { position, id, edge } = data;
+        const { position, id, edge, title, date, content, subtitle } = data;
 
         if (position) {
             const [updateResult] = await promisePool.query(
@@ -82,6 +82,20 @@ export async function PUT(req) {
             }
         }
 
+        if (content) {
+            const contentData = JSON.stringify({ title, date, content, subtitle });
+            console.log("Content data to be updated:", contentData);
+        
+            const [contentUpdateResult] = await promisePool.query(
+                'UPDATE tb_content SET data = ? WHERE id = ?',
+                [contentData, id]
+            );
+        
+            if (contentUpdateResult.affectedRows === 0) {
+                return NextResponse.json({ success: false, message: 'Content update failed' }, { status: 404 });
+            }
+        }
+
         return NextResponse.json({ success: true, message: 'Node updated successfully' });
     } catch (error) {
         console.error("Error in PUT:", error);
@@ -91,18 +105,33 @@ export async function PUT(req) {
 
 export async function DELETE(req) {
     try {
-        const id = req.nextUrl.searchParams.get('id');
+        const data = await req.json();
+        const { id, type } = data;
 
-        const [deleteResult] = await promisePool.query(
-            'DELETE FROM tb_edge WHERE id = ?',
-            [id]
-        );
+        if (type === "content") {
+            
+            await promisePool.query("DELETE FROM tb_edge WHERE content_id = ? AND content_id IS NOT NULL", [id]);
 
-        if (deleteResult.affectedRows === 0) {
-            return NextResponse.json({ success: false, message: 'Edge not found or not deleted' }, { status: 404 });
+            const [deleteResult] = await promisePool.query("DELETE FROM tb_content WHERE id = ?", [id]);
+
+            if (deleteResult.affectedRows === 0) {
+                return NextResponse.json({ success: false, message: "Content not found or not deleted." }, { status: 404 });
+            }
+
+            return NextResponse.json({ success: true, message: "Content and related edges deleted successfully." });
+
+        } else if (type === "edge") {
+
+            const [deleteResult] = await promisePool.query("DELETE FROM tb_edge WHERE id = ?", [id]);
+
+            if (deleteResult.affectedRows === 0) {
+                return NextResponse.json({ success: false, message: "Edge not found or not deleted." }, { status: 404 });
+            }
+
+            return NextResponse.json({ success: true, message: "Edge deleted successfully." });
+        } else {
+            return NextResponse.json({ success: false, message: "Invalid type specified." }, { status: 400 });
         }
-
-        return NextResponse.json({ success: true, message: 'Edge deleted successfully' });
     } catch (error) {
         console.error("Error in DELETE:", error);
         return NextResponse.json({ success: false, error: error.message }, { status: 500 });

@@ -28,3 +28,15 @@ content 페이지 리액트 플로우
 ** npm install --legacy-peer-deps 
 버전 충돌로 인한 리액트 플로우 설치 문제 해결
 
+** npm install react-markdown react-syntax-highlighter prismjs
+** npm i --save-dev @types/react-syntax-highlighter
+문법 하이라이팅 컴포넌트 추가
+
+** npm install react-quill (호환 x)
+마크다운 에디터
+
+** npm install @toast-ui/react-editor
+마크다운 에디터 (호환 x)
+
+** npm install react-simplemde-editor simplemde
+마크다운 에디터

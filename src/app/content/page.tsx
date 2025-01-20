@@ -57,7 +57,7 @@ export default function ContentMap() {
                     id: item.id,
                     title: item.data.title,
                     date: item.data.date,
-                    subTitle: item.data.subtitle,
+                    subtitle: item.data.subtitle,
                     content: item.data.content,
                 },
                 position: item.position,
@@ -178,8 +178,8 @@ export default function ContentMap() {
     const deleteEdge = useCallback(async (edgeId: string) => {
         setEdges((eds) => eds.filter((edge) => edge.id !== edgeId));
         try {
-            await axios.delete(`/content/api`, {
-                params: { id: edgeId },
+            const response = await axios.delete(`/content/api`, {
+                data: { id: edgeId, type: "edge" },
             });
         } catch (error) {
             console.error('Failed to delete edge:', error);

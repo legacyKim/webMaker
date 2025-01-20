@@ -1,19 +1,18 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-
 import dynamic from 'next/dynamic';
-
 import "easymde/dist/easymde.min.css";
 import { ChangeEvent, FormEvent } from "react";
 import type SimpleMDEEditor from 'easymde';
 
 const SimpleMDE = dynamic(() => import('react-simplemde-editor'), { ssr: false });
 
-export default function Write() {
+export default function Correct() {
 
     const router = useRouter();
+    const searchParams = useSearchParams();
 
     const [formData, setFormData] = useState({
         title: "",
@@ -22,6 +21,18 @@ export default function Write() {
     });
 
     const currentDate = new Date().toISOString().split("T")[0];
+
+    useEffect(() => {
+        const title = searchParams.get("title") || "";
+        const subtitle = searchParams.get("subtitle") || "";
+        const content = searchParams.get("content") || "";
+
+        setFormData({
+            title,
+            subtitle,
+            content: content.replace(/\\n/g, '\n'),
+        });
+    }, [searchParams]);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -38,16 +49,18 @@ export default function Write() {
 
         let content = editorRef.current?.value() || "";
 
+        const contentId = searchParams.get("id");
+
         const dataToSend = {
             ...formData,
             content,
             date: currentDate,
-            position: { x: Math.random() * 400, y: Math.random() * 400 },
+            id: contentId,
         };
 
         try {
             const response = await fetch("/content/api", {
-                method: "POST",
+                method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -55,10 +68,10 @@ export default function Write() {
             });
 
             if (response.ok) {
-                console.log("Project created successfully!");
-                router.push("/content");
+                console.log("Project updated successfully!");
+                router.push(`/content`);
             } else {
-                console.error("Failed to create project");
+                console.error("Failed to update project");
             }
         } catch (error) {
             console.error("Error:", error);
@@ -69,7 +82,7 @@ export default function Write() {
         <div>
             <form onSubmit={handleSubmit} className="write">
                 <button className="customBtn abs" type="submit">
-                    <span>Submit</span>
+                    <span>Update</span>
                 </button>
                 <div>
                     <input
@@ -93,6 +106,7 @@ export default function Write() {
                 </div>
                 <div>
                     <SimpleMDE
+                        value={formData.content}
                         getMdeInstance={handleEditorMount}
                         options={{
                             spellChecker: false,
