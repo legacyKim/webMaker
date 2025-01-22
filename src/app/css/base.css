@@ -466,6 +466,7 @@ button{cursor: pointer;
 html {
   line-height: 1.15; /* 1 */
   -webkit-text-size-adjust: 100%; /* 2 */
+  background-color: hsl(250, 24%, 9%);
 }
 
 /* Sections

@@ -1,10 +1,10 @@
-body, span, p { color: rgba(0, 0, 0, 0.80) } 
+body, span, p { color: rgba(0, 0, 0, 0.80);  } 
 body { transition: all 0.3s ease-in-out; } 
-body::-webkit-scrollbar { background-color: transparent; width: 4px; } 
-body::-webkit-scrollbar-thumb { background-color: #3498db; border-radius: 100px; } 
 
+.container { position: relative; display: block; width: 100%; height: calc(100% - 56px); padding-top: 56px; overflow: auto; } 
+.container::-webkit-scrollbar { background-color: transparent; width: 4px; } 
+.container::-webkit-scrollbar-thumb { background-color: #d2513c; border-radius: 100px; } 
 
-.container { position: relative; display: block; } 
 .page_1320 { max-width: 1320px; margin: 0 auto; } 
 
 .modal_bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center; z-index: 1000; } 

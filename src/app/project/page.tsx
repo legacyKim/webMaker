@@ -36,11 +36,10 @@ export default function Project() {
     if (isLoading) return <Loading />;
 
     return (
-        <div className='page'>
-
+        <div className='container dark'>
             <div className='page_header'>
                 <div className='page_header_tit'>
-                    <h4>Projects</h4>
+                    <h4></h4>
                 </div>
                 <button className='customBtn' onClick={() => setIsModalOpen(true)}>
                     <span>New Project</span>

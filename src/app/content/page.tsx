@@ -189,11 +189,9 @@ export default function ContentMap() {
     if (isLoading) return <Loading />;
 
     return (
-        <div className="page">
+        <div className="container dark">
             <div className='page_header'>
-                <div className='page_header_tit'>
-                    <h4>Content</h4>
-                </div>
+                <div className='page_header_tit'></div>
                 <Link
                     className="customBtn"
                     href={{ pathname: "/content/write" }} >

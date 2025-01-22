@@ -66,7 +66,7 @@ export default function Write() {
     };
 
     return (
-        <div>
+        <div className="container dark">
             <form onSubmit={handleSubmit} className="write">
                 <button className="customBtn abs" type="submit">
                     <span>Submit</span>

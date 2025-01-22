@@ -1,6 +1,39 @@
-$main-color: #3498db;
-$font-color: rgba($color: #2a2e30, $alpha: 1.0);
-$font-color: rgba($color: #2a2e30, $alpha: 1.0);
+// common
+
+$main-color: #d2513c;
+$sub-color: #edeadf;
+$sub2-color: #d4d2c7;
+
+// light
+
+$light-font-color: rgba(#2a2e30, 1.0);
+$light-background-color: rgba(#fff, 1.0);
+
+// dark
+
+$dark-font-color: rgba(#fff, 1.0);
+$dark-font2-color: rgba(#fff, 0.5);
+$dark-background-color: hsl(250, 24%, 9%);
+$dark-background-hover-color: hsl(204, 49%, 9%);
+$dark-border-line: hsl(246, 11%, 22%);
+$dark-box-bg: hsl(250, 21%, 11%);
+$dark-box2-bg: hsl(246, 15%, 15%);
+
+.light {
+    background-color: $light-background-color;
+}
+
+.light * {
+    color: $light-font-color;
+}
+
+.dark {
+    background-color: $dark-background-color;
+}
+
+.dark * {
+    color: $dark-font-color;
+}
 
 @mixin relative_block {
     position: relative;
@@ -47,35 +80,30 @@ $font-color: rgba($color: #2a2e30, $alpha: 1.0);
     font-size: 16px;
     font-weight: 400;
     line-height: 1.6;
-    color: rgba($color: #000000, $alpha: 1.0)
 }
 
 @mixin font_small {
     font-size: 14px;
-    font-weight: 400;
+    font-weight: 300;
     line-height: 1.6;
-    color: rgba($color: #000000, $alpha: 1.0)
 }
 
 @mixin font_ssmall {
     font-size: 12px;
-    font-weight: 400;
+    font-weight: 300;
     line-height: 1.6;
-    color: rgba($color: #000000, $alpha: 1.0)
 }
 
 @mixin font_sssmall {
     font-size: 11px;
     font-weight: 300;
     line-height: 1.6;
-    color: rgba($color: #000000, $alpha: 1.0)
 }
 
 @mixin font_tit {
     font-size: 24px;
     font-weight: 700;
     line-height: 1.6;
-    color: rgba($color: #000000, $alpha: 1.0)
 }
 
 @mixin oneline {
@@ -84,14 +112,26 @@ $font-color: rgba($color: #2a2e30, $alpha: 1.0);
     overflow: hidden;
 }
 
+@mixin twoline {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+}
+
 header {
-    @include page_1320;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: calc(100% - 32px);
+
     @include flex-sb;
 
     padding: 12px 16px;
-    margin-bottom: 32px;
-    position: relative;
-    z-index: 99999999;
+    z-index: 99999;
+
+    border-bottom: 1px solid $dark-border-line;
 }
 
 nav {
@@ -99,36 +139,51 @@ nav {
 }
 
 nav a {
-    @include font_small;
+
     @include relative_block;
 
-    margin-left: 12px;
+    margin-left: 8px;
 
-    &::after {
-        content: '';
-
+    div {
         position: absolute;
-        top: calc(100% + 1px);
+        top: 22px;
         left: 50%;
         transform: translateX(-50%);
-        width: 0;
-        height: 2px;
-        background-color: $main-color;
+        display: block;
+
+        border: 1px solid $dark-border-line;
+        background-color: $dark-box-bg;
+        padding: 4px 7px 3px;
+
+        @include font_sssmall();
+        color: $dark-font2-color;
+        opacity: 0;
         transition: all 0.3s ease-in-out;
+        border-radius: 3px;
     }
 
-    &:hover:after {
-        width: 100%;
+    i {
+        @include font_basic();
+    }
+
+    &:hover {
+
+        i {
+            color: $main-color;
+        }
+
+        div {
+            opacity: 1;
+        }
     }
 }
 
 .img_logo {
     position: relative;
     display: block;
-    width: 32px;
-    height: 32px;
-    background: url('../img/img_logo.png') no-repeat center / contain;
-
+    width: 24px;
+    height: 24px;
+    background: url(../img/portfolio_logo.png) no-repeat center / contain;
 }
 
 .page {
@@ -145,12 +200,13 @@ nav a {
 }
 
 .page_header {
-    @include page_1320;
+
     @include flex-sb;
     position: relative;
     z-index: 99999;
 
     align-items: flex-start;
+    padding: 16px;
 
     opacity: 0;
     animation: 0.3s page_header 0.3s forwards ease-in;
@@ -370,20 +426,140 @@ nav a {
 
 .layout {
 
-    div {
+    .box {
         opacity: 0;
         border: 1px solid rgba($color: #000000, $alpha: 0.3);
 
         display: flex;
         flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        border: 1px solid #ccc;
-        border-radius: 4px;
+        border: 2px solid $dark-border-line;
+        border-radius: 16px;
     }
 
-    div.active {
+    .box.active {
         animation: 0.3s ease-in layout_opacity 0.3s forwards;
+    }
+
+    .box_inner {
+
+        background-color: $dark-box2-bg;
+        height: 100%;
+
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+
+        .box_top {
+
+            @include flex-start();
+            padding: 40px 24px 16px;
+            background-color: $dark-background-color;
+            border-radius: 16px 16px 0 0;
+
+            h1 {
+                margin: 0;
+            }
+        }
+
+        .explain {
+            @include font_small();
+            opacity: 0.7;
+            text-align: justify;
+
+            padding: 24px;
+            padding-top: 0;
+            background-color: $dark-background-color;
+            border-radius: 0 0 16px 16px;
+
+            flex: 1;
+        }
+
+        .box_bot {
+            @include flex-start();
+            flex-wrap: wrap;
+            padding: 12px;
+
+            .skill_wrap {
+                @include flex-start();
+                margin-right: 6px;
+                margin-bottom: 6px;
+
+                padding: 8px 10px 6px;
+                border-radius: 8px;
+                background-color: $dark-background-color;
+
+                div.skill_icon {
+                    @include flex-center();
+
+                    min-width: 24px;
+                    height: 24px;
+                    border-radius: 4px;
+
+                    &:after {
+                        content: '';
+                        width: 20px;
+                        height: 20px;
+                        background-repeat: no-repeat !important;
+                        background-size: contain !important;
+                        background-position: center !important;
+                        border-radius: 2px;
+                        overflow: hidden;
+                    }
+                }
+
+                .HTML5::after {
+                    background: url('../img/html5.png');
+                }
+
+                .CSS3::after {
+                    background: url('../img/css3.png');
+                }
+
+                .React::after {
+                    background: url('../img/react.png');
+                }
+
+                .ReactQuery::after {
+                    background: url('../img/ReactQuery.png');
+                }
+
+                .Redux::after {
+                    background: url('../img/redux.png');
+                }
+
+                .Zustand::after {
+                    background: url('../img/Zustand.png');
+                }
+
+                .Python::after {
+                    background: url('../img/python.png');
+                }
+
+                .Mysql::after {
+                    background: url('../img/mysql.png');
+                }
+
+                .NextJs::after {
+                    background: url('../img/next.js.png');
+                }
+
+                .Vercel::after {
+                    background: url('../img/Vercel.png');
+                }
+
+                .Railway::after {
+                    background: url('../img/Railway.png');
+                }
+
+                span {
+                    @include font_ssmall();
+                    opacity: 0.8;
+                    margin-left: 4px;
+                    padding-right: 4px;
+                }
+            }
+
+        }
     }
 
     @keyframes layout_opacity {
@@ -395,7 +571,43 @@ nav a {
             opacity: 1;
         }
     }
+}
 
+.LinkPopup {
+
+    background-color: $dark-box-bg;
+    border: 1px solid $dark-border-line;
+    border-radius: 8px;
+
+    padding: 8px 8px 6px;
+
+    @include flex-start();
+
+    a:last-child {
+        margin-right: 2px;
+    }
+
+    a {
+        @include relative_block();
+        margin-right: 6px;
+
+        width: 24px;
+        height: 24px;
+
+        i {
+            @include flex-center();
+            position: relative;
+            top: 1px;
+            font-size: 22px;
+        }
+
+        img {
+            @include relative_block();
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+    }
 }
 
 .content {
@@ -426,41 +638,83 @@ nav a {
 
     @include relative_block;
 
-    padding: 8px 12px;
-    border-radius: 4px;
+    border-radius: 8px;
 
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    background-color: $dark-box2-bg;
+    border: 1px solid $dark-border-line;
+
     transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
 
-    &:hover {
-        box-shadow: 0 2px 14px rgba(0, 0, 0, 0.25), 0 4px 10px rgba(0, 0, 0, 0.22);
+    .react-flow__handle {
+        z-index: 999999;
     }
 
-    .content_factor_top {
+    &:hover {
+
+        .content_factor_title,
+        .content_factor_subtitle {
+            background-color: $dark-background-hover-color;
+        }
+    }
+
+    .content_factor_title {
 
         @include flex-sb;
 
+        padding: 18px 16px 16px;
+        border-radius: 8px 8px 0 0;
+        background-color: $dark-background-color;
+
         h3 {
-            @include font_ssmall;
+            @include font_small;
             @include oneline;
             min-width: 180px;
         }
-
-        span {
-            @include font_sssmall;
-        }
-
     }
 
-    p {
-        @include font_ssmall;
+    .content_factor_subtitle {
+        @include relative_block;
+        padding: 0 16px 16px;
+        background-color: $dark-background-color;
+        border-radius: 0 0 8px 8px;
+
+        p {
+            @include relative_block;
+            @include font_ssmall;
+            @include twoline;
+
+            color: $dark-font2-color;
+            z-index: 9;
+
+            max-height: 40px;
+            max-width: 200px;
+        }
+    }
+
+    .sec_box {
+        width: calc(100% - 24px);
+        padding: 12px;
+        background-color: $dark-box2-bg;
+        border-radius: 0 0 8px 8px;
+
+        span {
+            @include font_ssmall;
+            color: $dark-font2-color;
+            margin-left: 4px;
+        }
+
+        i {
+            @include font_small;
+            color: $dark-font2-color;
+            font-weight: 100;
+        }
     }
 }
 
 .write {
     @include relative_block;
     @include page_1320;
-    
+
     opacity: 0;
     animation: 0.3s content_opacity 0.3s forwards ease-in-out;
 
@@ -471,6 +725,7 @@ nav a {
 
         outline: none;
         margin-bottom: 8px;
+        background-color: $dark-background-color;
     }
 
     .write_title {
@@ -524,6 +779,10 @@ nav a {
     }
 }
 
+.CodeMirror {
+    background-color: $dark-background-color !important;
+}
+
 @keyframes content_opacity {
     0% {
         opacity: 0;
@@ -541,6 +800,8 @@ nav a {
     width: 100%;
     height: 100%;
     background-color: rgba($color: #000000, $alpha: 0.3);
+
+    z-index: 9999999999;
 
     @include flex-center;
 

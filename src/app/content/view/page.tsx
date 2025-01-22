@@ -55,10 +55,10 @@ function ViewContent() {
     };
 
     return (
-        <div>
+        <div className="container dark">
             <div className="page_header">
                 <div className="page_header_tit">
-                    <h4>View Content</h4>
+                    <h4></h4>
                 </div>
                 <div className="btn_wrap">
                     <button className="customBtn" onClick={handleDelete}>
