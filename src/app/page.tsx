@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Responsive, WidthProvider } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
@@ -8,7 +8,11 @@ import "react-resizable/css/styles.css";
 import { saveToLocalStorage, getFromLocalStorage } from "./utils/localstorage";
 
 import Image from 'next/image';
-import bambueong_logo from './img/bambueong_logo.png';
+
+const images: Record<string, string> = {
+  bambueong_logo: '/img/bambueong_logo.png',
+  portfolio_logo: '/img/portfolio_logo.png',
+};
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -22,6 +26,7 @@ const defaultLayouts = {
       url: `javascript:void(0)`,
       gitUrl: `https://github.com/legacyKim/webMaker`,
       skill: ["HTML5", "NextJs", "Vercel", "Railway"],
+      logo: "portfolio_logo",
     },
     {
       i: "Bambueong", x: 0, y: 0, w: 5, h: 8,
@@ -29,8 +34,9 @@ const defaultLayouts = {
       url: `https://bambueong.net/`,
       gitUrl: `https://github.com/legacyKim/Whelper`,
       skill: ["HTML5", "React", "ReactQuery", "Redux", "Zustand", "CSS3", "Python", "Mysql"],
+      logo: "bambueong_logo",
     },
-    { i: "demo", x: 0, y: 0, w: 5, h: 8, explain: "준비 중 입니다.", gitUrl: "javascript:void(0)", url: 'javascript:void(0)', skill: [] }
+    { i: "demo", x: 0, y: 0, w: 5, h: 8, explain: "준비 중 입니다.", gitUrl: "javascript:void(0)", url: 'javascript:void(0)', skill: [], logo: "default", }
   ],
 };
 
@@ -44,6 +50,7 @@ interface Layout {
   url: string;
   gitUrl: string;
   skill?: string[];
+  logo: keyof typeof images;
 }
 
 export default function Home() {
@@ -158,9 +165,12 @@ function LinkPopup({ linkPopup, popupPosition }: {
       <a href={linkPopup.gitUrl} target="_blank">
         <i className="icon-github-circled-alt2"></i>
       </a>
-      <a href={linkPopup.url} target="_blank">
-        <Image src={bambueong_logo} alt="bambueong_logo" />
-      </a>
+      {(linkPopup.logo !== "default") && (
+        <a href={linkPopup.url} target="_blank">
+          <Image src={images[linkPopup.logo as keyof typeof images]}
+            alt={linkPopup.logo} />;
+        </a>
+      )}
     </div>
   )
 }
