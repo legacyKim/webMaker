@@ -396,6 +396,7 @@ nav a {
         cursor: pointer;
 
         .file_upload_btn {
+            position: relative;
             @include flex-center;
 
             min-width: 32px;
@@ -490,6 +491,7 @@ nav a {
 
             h1 {
                 margin: 0;
+                font-size: 32px;
             }
         }
 
