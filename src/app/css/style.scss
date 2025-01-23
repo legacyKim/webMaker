@@ -14,7 +14,7 @@ $light-background-color: rgba(#fff, 1.0);
 $dark-font-color: rgba(#fff, 1.0);
 $dark-font2-color: rgba(#fff, 0.5);
 $dark-background-color: hsl(250, 24%, 9%);
-$dark-background-hover-color: hsl(204, 49%, 9%);
+$dark-background-hover-color: hsl(204, 30%, 15%);
 $dark-border-line: hsl(246, 11%, 22%);
 $dark-box-bg: hsl(250, 21%, 11%);
 $dark-box2-bg: hsl(246, 15%, 15%);
@@ -142,7 +142,7 @@ nav a {
 
     @include relative_block;
 
-    margin-left: 8px;
+    margin-left: 4px;
 
     div {
         position: absolute;
@@ -193,6 +193,8 @@ nav a {
 .project_list {
     @include flex-start;
     flex-wrap: wrap;
+    
+    list-style: none;
 
     &.li:nth-child(5) {
         background-color: #000;
@@ -227,12 +229,8 @@ nav a {
 }
 
 .customBtn {
-
-    @include relative_block;
-
-    padding: 6px 24px;
-    border: 1px solid rgba($color: #000000, $alpha: 0.3);
-    border-radius: 4px;
+    position: relative;
+    @include flex-center();
 
     color: rgba($color: #000000, $alpha: 0.3);
     overflow: hidden;
@@ -246,10 +244,6 @@ nav a {
         height: 100%;
         background-color: $main-color;
         transition: all 0.3s ease-in-out;
-    }
-
-    &:hover {
-        border: 1px solid $main-color;
     }
 
     &:hover::before {
@@ -279,16 +273,43 @@ nav a {
 }
 
 .btn_wrap {
-    @include flex-start;
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
 
-    & * {
-        margin-left: 6px;
+    display: flex;
+    flex-direction: column;
+
+    & a,
+    button {
+
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        border: 1px solid $dark-border-line;
+
+        i {
+            z-index: 9;
+            width: 100%;
+            height: 100%;
+            @include font_small();
+
+            &:before {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                margin: 0;
+            }
+        }
     }
 }
 
 .modal {
     @include relative_block;
     @include maxWidth_732;
+    background-color: $dark-background-color;
+    box-shadow: 0 0 12px 4px rgba(255, 255, 255, 0.4);
 }
 
 .modal_header {
@@ -314,7 +335,7 @@ nav a {
         @include font_small;
         min-width: 140px;
         margin-bottom: 4px;
-        opacity: 0.4;
+        opacity: 0.5;
     }
 
     .file_custom {
@@ -332,14 +353,16 @@ nav a {
     input,
     .file_name {
         @include flex-start;
-        @include font_small;
+        @include font_ssmall;
 
-        border: 1px solid #eee;
+        border: 1px solid $dark-border-line;
+        background-color: transparent;
         padding-left: 8px;
         min-height: 40px;
         width: calc(100% - 8px);
         border-radius: 8px;
         flex: 1;
+        margin-right: 10px;
 
         &:focus {
             border: 1px solid $main-color;
@@ -358,7 +381,7 @@ nav a {
         }
 
         b {
-            @include font_basic;
+            @include font_ssmall;
         }
     }
 
@@ -378,7 +401,6 @@ nav a {
             min-width: 32px;
             min-height: 32px;
             border-radius: 50%;
-            background-color: #fff;
             border: 1px solid #eee;
 
             &:hover {
@@ -386,14 +408,23 @@ nav a {
                 border: 1px solid $main-color;
 
                 i {
-                    color: #fff
+                    color: #fff;
                 }
             }
 
             i {
-                @include font_small;
-                margin-left: -2px;
+                @include font_ssmall;
                 color: #eee;
+                width: 100%;
+                height: 100%;
+
+                &:before {
+                    position: absolute;
+                    top: 49%;
+                    left: 49%;
+                    transform: translate(-50%, -50%);
+                    margin: 0;
+                }
             }
         }
     }
@@ -448,6 +479,7 @@ nav a {
         display: flex;
         flex-direction: column;
         overflow: hidden;
+        border-radius: 16px;
 
         .box_top {
 
@@ -579,7 +611,7 @@ nav a {
     border: 1px solid $dark-border-line;
     border-radius: 8px;
 
-    padding: 8px 8px 6px;
+    padding: 5px 5px 6px;
 
     @include flex-start();
 
@@ -599,13 +631,18 @@ nav a {
             position: relative;
             top: 1px;
             font-size: 22px;
-        }
-
-        img {
-            @include relative_block();
+            background-repeat: no-repeat !important;
+            background-size: contain !important;
             width: 100%;
             height: 100%;
-            object-fit: contain;
+
+            &.bambueong_logo {
+                background: url('../img/bambueong_logo.png');
+            }
+
+            &.portfolio_logo {
+                background: url('../img/portfolio_logo.png');
+            }
         }
     }
 }
@@ -669,6 +706,8 @@ nav a {
             @include font_small;
             @include oneline;
             min-width: 180px;
+            padding-top: 4px;
+            padding-left: 6px;
         }
     }
 
@@ -693,7 +732,7 @@ nav a {
 
     .sec_box {
         width: calc(100% - 24px);
-        padding: 12px;
+        padding: 8px 12px;
         background-color: $dark-box2-bg;
         border-radius: 0 0 8px 8px;
 
@@ -717,6 +756,7 @@ nav a {
 
     opacity: 0;
     animation: 0.3s content_opacity 0.3s forwards ease-in-out;
+    padding-top: 48px;
 
     input {
         @include relative_block;
@@ -724,7 +764,6 @@ nav a {
         width: 100%;
 
         outline: none;
-        margin-bottom: 8px;
         background-color: $dark-background-color;
     }
 
@@ -733,7 +772,10 @@ nav a {
     }
 
     .write_subtitle {
-        font-size: 18px;
+        font-size: 14px;
+        opacity: 0.6;
+        height: 24px;
+        margin-bottom: 24px;
     }
 
     .write_content {
@@ -754,19 +796,35 @@ nav a {
     @include page_1320;
 
     padding-top: 12px;
-    height: calc(100vh - 180px);
+    height: calc(100vh - 80px);
     opacity: 0;
     animation: 0.3s content_opacity 0.3s forwards ease-in-out;
 
     .view_content_header {
         @include flex-sb;
+        padding: 16px 0 12px;
 
         .view_content_title {
-            @include font_basic;
+            @include font_tit;
         }
 
-        .view_content_date {
-            @include font_basic;
+        .view_info {
+            @include flex-start();
+
+            .view_info_box {
+                @include flex-start();
+
+                i {
+                    @include font_ssmall();
+                    opacity: 0.5;
+                    margin-right: 4px;
+                }
+
+                .view_content_date {
+                    @include font_ssmall();
+                    opacity: 0.5;
+                }
+            }
         }
 
         .view_content_subtitle {
@@ -777,10 +835,17 @@ nav a {
             @include font_basic;
         }
     }
+
+    pre {
+        div {
+            background-color: #2e3338 !important;
+        }
+    }
 }
 
 .CodeMirror {
     background-color: $dark-background-color !important;
+    caret-color: #d2513c !important;
 }
 
 @keyframes content_opacity {

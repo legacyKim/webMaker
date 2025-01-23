@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 
-import "./css/base.css";
-import "./css/font.css";
 import "./css/style.css";
 import "./css/style.scss";
 

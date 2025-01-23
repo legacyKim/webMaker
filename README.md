@@ -40,3 +40,9 @@ content 페이지 리액트 플로우
 
 ** npm install react-simplemde-editor simplemde
 마크다운 에디터
+
+** npm install --save-dev prettier
+scss 한줄 정렬
+
+** npm install rehype-sanitize
+view 페이지에서 MarkDown 렌더링

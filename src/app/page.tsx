@@ -7,13 +7,6 @@ import "react-resizable/css/styles.css";
 
 import { saveToLocalStorage, getFromLocalStorage } from "./utils/localstorage";
 
-import Image from 'next/image';
-
-const images: Record<string, string> = {
-  bambueong_logo: '/img/bambueong_logo.png',
-  portfolio_logo: '/img/portfolio_logo.png',
-};
-
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const LAYOUT_KEY = "layout";
@@ -50,7 +43,7 @@ interface Layout {
   url: string;
   gitUrl: string;
   skill?: string[];
-  logo: keyof typeof images;
+  logo: string;
 }
 
 export default function Home() {
@@ -161,15 +154,18 @@ function LinkPopup({ linkPopup, popupPosition }: {
   };
 
   return (
-    <div style={style} className="LinkPopup">
-      <a href={linkPopup.gitUrl} target="_blank">
-        <i className="icon-github-circled-alt2"></i>
-      </a>
-      {(linkPopup.logo !== "default") && (
-        <a href={linkPopup.url} target="_blank">
-          <Image src={images[linkPopup.logo as keyof typeof images]}
-            alt={linkPopup.logo} />;
-        </a>
+    <div style={style}>
+      {(linkPopup.logo !== "default") && (linkPopup.logo !== "portfolio_logo") && (
+        <div className="LinkPopup">
+
+          <a href={linkPopup.gitUrl} target="_blank">
+            <i className="icon-github-circled-alt2"></i>
+          </a>
+
+          <a href={linkPopup.url} target="_blank">
+            <i className={`${linkPopup.logo}`}></i>
+          </a>
+        </div>
       )}
     </div>
   )

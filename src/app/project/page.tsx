@@ -37,15 +37,6 @@ export default function Project() {
 
     return (
         <div className='container dark'>
-            <div className='page_header'>
-                <div className='page_header_tit'>
-                    <h4></h4>
-                </div>
-                <button className='customBtn' onClick={() => setIsModalOpen(true)}>
-                    <span>New Project</span>
-                </button>
-            </div>
-
             <ul className='project_list'>
                 {
                     projectList.map((p, i) => (
@@ -75,6 +66,12 @@ export default function Project() {
                     ))
                 }
             </ul>
+
+            <div className='btn_wrap'>
+                <button className='customBtn' onClick={() => setIsModalOpen(true)}>
+                    <i className='icon-vector-pencil'></i>
+                </button>
+            </div>
 
             {isModalOpen && <Modal setIsModalOpen={setIsModalOpen} />}
 

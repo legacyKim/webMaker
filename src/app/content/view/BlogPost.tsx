@@ -1,8 +1,9 @@
 import React from "react";
 import ReactMarkdown, { Components } from "react-markdown";
+import rehypeSanitize from 'rehype-sanitize';
+
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
-import rehypeRaw from 'rehype-raw';
 
 interface CodeProps {
     inline?: boolean;
@@ -35,15 +36,14 @@ const components: Components = {
 };
 
 export default function BlogPost({ content }: BlogEditorProps) {
-    const markdownContent = content;
 
     return (
-        <div>
+        <div className="css_except">
             <ReactMarkdown
                 components={components}
-                rehypePlugins={[rehypeRaw]}
+                rehypePlugins={[rehypeSanitize]}
             >
-                {markdownContent}
+                {content}
             </ReactMarkdown>
         </div>
     );

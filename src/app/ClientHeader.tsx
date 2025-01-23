@@ -11,7 +11,7 @@ export default function ClientHeader() {
 
       <nav>
         <Link href="/content">
-          <i className="icon-flow-split"></i>
+          <i className="icon-share"></i>
           <div>
             Content
           </div>

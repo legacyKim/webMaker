@@ -8,6 +8,8 @@ import "easymde/dist/easymde.min.css";
 import { ChangeEvent, FormEvent } from "react";
 import type SimpleMDEEditor from 'easymde';
 
+import '../../css/simpleMDE.custom.scss';
+
 const SimpleMDE = dynamic(() => import('react-simplemde-editor'), { ssr: false });
 
 export default function Correct() {
@@ -89,9 +91,11 @@ function CorrectContent() {
     return (
         <div className="container dark">
             <form onSubmit={handleSubmit} className="write">
-                <button className="customBtn abs" type="submit">
-                    <span>Update</span>
-                </button>
+                <div className="btn_wrap">
+                    <button className="customBtn" type="submit">
+                        <i className="icon-vector-pencil"></i>
+                    </button>
+                </div>
                 <div>
                     <input
                         className="write_title"

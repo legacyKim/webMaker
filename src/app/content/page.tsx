@@ -190,15 +190,6 @@ export default function ContentMap() {
 
     return (
         <div className="container dark">
-            <div className='page_header'>
-                <div className='page_header_tit'></div>
-                <Link
-                    className="customBtn"
-                    href={{ pathname: "/content/write" }} >
-                    <span>New Content</span>
-                </Link>
-            </div>
-
             <div className="content">
                 <ReactFlow
                     nodes={nodes}
@@ -211,6 +202,14 @@ export default function ContentMap() {
                     elementsSelectable={true}
                     zoomOnScroll={true}
                 />
+            </div>
+
+            <div className="btn_wrap">
+                <Link
+                    className="customBtn"
+                    href={{ pathname: "/content/write" }} >
+                        <i className="icon-vector-pencil"></i>
+                </Link>
             </div>
         </div>
     );

@@ -31,6 +31,7 @@ const CustomNode = ({ data }: NodeProps<{ title: string; date: string; content: 
                     },
                 }}>
                 <div className="content_factor_title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d2513c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><path d="M22 4 12 14.01l-3-3"></path></svg>
                     <h3>{data.title}</h3>
                 </div>
                 <div className="content_factor_subtitle">

@@ -6,6 +6,8 @@ import { useSearchParams, useRouter } from "next/navigation";
 import axios from 'axios';
 import BlogPost from "./BlogPost";
 
+import '../../css/simpleMDE.custom.scss';
+
 export default function ViewPage() {
     return (
         <Suspense fallback={<div>Loading...</div>}>
@@ -56,26 +58,26 @@ function ViewContent() {
 
     return (
         <div className="container dark">
-            <div className="page_header">
-                <div className="page_header_tit">
-                    <h4></h4>
-                </div>
-                <div className="btn_wrap">
-                    <button className="customBtn" onClick={handleDelete}>
-                        <span>Delete</span>
-                    </button>
-                    <button className="customBtn" onClick={handleCorrect}>
-                        <span>Correct</span>
-                    </button>
-                </div>
-            </div>
-
             <div className="view_content">
                 <div className="view_content_header">
-                    <h3 className="view_content_title">{title}</h3>
-                    <span className="view_content_date">{date}</span>
+                    <h5 className="view_content_title">{title}</h5>
+                    <div className="view_info">
+                        <div className="view_info_box">
+                            <i className="icon-clock"></i>
+                            <span className="view_content_date">{date}</span>
+                        </div>
+                    </div>
                 </div>
                 <BlogPost content={content} />
+            </div>
+
+            <div className="btn_wrap">
+                <button className="customBtn" onClick={handleDelete}>
+                    <i className="icon-trash-2"></i>
+                </button>
+                <button className="customBtn" onClick={handleCorrect}>
+                    <i className="icon-vector-pencil"></i>
+                </button>
             </div>
         </div>
     );
