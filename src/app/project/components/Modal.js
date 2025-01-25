@@ -155,7 +155,6 @@ export default function Modal({ setIsModalOpen }) {
                         </span>
                         <input
                             type="password"
-                            placeholder="비밀번호를 입력해 주세요."
                             value={password}
                             onChange={(e) => setLink(e.target.value)}
                         />

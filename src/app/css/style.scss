@@ -310,6 +310,10 @@ nav a {
     @include maxWidth_732;
     background-color: $dark-background-color;
     box-shadow: 0 0 12px 4px rgba(255, 255, 255, 0.4);
+
+    &.password {
+        max-width: 368px;
+    }
 }
 
 .modal_header {

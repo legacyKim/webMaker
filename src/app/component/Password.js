@@ -19,9 +19,9 @@ export default function PasswordCheckModal({ setIsModalOpen, setIsPasswordCheck,
 
     return (
         <div className="modal_bg">
-            <div className="modal">
+            <div className="modal password">
                 <div className='modal_header'>
-                    <span></span>
+                    <h2>Password</h2>
                     <button onClick={() => { modalClose() }}>
                         <i className='icon-cancel'></i>
                     </button>
@@ -30,9 +30,6 @@ export default function PasswordCheckModal({ setIsModalOpen, setIsPasswordCheck,
                 <div className="modal_form">
 
                     <div className='modal_input_box'>
-                        <span>
-                            Password
-                        </span>
                         <input
                             type="password"
                             value={modalPassword}

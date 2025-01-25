@@ -69,7 +69,7 @@ export default function Project() {
             </ul>
 
             <div className='btn_wrap'>
-                <button className='customBtn' onClick={() => { setIsModalOpen(false); }}>
+                <button className='customBtn' onClick={() => { setIsModalOpen(true); }}>
                     <i className='icon-vector-pencil'></i>
                 </button>
             </div>

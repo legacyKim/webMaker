@@ -3,7 +3,6 @@
 import React, { Suspense, useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
-import axios from 'axios';
 import BlogPost from "./BlogPost";
 
 import PasswordCheckModal from "../../component/Password"
