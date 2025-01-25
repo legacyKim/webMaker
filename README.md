@@ -46,3 +46,6 @@ scss 한줄 정렬
 
 ** npm install rehype-sanitize
 view 페이지에서 MarkDown 렌더링
+
+** npm install recoil
+리코일 - 전역변수 상태 관리.

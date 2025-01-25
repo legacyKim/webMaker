@@ -5,10 +5,12 @@ import { useSearchParams, useRouter } from "next/navigation";
 
 import dynamic from 'next/dynamic';
 import "easymde/dist/easymde.min.css";
-import { ChangeEvent, FormEvent } from "react";
+import { ChangeEvent } from "react";
 import type SimpleMDEEditor from 'easymde';
 
 import '../../css/simpleMDE.custom.scss';
+
+import PasswordCheckModal from "../../component/Password"
 
 const SimpleMDE = dynamic(() => import('react-simplemde-editor'), { ssr: false });
 
@@ -41,7 +43,7 @@ function CorrectContent() {
         setFormData({
             title,
             subtitle,
-            content: content ? content.replace(/\\n/g, '\n') : "",  // Ensure content is handled safely
+            content: content ? content.replace(/\\n/g, '\n') : "",
         });
     }, [searchParams]);
 
@@ -50,13 +52,13 @@ function CorrectContent() {
     };
 
     const editorRef = useRef<SimpleMDEEditor | null>(null);
+    console.log(editorRef);
 
     const handleEditorMount = (editor: SimpleMDEEditor) => {
         editorRef.current = editor;
     };
 
-    const handleSubmit = async (e: FormEvent) => {
-        e.preventDefault();
+    const handleSubmit = async () => {
 
         const content = editorRef.current?.value() || "";
         const contentId = searchParams.get("id");
@@ -66,6 +68,7 @@ function CorrectContent() {
             content,
             date: currentDate,
             id: contentId,
+            Password,
         };
 
         try {
@@ -78,7 +81,7 @@ function CorrectContent() {
             });
 
             if (response.ok) {
-                console.log("Project updated successfully!");
+                console.log("Content updated successfully!");
                 router.push(`/content`);
             } else {
                 console.error("Failed to update project");
@@ -88,11 +91,21 @@ function CorrectContent() {
         }
     };
 
+    const [isPasswordCheck, setIsPasswordCheck] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [Password, setPassword] = useState('');
+
+    useEffect(() => {
+        if (isPasswordCheck) {
+            handleSubmit();
+        }
+    }, [isPasswordCheck]);
+
     return (
         <div className="container dark">
-            <form onSubmit={handleSubmit} className="write">
+            <form onSubmit={(e) => e.preventDefault()} className="write">
                 <div className="btn_wrap">
-                    <button className="customBtn" type="submit">
+                    <button className="customBtn" onClick={() => { setIsModalOpen(true); }}>
                         <i className="icon-vector-pencil"></i>
                     </button>
                 </div>
@@ -128,6 +141,10 @@ function CorrectContent() {
                         }}
                     />
                 </div>
+
+                {isModalOpen &&
+                    <PasswordCheckModal setIsModalOpen={setIsModalOpen} setIsPasswordCheck={setIsPasswordCheck} setPassword={setPassword}></PasswordCheckModal>
+                }
             </form>
         </div>
     );

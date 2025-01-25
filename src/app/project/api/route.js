@@ -9,6 +9,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const bucketName = process.env.AWS_BUCKET_NAME;
+const validPassword = process.env.MY_SECRET_PASSWORD;
 
 export const config = {
     api: {
@@ -41,6 +42,11 @@ export async function POST(req) {
         const projectName = data.get('projectName');
         const link = data.get('link');
         const company = data.get('company');
+        const password = data.get('password');
+
+        if (password !== validPassword) {
+            return res.status(403).json({ message: "Invalid password" });
+        }
 
         if (!file) {
             throw new Error('No file uploaded');

@@ -1,15 +1,17 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import dynamic from 'next/dynamic';
 
 import "easymde/dist/easymde.min.css";
-import { ChangeEvent, FormEvent } from "react";
+import { ChangeEvent } from "react";
 import type SimpleMDEEditor from 'easymde';
 
 import '../../css/simpleMDE.custom.scss';
+
+import PasswordCheckModal from "../../component/Password"
 
 const SimpleMDE = dynamic(() => import('react-simplemde-editor'), { ssr: false });
 
@@ -35,8 +37,7 @@ export default function Write() {
         editorRef.current = editor;
     };
 
-    const handleSubmit = async (e: FormEvent) => {
-        e.preventDefault();
+    const handleSubmit = async () => {
 
         const content = editorRef.current?.value() || "";
 
@@ -45,6 +46,7 @@ export default function Write() {
             content,
             date: currentDate,
             position: { x: Math.random() * 400, y: Math.random() * 400 },
+            Password
         };
 
         try {
@@ -57,7 +59,7 @@ export default function Write() {
             });
 
             if (response.ok) {
-                console.log("Project created successfully!");
+                console.log("Content created successfully!");
                 router.push("/content");
             } else {
                 console.error("Failed to create project");
@@ -67,11 +69,21 @@ export default function Write() {
         }
     };
 
+    const [isPasswordCheck, setIsPasswordCheck] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [Password, setPassword] = useState('');
+
+    useEffect(() => {
+        if (isPasswordCheck) {
+            handleSubmit();
+        }
+    }, [isPasswordCheck]);
+
     return (
         <div className="container dark">
-            <form onSubmit={handleSubmit} className="write">
+            <form onSubmit={(e) => e.preventDefault()} className="write">
                 <div className="btn_wrap">
-                    <button className="customBtn" type="submit">
+                    <button className="customBtn" onClick={() => { setIsModalOpen(true); }}>
                         <i className="icon-ok-circled"></i>
                     </button>
                 </div>
@@ -106,6 +118,11 @@ export default function Write() {
                         }}
                     />
                 </div>
+
+                {isModalOpen &&
+                    <PasswordCheckModal setIsModalOpen={setIsModalOpen} setIsPasswordCheck={setIsPasswordCheck} setPassword={setPassword}></PasswordCheckModal>
+                }
+
             </form>
         </div>
     );

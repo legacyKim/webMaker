@@ -9,6 +9,7 @@ export default function Modal({ setIsModalOpen }) {
     const [company, setCompany] = useState('');
     const [link, setLink] = useState('');
     const [image, setImage] = useState('');
+    const [password, setPassowrd] = useState('');
 
     const projectImgChange = (e) => {
         const file = e.target.files[0];
@@ -19,23 +20,28 @@ export default function Modal({ setIsModalOpen }) {
         e.preventDefault();
 
         if (projectName === '') {
-            alert("프로젝트명을 입력해 주세요.")
+            alert("프로젝트명을 입력해 주세요.");
             return
         }
 
         if (company === '') {
-            alert("회사명을 입력해 주세요.")
+            alert("회사명을 입력해 주세요.");
             return
         }
 
         if (link === '') {
-            alert("주소를 입력해 주세요.")
+            alert("주소를 입력해 주세요.");
             return
         }
 
         if (image === '') {
-            alert("이미지를 추가해 주세요.")
+            alert("이미지를 추가해 주세요.");
             return
+        }
+
+        if (password === '') {
+            alert("비밀번호를 입력해 주세요.");
+            return;
         }
 
         const formData = new FormData();
@@ -43,6 +49,7 @@ export default function Modal({ setIsModalOpen }) {
         formData.append('company', company);
         formData.append('link', link);
         formData.append('image', image);
+        formData.append('password', password);
 
         try {
             const response = await axios.post('/project/api', formData);
@@ -51,6 +58,7 @@ export default function Modal({ setIsModalOpen }) {
             setCompany('');
             setLink('');
             setImage(null);
+            setPassowrd('');
 
             return response.data;
 
@@ -64,6 +72,7 @@ export default function Modal({ setIsModalOpen }) {
         setCompany('');
         setLink('');
         setImage(null);
+        setPassowrd('');
         setIsModalOpen(false)
     }
 
@@ -139,7 +148,17 @@ export default function Modal({ setIsModalOpen }) {
                                 </button>
                             )}
                         </div>
-
+                    </div>
+                    <div className='modal_input_box'>
+                        <span>
+                            Password
+                        </span>
+                        <input
+                            type="password"
+                            placeholder="비밀번호를 입력해 주세요."
+                            value={password}
+                            onChange={(e) => setLink(e.target.value)}
+                        />
                     </div>
                     <button className='btn_all' type="submit">New Project</button>
                 </form>

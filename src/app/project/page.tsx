@@ -10,6 +10,7 @@ interface Project {
     project: string;
     company: string;
     link: string;
+    
 }
 
 import Modal from './components/Modal.js';
@@ -68,7 +69,7 @@ export default function Project() {
             </ul>
 
             <div className='btn_wrap'>
-                <button className='customBtn' onClick={() => setIsModalOpen(true)}>
+                <button className='customBtn' onClick={() => { setIsModalOpen(false); }}>
                     <i className='icon-vector-pencil'></i>
                 </button>
             </div>
