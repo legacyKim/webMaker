@@ -18,6 +18,7 @@ $dark-background-hover-color: hsl(204, 30%, 15%);
 $dark-border-line: hsl(246, 11%, 22%);
 $dark-box-bg: hsl(250, 21%, 11%);
 $dark-box2-bg: hsl(246, 15%, 15%);
+$dark-box3-bg: hsl(246, 6%, 18%);
 
 .light {
     background-color: $light-background-color;
@@ -64,8 +65,8 @@ $dark-box2-bg: hsl(246, 15%, 15%);
     align-items: center;
 }
 
-@mixin page_1320 {
-    max-width: 1320px;
+@mixin page {
+    max-width: 920px;
     margin: 0 auto;
     padding: 0 16px;
 }
@@ -187,7 +188,7 @@ nav a {
 }
 
 .page {
-    @include page_1320;
+    @include page;
 }
 
 .project_list {
@@ -540,7 +541,7 @@ nav a {
                         background-repeat: no-repeat !important;
                         background-size: contain !important;
                         background-position: center !important;
-                        border-radius: 2px;
+                        border-radius: 4px;
                         overflow: hidden;
                     }
                 }
@@ -587,6 +588,10 @@ nav a {
 
                 .Railway::after {
                     background: url('../img/Railway.png');
+                }
+
+                .Recoil::after {
+                    background: url('../img/Recoil.png');
                 }
 
                 span {
@@ -758,7 +763,6 @@ nav a {
 
 .write {
     @include relative_block;
-    @include page_1320;
 
     opacity: 0;
     animation: 0.3s content_opacity 0.3s forwards ease-in-out;
@@ -767,17 +771,19 @@ nav a {
     input {
         @include relative_block;
         height: 40px;
-        width: 100%;
+        width: calc(100% - 8px);
 
         outline: none;
         background-color: $dark-background-color;
     }
 
     .write_title {
+        @include page;
         font-size: 24px;
     }
 
     .write_subtitle {
+        @include page;
         font-size: 14px;
         opacity: 0.6;
         height: 24px;
@@ -786,6 +792,7 @@ nav a {
 
     .write_content {
         @include font_small;
+        
         width: calc(100% - 16px);
         height: calc(100vh - 266px);
         margin-bottom: 12px;
@@ -793,6 +800,11 @@ nav a {
         border: 1px solid rgba($color: #000000, $alpha: 0.3);
         padding: 8px;
         border-radius: 4px;
+    }
+
+    .content_line {
+        border-bottom: 1px solid $dark-border-line;
+        margin-bottom: 24px;
     }
 }
 
@@ -806,7 +818,8 @@ nav a {
     animation: 0.3s content_opacity 0.3s forwards ease-in-out;
 
     .view_content_header {
-        @include page_1320;
+
+        @include page;
         @include flex-sb;
         align-items: flex-start;
         padding: 48px 0 0;
@@ -839,12 +852,12 @@ nav a {
         }
     }
 
-    .view_content_line {
+    .content_line {
         border-bottom: 1px solid $dark-border-line;
         margin-bottom: 24px;
 
         .view_content_subtitle {
-            @include page_1320;
+            @include page;
             font-size: 14px;
             opacity: 0.6;
             height: 24px;
@@ -858,14 +871,23 @@ nav a {
         }
     }
 
-    .css_except {
-        @include page_1320;
+    .simpoeMDE_custom {
+        @include page;
+        padding-bottom: 100px;
     }
 }
 
 .CodeMirror {
+    @include page;
     background-color: $dark-background-color !important;
     caret-color: #d2513c !important;
+    padding: 0;
+    border: 1px solid $dark-border-line;
+    border-radius: 4px;
+}
+
+.simpleMDE_wrap {
+    padding-bottom: 100px;
 }
 
 @keyframes content_opacity {
@@ -904,4 +926,43 @@ nav a {
             }
         }
     }
+}
+
+.sidebar {
+    position: fixed;
+    top: 50px;
+    right: -288px;
+    width: 240px;
+    transition: all 0.3s ease-in-out;
+    background-color: $dark-box3-bg;
+    height: calc(100% - 50px);
+    padding: 20px 24px;
+
+    &.active {
+        right: 0;
+    }
+
+    h3 {
+        font-size: 18px;
+        margin-bottom: 8px;
+    }
+
+    .index_list {
+        button {
+            @include font_basic();
+            opacity: 0.5;
+            transition: all 0.3s ease-in-out;
+
+            &:hover {
+                color: $main-color;
+                opacity: 1;
+            }
+        }
+    }
+}
+
+.sidebar_btn {
+    position: absolute;
+    top: 16px;
+    left: -32px;
 }

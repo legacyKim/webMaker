@@ -97,7 +97,7 @@ export default function Write() {
                         onChange={handleChange}
                     />
                 </div>
-                <div>
+                <div className="content_line">
                     <input
                         className="write_subtitle"
                         type="text"
@@ -107,7 +107,7 @@ export default function Write() {
                         onChange={handleChange}
                     />
                 </div>
-                <div>
+                <div className="simpleMDE_wrap">
                     <SimpleMDE
                         getMdeInstance={handleEditorMount}
                         options={{

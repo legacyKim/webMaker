@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useState, useEffect } from "react";
+import React, { Suspense, useState, useEffect, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
 import BlogPost from "./BlogPost";
@@ -76,6 +76,24 @@ function ViewContent() {
         }
     }, [isPasswordCheck]);
 
+    // sidebar Event
+    const blogPostRef = useRef<HTMLDivElement>(null);
+    const [headings, setHeadings] = useState<HTMLHeadingElement[]>([]);
+    console.log(headings)
+
+    useEffect(() => {
+        if (blogPostRef.current) {
+            const h1Elements = blogPostRef.current.querySelectorAll("h1");
+            setHeadings(Array.from(h1Elements));
+        }
+    }, [content]);
+
+    const scrollToHeading = (index: number) => {
+        headings[index]?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    const [sidebarOpen, setSidebarOpen] = useState("");
+
     return (
         <div className="container dark">
             <div className="view_content">
@@ -88,12 +106,39 @@ function ViewContent() {
                         </div>
                     </div>
                 </div>
-                <div className="view_content_line">
+                <div className="content_line">
                     <p className="view_content_subtitle">
                         {subtitle}
                     </p>
                 </div>
-                <BlogPost content={content} />
+                <div ref={blogPostRef}>
+                    <BlogPost content={content} />
+                </div>
+            </div>
+
+            <div className={`sidebar ${sidebarOpen}`}>
+                {headings.length !== 0 && (
+                    <button className="sidebar_btn" onClick={() => {
+                        if (sidebarOpen === "") {
+                            setSidebarOpen("active")
+                        } else {
+                            setSidebarOpen("")
+                        }
+                    }}>
+                        <i className="icon-list-bullet"></i>
+                    </button>
+                )}
+
+                <h3>Index</h3>
+                <ul className="index_list">
+                    {headings.map((heading, index) => (
+                        <li key={index}>
+                            <button onClick={() => scrollToHeading(index)}>
+                                {heading.textContent}
+                            </button>
+                        </li>
+                    ))}
+                </ul>
             </div>
 
             <div className="btn_wrap">

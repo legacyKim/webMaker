@@ -51,16 +51,11 @@ function CorrectContent() {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const editorRef = useRef<SimpleMDEEditor | null>(null);
-    console.log(editorRef);
-
-    const handleEditorMount = (editor: SimpleMDEEditor) => {
-        editorRef.current = editor;
-    };
+    const contentRef = useRef(formData.content);
 
     const handleSubmit = async () => {
 
-        const content = editorRef.current?.value() || "";
+        const content = contentRef.current || "";
         const contentId = searchParams.get("id");
 
         const dataToSend = {
@@ -119,7 +114,7 @@ function CorrectContent() {
                         onChange={handleChange}
                     />
                 </div>
-                <div>
+                <div className="content_line">
                     <input
                         className="write_subtitle"
                         type="text"
@@ -129,10 +124,13 @@ function CorrectContent() {
                         onChange={handleChange}
                     />
                 </div>
-                <div>
+                <div className="simpleMDE_wrap">
                     <SimpleMDE
                         value={formData.content}
-                        getMdeInstance={handleEditorMount}
+                        onChange={(value) => {
+                            contentRef.current = value;
+                        }}
+                    
                         options={{
                             spellChecker: false,
                             hideIcons: ["guide", "fullscreen", "side-by-side", "image"],

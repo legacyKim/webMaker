@@ -15,10 +15,10 @@ const defaultLayouts = {
   lg: [
     {
       i: "Portfolio", x: 0, y: 0, w: 5, h: 8,
-      explain: "김태훈의 포트폴리오입니다. 레이아웃에서 우클릭을 하시면 링크로 연결되는 버튼이 나옵니다.",
+      explain: "레이아웃에서 우클릭을 하시면 링크로 연결되는 버튼이 나옵니다.",
       url: `javascript:void(0)`,
       gitUrl: `https://github.com/legacyKim/webMaker`,
-      skill: ["HTML5", "NextJs", "Vercel", "Railway"],
+      skill: ["HTML5", "NextJs", "Vercel", "Railway", "Recoil"],
       logo: "portfolio_logo",
     },
     {

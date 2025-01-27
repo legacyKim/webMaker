@@ -38,7 +38,7 @@ const components: Components = {
 export default function BlogPost({ content }: BlogEditorProps) {
 
     return (
-        <div className="css_except">
+        <div className="simpoeMDE_custom">
             <ReactMarkdown
                 components={components}
                 rehypePlugins={[rehypeSanitize]}
