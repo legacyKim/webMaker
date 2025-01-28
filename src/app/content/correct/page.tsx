@@ -29,7 +29,6 @@ function CorrectContent() {
     const [formData, setFormData] = useState({
         title: "",
         subtitle: "",
-        content: "",
     });
 
     const currentDate = new Date().toISOString().split("T")[0];
@@ -37,12 +36,10 @@ function CorrectContent() {
     useEffect(() => {
         const title = searchParams.get("title") || "";
         const subtitle = searchParams.get("subtitle") || "";
-        const content = searchParams.get("content") || "";
 
         setFormData({
             title,
             subtitle,
-            content: content ? content.replace(/\\n/g, '\n') : "",
         });
     }, [searchParams]);
 
@@ -50,7 +47,7 @@ function CorrectContent() {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const contentRef = useRef(formData.content);
+    const contentRef = useRef(searchParams.get("content") || "");
 
     const handleSubmit = async () => {
 
@@ -76,6 +73,9 @@ function CorrectContent() {
 
             if (response.ok) {
                 router.push(`/content`);
+            } else {
+                const errorData = await response.json();
+                alert(errorData.message || "패스워드가 올바르지 않습니다.");
             }
         } catch (error) {
             console.error(error);
@@ -122,11 +122,11 @@ function CorrectContent() {
                 </div>
                 <div className="simpleMDE_wrap">
                     <SimpleMDE
-                        value={formData.content}
+                        value={contentRef.current}
                         onChange={(value) => {
                             contentRef.current = value;
                         }}
-                    
+
                         options={{
                             spellChecker: false,
                             hideIcons: ["guide", "fullscreen", "side-by-side", "image"],

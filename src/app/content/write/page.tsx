@@ -19,19 +19,11 @@ export default function Write() {
 
     const router = useRouter();
 
-    const [formData, setFormData] = useState({
-        title: "",
-        subtitle: "",
-        content: "",
-    });
+    const titleRef = useRef<HTMLInputElement | null>(null);
+    const subtitleRef = useRef<HTMLInputElement | null>(null);
+    const editorRef = useRef<SimpleMDEEditor | null>(null);
 
     const currentDate = new Date().toISOString().split("T")[0];
-
-    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
-
-    const editorRef = useRef<SimpleMDEEditor | null>(null);
 
     const handleEditorMount = (editor: SimpleMDEEditor) => {
         editorRef.current = editor;
@@ -39,10 +31,13 @@ export default function Write() {
 
     const handleSubmit = async () => {
 
+        const title = titleRef.current?.value || "";
+        const subtitle = subtitleRef.current?.value || "";
         const content = editorRef.current?.value() || "";
 
         const dataToSend = {
-            ...formData,
+            title,
+            subtitle,
             content,
             date: currentDate,
             position: { x: Math.random() * 400, y: Math.random() * 400 },
@@ -76,6 +71,11 @@ export default function Write() {
         }
     }, [isPasswordCheck]);
 
+    const handleImageUpload = () => {
+        alert("준비 중 입니다.");
+        return;
+    };
+
     return (
         <div className="container dark">
             <form onSubmit={(e) => e.preventDefault()} className="write">
@@ -89,9 +89,8 @@ export default function Write() {
                         className="write_title"
                         type="text"
                         name="title"
-                        value={formData.title}
+                        ref={titleRef}
                         placeholder="Title"
-                        onChange={handleChange}
                     />
                 </div>
                 <div className="content_line">
@@ -99,9 +98,8 @@ export default function Write() {
                         className="write_subtitle"
                         type="text"
                         name="subtitle"
-                        value={formData.subtitle}
+                        ref={subtitleRef}
                         placeholder="Subtitle"
-                        onChange={handleChange}
                     />
                 </div>
                 <div className="simpleMDE_wrap">
@@ -109,7 +107,18 @@ export default function Write() {
                         getMdeInstance={handleEditorMount}
                         options={{
                             spellChecker: false,
-                            hideIcons: ["guide", "fullscreen", "side-by-side", "image"],
+                            hideIcons: ["guide", "fullscreen", "preview"],
+                            toolbar: [
+                                "bold", "italic", "heading", "|", "quote", "unordered-list", "ordered-list", "|",
+                                {
+                                    name: "image",
+                                    action: handleImageUpload,
+                                    className: "fa fa-image",
+                                    title: "Insert Image",
+                                },
+                                "|", "link", "table", "horizontal-rule",
+                                "|", "undo", "redo",
+                            ],
                             lineWrapping: true,
                             forceSync: true,
                         }}

@@ -107,6 +107,12 @@ $dark-box3-bg: hsl(246, 6%, 18%);
     line-height: 1.6;
 }
 
+@mixin font_tit_2 {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.6;
+}
+
 @mixin oneline {
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -305,20 +311,85 @@ nav a {
     }
 }
 
+.modal_bg {
+    animation: modal_bg_ani 0.3s forwards ease-in-out;
+    opacity: 0;
+
+    @keyframes modal_bg_ani {
+        0% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    @keyframes modal_bg_ani_close {
+        0% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+        }
+    }
+
+    &.close {
+        opacity: 1;
+        animation: 0.3s modal_bg_ani_close 0.3s forwards ease-in-out;
+    }
+}
+
 .modal {
     @include relative_block;
     @include maxWidth_732;
     background-color: $dark-background-color;
     box-shadow: 0 0 12px 4px rgba(255, 255, 255, 0.4);
+    opacity: 0;
 
     &.password {
         max-width: 368px;
+    }
+
+    animation: 0.3s modal_ani 0.3s forwards ease-in-out;
+
+    @keyframes modal_ani {
+        0% {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    &.close {
+        opacity: 1;
+        animation: modal_ani_close 0.3s forwards ease-in-out;
+    }
+
+    @keyframes modal_ani_close {
+        0% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        100% {
+            opacity: 0;
+            transform: translateY(30px);
+        }
     }
 }
 
 .modal_header {
     h2 {
         @include font_tit;
+    }
+
+    h6 {
+        @include font_tit_2();
     }
 }
 
@@ -791,7 +862,7 @@ nav a {
 
     .write_content {
         @include font_small;
-        
+
         width: calc(100% - 16px);
         height: calc(100vh - 266px);
         margin-bottom: 12px;
@@ -821,7 +892,7 @@ nav a {
         @include page;
         @include flex-sb;
         align-items: flex-start;
-        padding: 48px 0 0;
+        padding: 48px 16px 0;
 
         .view_content_title {
             @include font_tit;
@@ -859,7 +930,6 @@ nav a {
             @include page;
             font-size: 18px;
             opacity: 0.78;
-            height: 24px;
             margin-bottom: 24px;
         }
     }

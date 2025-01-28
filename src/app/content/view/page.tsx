@@ -46,6 +46,9 @@ function ViewContent() {
             });
             if (response.ok) {
                 router.push(`/content`);
+            } else {
+                const errorData = await response.json();
+                alert(errorData.message || "패스워드가 올바르지 않습니다.");
             }
         } catch (error) {
             console.error("Error deleting content:", error);
@@ -60,7 +63,6 @@ function ViewContent() {
         }
 
         const encodedContent = content ? encodeURIComponent(content) : "";
-
         router.push(`/content/correct?id=${contentId}&title=${title}&subtitle=${subtitle}&content=${encodedContent}`);
     };
 

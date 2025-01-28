@@ -67,18 +67,25 @@ export default function Modal({ setIsModalOpen }) {
         }
     };
 
+    const [modalAnima, setModalAnima] = useState("");
+
     const modalClose = () => {
         setProjectName('');
         setCompany('');
         setLink('');
         setImage(null);
         setPassowrd('');
-        setIsModalOpen(false)
+        setModalAnima("close");
+
+        setTimeout(() => {
+            setModalAnima("");
+            setIsModalOpen(false);
+        }, 1000);
     }
 
     return (
-        <div className="modal_bg">
-            <div className="modal">
+        <div className={`modal_bg ${modalAnima}`}>
+            <div className={`modal ${modalAnima}`}>
                 <div className='modal_header'>
                     <h2>New Project</h2>
                     <button onClick={() => { modalClose() }}>

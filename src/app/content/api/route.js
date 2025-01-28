@@ -24,7 +24,7 @@ export async function POST(req) {
         const validPassword = process.env.API_PASSWORD;
 
         const data = await req.json();
-        const { title, date, content, subtitle, source, target, position, Password } = data;
+        const { title, date, content, subtitle, source, target, position, Password, file } = data;
 
         if (Password !== validPassword) {
             return NextResponse.json(
@@ -95,6 +95,7 @@ export async function PUT(req) {
 
         if (Password && Password !== validPassword) {
             return NextResponse.json(
+                { success: false, message: "비밀번호가 일치하지 않습니다." },
                 { status: 403 }
             );
         } else {
@@ -130,6 +131,7 @@ export async function DELETE(req) {
 
         if (Password !== validPassword) {
             return NextResponse.json(
+                { success: false, message: "비밀번호가 일치하지 않습니다." },
                 { status: 403 }
             );
         } else {

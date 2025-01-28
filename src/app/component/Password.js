@@ -4,11 +4,17 @@ import React, { useState } from "react";
 export default function PasswordCheckModal({ setIsModalOpen, setIsPasswordCheck, setPassword }) {
 
     const [modalPassword, setModalPassword] = useState("");
+    const [modalAnima, setModalAnima] = useState("");
 
     const modalClose = () => {
         setPassword('');
         setModalPassword("");
-        setIsModalOpen(false);
+        setModalAnima("close");
+
+        setTimeout(() => {
+            setModalAnima("");
+            setIsModalOpen(false);
+        }, 1000);
     }
 
     const passwordCheck = async (e) => {
@@ -18,10 +24,10 @@ export default function PasswordCheckModal({ setIsModalOpen, setIsPasswordCheck,
     }
 
     return (
-        <div className="modal_bg">
-            <div className="modal password">
+        <div className={`modal_bg ${modalAnima}`}>
+            <div className={`modal password ${modalAnima}`}>
                 <div className='modal_header'>
-                    <h2>Password</h2>
+                    <h6>Password</h6>
                     <button onClick={() => { modalClose() }}>
                         <i className='icon-cancel'></i>
                     </button>
