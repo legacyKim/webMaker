@@ -46,8 +46,6 @@ function ViewContent() {
             });
             if (response.ok) {
                 router.push(`/content`);
-            } else {
-                console.error("Failed to update project");
             }
         } catch (error) {
             console.error("Error deleting content:", error);
@@ -79,7 +77,6 @@ function ViewContent() {
     // sidebar Event
     const blogPostRef = useRef<HTMLDivElement>(null);
     const [headings, setHeadings] = useState<HTMLHeadingElement[]>([]);
-    console.log(headings)
 
     useEffect(() => {
         if (blogPostRef.current) {

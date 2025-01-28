@@ -63,7 +63,7 @@ export default function Modal({ setIsModalOpen }) {
             return response.data;
 
         } catch (error) {
-            console.error('Error adding project:', error);
+            console.error(error);
         }
     };
 

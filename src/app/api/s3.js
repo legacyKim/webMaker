@@ -11,5 +11,4 @@ const s3 = new S3Client({
     },
 });
 
-
 export default s3;

@@ -59,13 +59,10 @@ export default function Write() {
             });
 
             if (response.ok) {
-                console.log("Content created successfully!");
                 router.push("/content");
-            } else {
-                console.error("Failed to create project");
-            }
+            } 
         } catch (error) {
-            console.error("Error:", error);
+            console.error(error);
         }
     };
 

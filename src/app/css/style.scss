@@ -102,7 +102,7 @@ $dark-box3-bg: hsl(246, 6%, 18%);
 }
 
 @mixin font_tit {
-    font-size: 24px;
+    font-size: 32px;
     font-weight: 700;
     line-height: 1.6;
 }
@@ -287,7 +287,6 @@ nav a {
         width: 28px;
         height: 28px;
         border-radius: 50%;
-        border: 1px solid $dark-border-line;
 
         i {
             z-index: 9;
@@ -858,8 +857,8 @@ nav a {
 
         .view_content_subtitle {
             @include page;
-            font-size: 14px;
-            opacity: 0.6;
+            font-size: 18px;
+            opacity: 0.78;
             height: 24px;
             margin-bottom: 24px;
         }

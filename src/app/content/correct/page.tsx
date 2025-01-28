@@ -75,13 +75,10 @@ function CorrectContent() {
             });
 
             if (response.ok) {
-                console.log("Content updated successfully!");
                 router.push(`/content`);
-            } else {
-                console.error("Failed to update project");
             }
         } catch (error) {
-            console.error("Error:", error);
+            console.error(error);
         }
     };
 

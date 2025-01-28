@@ -16,6 +16,7 @@ $dark-font2-color: rgba(#fff, 0.5);
 $dark-background-color: hsl(250, 24%, 9%);
 $dark-background-hover-color: hsl(204, 30%, 15%);
 $dark-border-line: hsl(246, 10%, 27%);
+$dark-border-line-light: hsl(25, 15%, 50%);
 $dark-box-bg: hsl(250, 21%, 11%);
 $dark-box2-bg: hsl(246, 15%, 15%);
 
@@ -33,7 +34,7 @@ $dark-box2-bg: hsl(246, 15%, 15%);
 
         list-style: none;
 
-        border: 1px solid $dark-border-line;
+        border: 1px solid $dark-border-line-light;
         padding: 20px 14px 16px;
         border-radius: 12px;
     }

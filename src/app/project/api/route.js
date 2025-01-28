@@ -26,9 +26,9 @@ export async function GET() {
             projects,
         });
     } catch (error) {
-        console.error('Database query failed:', error);
+        console.error(error);
         return NextResponse.json(
-            { error: 'Failed to fetch projects', details: error.message },
+            { details: error.message },
             { status: 500 }
         );
     }
@@ -78,9 +78,8 @@ export async function POST(req) {
             insertedId: result.insertId,
         });
     } catch (error) {
-        console.error('post failed:', error);
+        console.error(error);
         return NextResponse.json(
-            { error: 'Failed to create project' },
             { status: 500 }
         );
     }

@@ -11,9 +11,8 @@ export async function GET() {
             edgeData
         });
     } catch (error) {
-        console.error('Database query failed:', error);
+        console.error(error);
         return NextResponse.json(
-            { error: 'Failed to fetch projects', details: error.message },
             { status: 500 }
         );
     }
@@ -27,11 +26,8 @@ export async function POST(req) {
         const data = await req.json();
         const { title, date, content, subtitle, source, target, position, Password } = data;
 
-        console.log(validPassword, Password);
-
         if (Password !== validPassword) {
             return NextResponse.json(
-                { message: "Invalid password" },
                 { status: 403 }
             );
         } else {
@@ -62,7 +58,7 @@ export async function POST(req) {
         }
 
     } catch (error) {
-        console.error("Error in POST:", error);
+        console.error(error);
         return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
 }
@@ -82,7 +78,7 @@ export async function PUT(req) {
             );
 
             if (updateResult.affectedRows === 0) {
-                return NextResponse.json({ success: false, message: 'Node not found or not updated' }, { status: 404 });
+                return NextResponse.json({ success: false }, { status: 404 });
             }
         }
 
@@ -93,20 +89,18 @@ export async function PUT(req) {
             );
 
             if (edgeUpdateResult.affectedRows === 0) {
-                return NextResponse.json({ success: false, message: 'Edge not found or not updated' }, { status: 404 });
+                return NextResponse.json({ success: false }, { status: 404 });
             }
         }
 
         if (Password && Password !== validPassword) {
             return NextResponse.json(
-                { message: "Invalid password" },
                 { status: 403 }
             );
         } else {
-            
+
             if (content) {
                 const contentData = JSON.stringify({ title, date, content, subtitle });
-                console.log("Content data to be updated:", contentData);
 
                 const [contentUpdateResult] = await promisePool.query(
                     'UPDATE tb_content SET data = ? WHERE id = ?',
@@ -114,14 +108,14 @@ export async function PUT(req) {
                 );
 
                 if (contentUpdateResult.affectedRows === 0) {
-                    return NextResponse.json({ success: false, message: 'Content update failed' }, { status: 404 });
+                    return NextResponse.json({ success: false }, { status: 404 });
                 }
             }
 
-            return NextResponse.json({ success: true, message: 'Node updated successfully' });
+            return NextResponse.json({ success: true });
         }
     } catch (error) {
-        console.error("Error in PUT:", error);
+        console.error(error);
         return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
 }
@@ -134,11 +128,8 @@ export async function DELETE(req) {
         const data = await req.json();
         const { id, type, Password } = data;
 
-        console.log(id, type, Password);
-
         if (Password !== validPassword) {
             return NextResponse.json(
-                { message: "Invalid password" },
                 { status: 403 }
             );
         } else {
@@ -147,26 +138,26 @@ export async function DELETE(req) {
                 await promisePool.query("DELETE FROM tb_edge WHERE content_id = ? AND content_id IS NOT NULL", [id]);
                 const [deleteResult] = await promisePool.query("DELETE FROM tb_content WHERE id = ?", [id]);
                 if (deleteResult.affectedRows === 0) {
-                    return NextResponse.json({ success: false, message: "Content not found or not deleted." }, { status: 404 });
+                    return NextResponse.json({ success: false }, { status: 404 });
                 }
 
-                return NextResponse.json({ success: true, message: "Content and related edges deleted successfully." });
+                return NextResponse.json({ success: true });
 
             } else if (type === "edge") {
 
                 const [deleteResult] = await promisePool.query("DELETE FROM tb_edge WHERE id = ?", [id]);
                 if (deleteResult.affectedRows === 0) {
-                    return NextResponse.json({ success: false, message: "Edge not found or not deleted." }, { status: 404 });
+                    return NextResponse.json({ success: false }, { status: 404 });
                 }
 
-                return NextResponse.json({ success: true, message: "Edge deleted successfully." });
+                return NextResponse.json({ success: true });
             } else {
-                return NextResponse.json({ success: false, message: "Invalid type specified." }, { status: 400 });
+                return NextResponse.json({ success: false }, { status: 400 });
             }
         }
 
     } catch (error) {
-        console.error("Error in DELETE:", error);
+        console.error(error);
         return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
 }
