@@ -24,7 +24,7 @@ export async function POST(req) {
         const validPassword = process.env.API_PASSWORD;
 
         const data = await req.json();
-        const { title, date, content, subtitle, source, target, position, Password, file } = data;
+        const { title, date, content, subtitle, source, target, position, Password } = data;
 
         if (Password !== validPassword) {
             return NextResponse.json(

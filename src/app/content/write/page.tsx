@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import dynamic from 'next/dynamic';
 
 import "easymde/dist/easymde.min.css";
-import { ChangeEvent } from "react";
 import type SimpleMDEEditor from 'easymde';
 
 import '../../css/simpleMDE.custom.scss';
