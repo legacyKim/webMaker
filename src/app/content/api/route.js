@@ -129,7 +129,7 @@ export async function DELETE(req) {
         const data = await req.json();
         const { id, type, Password } = data;
 
-        if (Password !== validPassword) {
+        if (Password && Password !== validPassword) {
             return NextResponse.json(
                 { success: false, message: "비밀번호가 일치하지 않습니다." },
                 { status: 403 }

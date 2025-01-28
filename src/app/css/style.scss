@@ -286,6 +286,7 @@ nav a {
 
     display: flex;
     flex-direction: column;
+    z-index: 99999;
 
     & a,
     button {
