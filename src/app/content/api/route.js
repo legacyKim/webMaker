@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { promisePool } from '../../api/db.js';
+import path from "path";
+import fs from "fs/promises";
 
 export async function GET() {
     try {
@@ -22,8 +24,28 @@ export async function POST(req) {
     try {
 
         const validPassword = process.env.API_PASSWORD;
+        let data;
 
-        const data = await req.json();
+        const contentType = req.headers.get("content-type") || "";
+        if (contentType.includes("multipart/form-data")) {
+
+            const formData = await req.formData();
+            const file = formData.get("file");
+
+            const buffer = Buffer.from(await file.arrayBuffer());
+            const filename = `${Date.now()}-${file.name}`;
+            const uploadDir = path.join(process.cwd(), "uploads");
+            const filePath = path.join(uploadDir, filename);
+
+            await fs.mkdir(uploadDir, { recursive: true });
+            await fs.writeFile(filePath, buffer);
+
+            return new Response(JSON.stringify({ success: true, imageUrl: `/uploads/${filename}` }), { status: 200 });
+
+        } else {
+            data = await req.json();
+        }
+
         const { title, date, content, subtitle, source, target, position, Password } = data;
 
         if (Password !== validPassword) {

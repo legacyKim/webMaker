@@ -41,6 +41,7 @@ const debounceEdgesFunc = (func: (updatedEdges: EdgeData[]) => Promise<void>, de
 };
 
 export default function ContentMap() {
+    
     const { data, isLoading } = useQuery("contentData", fetchContent, {
         refetchInterval: 120000,
     });
@@ -68,6 +69,7 @@ export default function ContentMap() {
                 source: item.source,
                 target: item.target,
             }));
+
             setNodes(fetchedNodes);
             setEdges(fetchedEdge);
         }
@@ -79,7 +81,7 @@ export default function ContentMap() {
 
     const debounceNodes = useRef(
         debounceNodesFunc(async (updatedNodes: NodePosition[]) => {
-            try {
+            try { 
                 for (const node of updatedNodes) {
                     await axios.put(`/content/api`, {
                         id: node.id,

@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 import { Handle, Position, NodeProps } from "react-flow-renderer";
 
-const CustomNode = ({ data }: NodeProps<{ title: string; date: string; content: string; subtitle: string, id: string }>) => {
+const CustomNode = ({ data }: NodeProps<{ title: string; date: string; content: string; subtitle: string, id: number }>) => {
 
     const getRelativeDate = (dateString: string) => {
         const inputDate = new Date(dateString);
@@ -19,17 +19,7 @@ const CustomNode = ({ data }: NodeProps<{ title: string; date: string; content: 
     return (
         <div className="content_factor">
             <Handle type="source" position={Position.Top} id="a" />
-            <Link className=""
-                href={{
-                    pathname: "/content/view",
-                    query: {
-                        id: data.id,
-                        title: data.title,
-                        date: data.date,
-                        subtitle: data.subtitle,
-                        content: data.content,
-                    },
-                }}>
+            <Link className="" href={`/content/view/${encodeURIComponent(data.id)}`}>
                 <div className="content_factor_title">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d2513c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><path d="M22 4 12 14.01l-3-3"></path></svg>
                     <h3>{data.title}</h3>

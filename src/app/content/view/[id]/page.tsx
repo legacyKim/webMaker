@@ -1,13 +1,24 @@
 "use client";
 
 import React, { Suspense, useState, useEffect, useRef } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 import BlogPost from "./BlogPost";
+import axios from 'axios';
 
-import PasswordCheckModal from "../../component/Password"
+import PasswordCheckModal from "../../../component/Password.js"
 
-import '../../css/simpleMDE.custom.scss';
+import '../../../css/simpleMDE.custom.scss';
+
+type ContentData = {
+    id: number;
+    data: {
+        title: string;
+        subtitle: string;
+        date: string;
+        content: string;
+    };
+};
 
 export default function ViewPage() {
     return (
@@ -19,21 +30,39 @@ export default function ViewPage() {
 
 function ViewContent() {
 
-    const searchParams = useSearchParams();
+    const { id } = useParams();
     const router = useRouter();
 
-    const title = searchParams.get("title");
-    const subtitle = searchParams.get("subtitle");
-    const date = searchParams.get("date");
-    const content = searchParams.get("content");
-    const contentId = searchParams.get("id");
+    const [contentData, setContentData] = useState<ContentData>({
+        id: 0,
+        data: {
+            title: '',
+            subtitle: '',
+            date: '',
+            content: '',
+        }
+    });
+
+    useEffect(() => {
+        const fetchData = async () => {
+            if (id) {
+                try {
+                    const response = await axios.get(`/content/api/${id}`);
+                    setContentData(response.data);
+                } catch (err) {
+                    console.error("데이터 요청 실패", err);
+                }
+            }
+        };
+        fetchData();
+    }, [id]);
 
     const handleDelete = async () => {
 
         const dataToSend = {
             type: "content",
             Password,
-            id: contentId,
+            id: id,
         };
 
         try {
@@ -57,13 +86,13 @@ function ViewContent() {
     };
 
     const handleCorrect = () => {
-        if (!contentId) {
+        if (!id) {
             alert("Content ID is missing.");
             return;
         }
 
-        const encodedContent = content ? encodeURIComponent(content) : "";
-        router.push(`/content/correct?id=${contentId}&title=${title}&subtitle=${subtitle}&content=${encodedContent}`);
+        const encodedContent = contentData.data.content ? encodeURIComponent(contentData.data.content) : "";
+        router.push(`/content/correct?id=${id}&title=${contentData.data.title}&subtitle=${contentData.data.subtitle}&content=${encodedContent}`);
     };
 
     const [isPasswordCheck, setIsPasswordCheck] = useState(false);
@@ -79,16 +108,18 @@ function ViewContent() {
     // sidebar Event
     const blogPostRef = useRef<HTMLDivElement>(null);
     const [headings, setHeadings] = useState<HTMLHeadingElement[]>([]);
+    const [headingIndex, setHeadingIndex] = useState<number>();
 
     useEffect(() => {
         if (blogPostRef.current) {
             const h1Elements = blogPostRef.current.querySelectorAll("h1");
             setHeadings(Array.from(h1Elements));
         }
-    }, [content]);
+    }, [contentData]);
 
     const scrollToHeading = (index: number) => {
         headings[index]?.scrollIntoView({ behavior: "smooth" });
+        headings[index].classList.add("active");
     };
 
     const [sidebarOpen, setSidebarOpen] = useState("");
@@ -97,21 +128,21 @@ function ViewContent() {
         <div className="container dark">
             <div className="view_content">
                 <div className="view_content_header">
-                    <h5 className="view_content_title">{title}</h5>
+                    <h5 className="view_content_title">{contentData.data.title}</h5>
                     <div className="view_info">
                         <div className="view_info_box">
                             <i className="icon-clock"></i>
-                            <span className="view_content_date">{date}</span>
+                            <span className="view_content_date">{contentData.data.date}</span>
                         </div>
                     </div>
                 </div>
                 <div className="content_line">
                     <p className="view_content_subtitle">
-                        {subtitle}
+                        {contentData.data.subtitle}
                     </p>
                 </div>
                 <div ref={blogPostRef}>
-                    <BlogPost content={content} />
+                    <BlogPost content={contentData.data.content} />
                 </div>
             </div>
 
@@ -131,8 +162,8 @@ function ViewContent() {
                 <h3>Index</h3>
                 <ul className="index_list">
                     {headings.map((heading, index) => (
-                        <li key={index}>
-                            <button onClick={() => scrollToHeading(index)}>
+                        <li key={index} className={`${headingIndex === index ? "active" : ""}`}>
+                            <button onClick={() => { scrollToHeading(index); setHeadingIndex(index); }}>
                                 {heading.textContent}
                             </button>
                         </li>

@@ -102,9 +102,9 @@ $dark-box3-bg: hsl(246, 6%, 18%);
 }
 
 @mixin font_tit {
-    font-size: 32px;
+    font-size: 48px;
     font-weight: 700;
-    line-height: 1.6;
+    line-height: 1.2;
 }
 
 @mixin font_tit_2 {
@@ -893,7 +893,7 @@ nav a {
         @include page;
         @include flex-sb;
         align-items: flex-start;
-        padding: 48px 16px 0;
+        padding: 48px 16px 8px;
 
         .view_content_title {
             @include font_tit;
@@ -914,6 +914,7 @@ nav a {
                 .view_content_date {
                     @include font_ssmall();
                     opacity: 0.5;
+                    min-width: 68px;
                 }
             }
         }
@@ -1018,6 +1019,13 @@ nav a {
     }
 
     .index_list {
+
+        li.active {
+            button {
+                color: $main-color;
+            }
+        }
+
         button {
             @include font_basic();
             opacity: 0.5;

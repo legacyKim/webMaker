@@ -15,7 +15,6 @@ import PasswordCheckModal from "../../component/Password"
 const SimpleMDE = dynamic(() => import('react-simplemde-editor'), { ssr: false });
 
 export default function Write() {
-
     const router = useRouter();
 
     const titleRef = useRef<HTMLInputElement | null>(null);
@@ -29,7 +28,6 @@ export default function Write() {
     };
 
     const handleSubmit = async () => {
-
         const title = titleRef.current?.value || "";
         const subtitle = subtitleRef.current?.value || "";
         const content = editorRef.current?.value() || "";
@@ -54,7 +52,7 @@ export default function Write() {
 
             if (response.ok) {
                 router.push("/content");
-            } 
+            }
         } catch (error) {
             console.error(error);
         }
@@ -70,9 +68,43 @@ export default function Write() {
         }
     }, [isPasswordCheck]);
 
-    const handleImageUpload = () => {
-        alert("준비 중 입니다.");
-        return;
+    const handleImageUpload = (editor: SimpleMDEEditor) => {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = "image/*";
+
+        input.onchange = async (event) => {
+            const file = (event.target as HTMLInputElement).files?.[0];
+
+            if (file) {
+                const formData = new FormData();
+                formData.append("file", file);
+
+                try {
+                    const res = await fetch("/content/api", {
+                        method: "POST",
+                        body: formData,
+                    });
+
+                    const data = await res.json();
+
+                    if (data.success) {
+                        const imageUrl = data.imageUrl;
+                        if (editorRef.current) {
+                            const newValue = `${editorRef.current.value()} ![image](${imageUrl})`;
+                            editorRef.current.value(newValue);
+                        } 
+                    } else {
+                        throw new Error("Upload failed");
+                    }
+                } catch (error) {
+                    console.error(error);
+                    alert("이미지 업로드 실패");
+                }
+            }
+        };
+
+        input.click();
     };
 
     return (
@@ -111,7 +143,11 @@ export default function Write() {
                                 "bold", "italic", "heading", "|", "quote", "unordered-list", "ordered-list", "|",
                                 {
                                     name: "image",
-                                    action: handleImageUpload,
+                                    action: () => {
+                                        if (editorRef.current) {
+                                            handleImageUpload(editorRef.current);
+                                        }
+                                    },
                                     className: "fa fa-image",
                                     title: "Insert Image",
                                 },
