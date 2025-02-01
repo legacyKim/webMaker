@@ -1,7 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
+import React from "react";
 import { Handle, Position, NodeProps } from "react-flow-renderer";
 import Link from 'next/link';
-import { useRouter } from "next/navigation";
 
 type NodePosition = {
     id: string;
@@ -13,8 +12,6 @@ interface CustomNodeProps extends NodeProps {
 }
 
 const CustomNode: React.FC<CustomNodeProps> = ({ data, onRightClick }) => {
-
-    const router = useRouter();
 
     const getRelativeDate = (dateString: string) => {
         const inputDate = new Date(dateString);

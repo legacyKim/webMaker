@@ -171,6 +171,15 @@ export default function ViewContent() {
                 </ul>
             </div>
 
+            <div className="btn_wrap">
+                <button className="customBtn" onClick={() => { setIsModalOpen(true); }}>
+                    <i className="icon-trash-2"></i>
+                </button>
+                <button className="customBtn" onClick={handleCorrect}>
+                    <i className="icon-vector-pencil"></i>
+                </button>
+            </div>
+
             {isModalOpen &&
                 <PasswordCheckModal setIsModalOpen={setIsModalOpen} setIsPasswordCheck={setIsPasswordCheck} setPassword={setPassword}></PasswordCheckModal>
             }

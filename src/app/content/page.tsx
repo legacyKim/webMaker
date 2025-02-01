@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo, useCallback, useRef } from "react";
-import ReactFlow, { NodeChange, EdgeChange, Connection, applyNodeChanges, applyEdgeChanges, addEdge, Node, Edge } from "react-flow-renderer";
+import ReactFlow, { NodeChange, EdgeChange, Connection, applyNodeChanges, applyEdgeChanges, addEdge, Node, Edge, NodeProps } from "react-flow-renderer";
 import { useQuery } from "react-query";
 import { fetchContent } from './api/api.js';
 import CustomNode from "./CustomNode.tsx";
@@ -12,6 +12,8 @@ import axios from 'axios';
 type NodePosition = {
     id: string;
     position: { x: number; y: number };
+    lock: number;
+    fixed: number;
 };
 
 type NodeStatus = {
@@ -25,6 +27,10 @@ type EdgeData = {
     source: string | null;
     target: string | null;
 };
+
+interface CustomNodeProps extends NodeProps {
+    onRightClick: (e: React.MouseEvent, node: NodeProps['data']) => void;
+}
 
 const debounceNodesFunc = (func: (updatedNodes: NodePosition[]) => Promise<void>, delay: number) => {
     let timer: ReturnType<typeof setTimeout>;
@@ -85,15 +91,16 @@ export default function ContentMap() {
 
     const [optionPos, setOptionPos] = useState<{ x: number; y: number } | null>(null);
 
-    const handleRightClick = (e: React.MouseEvent, node: NodeStatus) => {
+    const handleRightClick = (e: React.MouseEvent, node: NodeProps['data']) => {
         const { clientX, clientY } = e;
         setOptionPos({ x: clientX, y: clientY });
         setSelectedNode(node);
     };
 
     const nodeTypes = useMemo(() => ({
-        custom: (props: any) => <CustomNode {...props} onRightClick={handleRightClick} />,
+        custom: (props: NodeProps) => <CustomNode {...props} onRightClick={handleRightClick} />,
     }), []);
+
 
     const handleFixed = async (updatedNodes: NodeStatus[]) => {
         try {
@@ -156,9 +163,9 @@ export default function ContentMap() {
         setNodes((nds) =>
             applyNodeChanges(
                 changes.filter((change) => {
-                    if ('id' in change) {
+                    if (change.type === "position") {
                         const node = nds.find((n) => n.id === change.id);
-                        return !(node?.data?.fixed && change.type === "position");
+                        return !(node?.data?.fixed);
                     }
                 }),
                 nds

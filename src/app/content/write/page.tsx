@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect, memo } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import "easymde/dist/easymde.min.css";
