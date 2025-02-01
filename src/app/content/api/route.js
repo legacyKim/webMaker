@@ -130,10 +130,7 @@ export async function PUT(req) {
             }
         }
 
-        console.log(lock, fixed);
-
         if (lock !== undefined && lock !== null) {
-            console.log(lock);
             const lockValue = lock ? 1 : 0;
             const [updateResult] = await promisePool.query(
                 'UPDATE tb_content SET `lock` = ? WHERE id = ?',
@@ -146,9 +143,7 @@ export async function PUT(req) {
         }
 
         if (fixed !== undefined && fixed !== null) {
-            console.log(fixed);
             const fixedValue = fixed ? 1 : 0;
-            console.log(fixedValue);
             const [updateResult] = await promisePool.query(
                 'UPDATE tb_content SET fixed = ? WHERE id = ?',
                 [fixedValue, id]
@@ -159,6 +154,7 @@ export async function PUT(req) {
             }
         }
 
+        console.log(Password, validPassword)
         if (Password && Password !== validPassword) {
             return NextResponse.json(
                 { success: false, message: "비밀번호가 일치하지 않습니다." },
