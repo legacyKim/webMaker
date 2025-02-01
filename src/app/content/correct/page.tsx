@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { Suspense, useState, useEffect, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
 import type SimpleMDEEditor from 'easymde';
@@ -9,9 +9,18 @@ import "easymde/dist/easymde.min.css";
 import '../../css/simpleMDE.custom.scss';
 
 import PasswordCheckModal from "../../component/Password";
+import Loading from "../../component/Loading"
 import { MemoizedEditor } from "../utils/simpleMDE"
 
-export default  function CorrectContent() {
+export default function Correct() {
+    return (
+        <Suspense fallback={<Loading/>}>
+            <CorrectContent />
+        </Suspense>
+    );
+}
+
+function CorrectContent() {
 
     const router = useRouter();
     const searchParams = useSearchParams();
