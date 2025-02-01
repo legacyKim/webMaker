@@ -28,10 +28,6 @@ type EdgeData = {
     target: string | null;
 };
 
-interface CustomNodeProps extends NodeProps {
-    onRightClick: (e: React.MouseEvent, node: NodeProps['data']) => void;
-}
-
 const debounceNodesFunc = (func: (updatedNodes: NodePosition[]) => Promise<void>, delay: number) => {
     let timer: ReturnType<typeof setTimeout>;
     return (updatedNodes: NodePosition[]) => {
