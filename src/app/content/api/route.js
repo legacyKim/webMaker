@@ -65,6 +65,7 @@ export async function POST(req) {
 
         if (Password !== validPassword) {
             return NextResponse.json(
+                { success: false, message: "비밀번호가 일치하지 않습니다." },
                 { status: 403 }
             );
         } else {
@@ -154,7 +155,6 @@ export async function PUT(req) {
             }
         }
 
-        console.log(Password, validPassword)
         if (Password && Password !== validPassword) {
             return NextResponse.json(
                 { success: false, message: "비밀번호가 일치하지 않습니다." },
