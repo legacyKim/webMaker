@@ -14,6 +14,12 @@ type NodePosition = {
     position: { x: number; y: number };
 };
 
+type NodeStatus = {
+    id: string;
+    lock: boolean;
+    fixed: boolean;
+}
+
 type EdgeData = {
     id: string;
     source: string | null;
@@ -41,7 +47,7 @@ const debounceEdgesFunc = (func: (updatedEdges: EdgeData[]) => Promise<void>, de
 };
 
 export default function ContentMap() {
-    
+
     const { data, isLoading } = useQuery("contentData", fetchContent, {
         refetchInterval: 120000,
     });
@@ -51,7 +57,7 @@ export default function ContentMap() {
 
     useMemo(() => {
         if (data) {
-            const fetchedNodes = data.contentData.map((item: { id: string; data: { title: string, date: string, subtitle: string, content: string }; position: { x: number, y: number } }) => ({
+            const fetchedNodes = data.contentData.map((item: { id: string; data: { title: string, date: string, subtitle: string, content: string }; lock: boolean; fixed: boolean; position: { x: number, y: number } }) => ({
                 id: `${item.id}`,
                 type: "custom",
                 data: {
@@ -60,6 +66,8 @@ export default function ContentMap() {
                     date: item.data.date,
                     subtitle: item.data.subtitle,
                     content: item.data.content,
+                    lock: item.lock,
+                    fixed: item.fixed,
                 },
                 position: item.position,
             }));
@@ -75,13 +83,59 @@ export default function ContentMap() {
         }
     }, [data]);
 
+    const [optionPos, setOptionPos] = useState<{ x: number; y: number } | null>(null);
+
+    const handleRightClick = (e: React.MouseEvent, node: NodeStatus) => {
+        const { clientX, clientY } = e;
+        setOptionPos({ x: clientX, y: clientY });
+        setSelectedNode(node);
+    };
+
     const nodeTypes = useMemo(() => ({
-        custom: CustomNode,
+        custom: (props: any) => <CustomNode {...props} onRightClick={handleRightClick} />,
     }), []);
+
+    const handleFixed = async (updatedNodes: NodeStatus[]) => {
+        try {
+            for (const node of updatedNodes) {
+                const updatedFixed = !node.fixed;
+                await axios.put(`/content/api`, {
+                    id: node.id,
+                    fixed: updatedFixed,
+                }, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('Failed to update fixed', error);
+        }
+    }
+
+    const handlelock = async (updatedNodes: NodeStatus[]) => {
+        try {
+            for (const node of updatedNodes) {
+                const updatedlock = !node.lock;
+                await axios.put(`/content/api`, {
+                    id: node.id,
+                    lock: updatedlock,
+                }, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('Failed to update lock:', error);
+        }
+    }
+
+    const [selectedNode, setSelectedNode] = useState<NodeStatus | null>(null);
 
     const debounceNodes = useRef(
         debounceNodesFunc(async (updatedNodes: NodePosition[]) => {
-            try { 
+            try {
                 for (const node of updatedNodes) {
                     await axios.put(`/content/api`, {
                         id: node.id,
@@ -99,7 +153,17 @@ export default function ContentMap() {
     ).current;
 
     const onNodesChange = useCallback(async (changes: NodeChange[]) => {
-        setNodes((nds) => applyNodeChanges(changes, nds));
+        setNodes((nds) =>
+            applyNodeChanges(
+                changes.filter((change) => {
+                    if ('id' in change) {
+                        const node = nds.find((n) => n.id === change.id);
+                        return !(node?.data?.fixed && change.type === "position");
+                    }
+                }),
+                nds
+            )
+        );
 
         const updatedNodes = changes.map((change) => {
             if (change.type === 'position' && change.dragging === true) {
@@ -191,7 +255,7 @@ export default function ContentMap() {
     if (isLoading) return <Loading />;
 
     return (
-        <div className="container dark">
+        <div className="container dark" onClick={() => { setOptionPos(null) }}>
             <div className="content">
                 <ReactFlow
                     nodes={nodes}
@@ -206,13 +270,31 @@ export default function ContentMap() {
                 />
             </div>
 
+            {optionPos && selectedNode && (
+                <ContentOption position={optionPos} selectedNode={selectedNode} />
+            )}
+
             <div className="btn_wrap">
                 <Link
                     className="customBtn"
                     href={{ pathname: "/content/write" }} >
-                        <i className="icon-vector-pencil"></i>
+                    <i className="icon-vector-pencil"></i>
                 </Link>
             </div>
         </div>
     );
+
+    function ContentOption({ position, selectedNode }: { position: { x: number; y: number }; selectedNode: NodeStatus }) {
+
+        return (
+            <div className="content_option" style={{
+                left: `${position.x}px`,
+                top: `${position.y}px`,
+            }}>
+                <button onClick={() => { handlelock([selectedNode]) }}><i className={`icon-lock ${Boolean(selectedNode.lock) !== false ? 'active' : ''}`}></i></button>
+                <button onClick={() => { handleFixed([selectedNode]) }}><i className={`icon-pinboard ${Boolean(selectedNode.fixed) !== false ? 'active' : ''}`}></i></button>
+            </div>
+        )
+    }
 }
+

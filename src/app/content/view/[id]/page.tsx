@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 
 import BlogPost from "./BlogPost";
@@ -9,6 +9,7 @@ import axios from 'axios';
 import PasswordCheckModal from "../../../component/Password.js"
 
 import '../../../css/simpleMDE.custom.scss';
+import Loading from "../../../component/Loading.js"
 
 type ContentData = {
     id: number;
@@ -20,15 +21,7 @@ type ContentData = {
     };
 };
 
-export default function ViewPage() {
-    return (
-        <Suspense fallback={<div>Loading...</div>}>
-            <ViewContent />
-        </Suspense>
-    );
-}
-
-function ViewContent() {
+export default function ViewContent() {
 
     const { id } = useParams();
     const router = useRouter();
@@ -43,12 +36,15 @@ function ViewContent() {
         }
     });
 
+    const [isLoading, setIsLoading] = useState(true);
+
     useEffect(() => {
         const fetchData = async () => {
             if (id) {
                 try {
                     const response = await axios.get(`/content/api/${id}`);
                     setContentData(response.data);
+                    setIsLoading(false);
                 } catch (err) {
                     console.error("데이터 요청 실패", err);
                 }
@@ -124,6 +120,10 @@ function ViewContent() {
 
     const [sidebarOpen, setSidebarOpen] = useState("");
 
+    if (isLoading) {
+        return <Loading />
+    }
+
     return (
         <div className="container dark">
             <div className="view_content">
@@ -169,15 +169,6 @@ function ViewContent() {
                         </li>
                     ))}
                 </ul>
-            </div>
-
-            <div className="btn_wrap">
-                <button className="customBtn" onClick={() => { setIsModalOpen(true); }}>
-                    <i className="icon-trash-2"></i>
-                </button>
-                <button className="customBtn" onClick={handleCorrect}>
-                    <i className="icon-vector-pencil"></i>
-                </button>
             </div>
 
             {isModalOpen &&

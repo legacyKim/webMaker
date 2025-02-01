@@ -16,6 +16,7 @@ $dark-font2-color: rgba(#fff, 0.5);
 $dark-background-color: hsl(250, 24%, 9%);
 $dark-background-hover-color: hsl(204, 30%, 15%);
 $dark-border-line: hsl(246, 11%, 22%);
+$dark-border2-line: hsl(29, 74%, 55%);
 $dark-box-bg: hsl(250, 21%, 11%);
 $dark-box2-bg: hsl(246, 15%, 15%);
 $dark-box3-bg: hsl(246, 6%, 18%);
@@ -103,13 +104,13 @@ $dark-box3-bg: hsl(246, 6%, 18%);
 
 @mixin font_tit {
     font-size: 48px;
-    font-weight: 700;
+    font-weight: 600;
     line-height: 1.2;
 }
 
 @mixin font_tit_2 {
     font-size: 24px;
-    font-weight: 700;
+    font-weight: 600;
     line-height: 1.6;
 }
 
@@ -330,6 +331,7 @@ nav a {
         0% {
             opacity: 1;
         }
+
         100% {
             opacity: 0;
         }
@@ -776,6 +778,10 @@ nav a {
         }
     }
 
+    &.lock {
+        opacity: 0.56;
+    }
+
     .content_factor_title {
 
         @include flex-sb;
@@ -830,6 +836,60 @@ nav a {
             font-weight: 100;
         }
     }
+
+    .content_pass {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 9;
+
+        @include flex-center();
+
+        .content_pass_bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: $dark-background-color;
+            opacity: 0.7;
+        }
+
+        & input {
+            @include relative_block();
+            @include font_basic();
+
+            border: 1px solid $dark-border2-line;
+            background-color: $dark-box2-bg;
+            z-index: 9;
+            padding: 0 8px;
+            outline: none;
+            text-align: center;
+            width: 140px;
+            border-radius: 4px;
+            height: 32px;
+        }
+    }
+}
+
+.content_option {
+    position: absolute;
+    @include flex-start();
+    background-color: $dark-box-bg;
+    border: 1px solid $dark-border-line;
+    border-radius: 8px;
+
+    padding: 7px 5px 4px;
+    transform: translateY(-50px);
+
+    button i {
+        opacity: 0.4;
+        @include font_small();
+    }
+
+    button i.active {
+        opacity: 1;
+    }
 }
 
 .write {
@@ -837,28 +897,35 @@ nav a {
 
     opacity: 0;
     animation: 0.3s content_opacity 0.3s forwards ease-in-out;
-    padding-top: 48px;
+    padding-top: 12px;
 
     input {
         @include relative_block;
-        height: 40px;
         width: calc(100% - 8px);
 
         outline: none;
         background-color: $dark-background-color;
     }
 
-    .write_title {
-        @include page;
-        font-size: 24px;
+    .write_header {
+
+        padding: 48px 16px 8px;
+
+        .write_title {
+            @include page;
+            font-size: 48px;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
     }
 
     .write_subtitle {
         @include page;
-        font-size: 14px;
-        opacity: 0.6;
-        height: 24px;
-        margin-bottom: 24px;
+        padding: 0 16px;
+        font-size: 18px;
+        opacity: .78;
+        margin: 0 auto 24px;
     }
 
     .write_content {
@@ -1028,6 +1095,7 @@ nav a {
 
         button {
             @include font_basic();
+            font-weight: 600;
             opacity: 0.5;
             transition: all 0.3s ease-in-out;
 

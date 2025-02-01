@@ -44,9 +44,9 @@ button,
 [type="reset"],
 [type="submit"] { -webkit-appearance: button; } 
 
-.container { position: relative; display: block; width: 100%; height: calc(100% - 51px); padding-top: 51px; overflow: auto; } 
-.container::-webkit-scrollbar { background-color: transparent; width: 4px; } 
-.container::-webkit-scrollbar-thumb { background-color: #d2513c; border-radius: 100px; } 
+html { position: relative; display: block; width: 100%; height: calc(100% - 51px); padding-top: 51px; overflow: auto; } 
+html::-webkit-scrollbar { background-color: transparent; width: 4px; } 
+html::-webkit-scrollbar-thumb { background-color: #d2513c; border-radius: 100px; } 
 
 .page_1320 { max-width: 1320px; margin: 0 auto; } 
 

@@ -1,7 +1,13 @@
 import { NextResponse } from 'next/server';
 import { promisePool } from '../../api/db.js';
-import path from "path";
-import fs from "fs/promises";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+
+import s3 from '../../api/s3.js';
+
+import dotenv from 'dotenv';
+dotenv.config();
+
+const bucketName = process.env.AWS_BUCKET_NAME;
 
 export async function GET() {
     try {
@@ -34,19 +40,28 @@ export async function POST(req) {
 
             const buffer = Buffer.from(await file.arrayBuffer());
             const filename = `${Date.now()}-${file.name}`;
-            const uploadDir = path.join(process.cwd(), "uploads");
-            const filePath = path.join(uploadDir, filename);
+            const folderName = "contents"
+            const s3Key = `${folderName}/${filename}`
 
-            await fs.mkdir(uploadDir, { recursive: true });
-            await fs.writeFile(filePath, buffer);
+            const s3Params = {
+                Bucket: bucketName,
+                Key: s3Key,
+                Body: buffer,
+                ContentType: file.type || 'application/octet-stream',
+            };
 
-            return new Response(JSON.stringify({ success: true, imageUrl: `/uploads/${filename}` }), { status: 200 });
+            const uploadCommand = new PutObjectCommand(s3Params);
+            await s3.send(uploadCommand);
+
+            const imageUrl = `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${s3Key}`;
+
+            return new Response(JSON.stringify({ success: true, imageUrl }), { status: 200 });
 
         } else {
             data = await req.json();
         }
 
-        const { title, date, content, subtitle, source, target, position, Password } = data;
+        const { title, date, content, subtitle, source, target, position, lock, fixed, Password } = data;
 
         if (Password !== validPassword) {
             return NextResponse.json(
@@ -57,7 +72,7 @@ export async function POST(req) {
             if (position) {
                 const [contentInsertResult] = await promisePool.query(
                     'INSERT INTO tb_content (type, data, position) VALUES (?, ?, ?)',
-                    ['custom', JSON.stringify({ title, date, content, subtitle }), JSON.stringify(position)]
+                    ['custom', JSON.stringify({ title, date, content, subtitle }), JSON.stringify(lock), JSON.stringify(fixed), JSON.stringify(position)]
                 );
                 contentResult = contentInsertResult;
             }
@@ -91,7 +106,7 @@ export async function PUT(req) {
         const validPassword = process.env.API_PASSWORD;
 
         const data = await req.json();
-        const { position, id, edge, title, date, content, subtitle, Password } = data;
+        const { position, id, edge, title, date, content, subtitle, lock, fixed, Password } = data;
 
         if (position) {
             const [updateResult] = await promisePool.query(
@@ -111,6 +126,35 @@ export async function PUT(req) {
             );
 
             if (edgeUpdateResult.affectedRows === 0) {
+                return NextResponse.json({ success: false }, { status: 404 });
+            }
+        }
+
+        console.log(lock, fixed);
+
+        if (lock !== undefined && lock !== null) {
+            console.log(lock);
+            const lockValue = lock ? 1 : 0;
+            const [updateResult] = await promisePool.query(
+                'UPDATE tb_content SET `lock` = ? WHERE id = ?',
+                [lockValue, id]
+            );
+
+            if (updateResult.affectedRows === 0) {
+                return NextResponse.json({ success: false }, { status: 404 });
+            }
+        }
+
+        if (fixed !== undefined && fixed !== null) {
+            console.log(fixed);
+            const fixedValue = fixed ? 1 : 0;
+            console.log(fixedValue);
+            const [updateResult] = await promisePool.query(
+                'UPDATE tb_content SET fixed = ? WHERE id = ?',
+                [fixedValue, id]
+            );
+
+            if (updateResult.affectedRows === 0) {
                 return NextResponse.json({ success: false }, { status: 404 });
             }
         }
