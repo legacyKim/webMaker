@@ -178,7 +178,7 @@ $dark-box2-bg: hsl(246, 15%, 15%);
 }
 
 .editor-toolbar {
-    position: fixed;
+    position: fixed !important;
     top: 69%;
     transform: translateY(-50%);
     right: 100px;

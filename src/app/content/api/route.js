@@ -53,7 +53,7 @@ export async function POST(req) {
             const uploadCommand = new PutObjectCommand(s3Params);
             await s3.send(uploadCommand);
 
-            const imageUrl = `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${s3Key}`;
+            const imageUrl = `https://d3gdgz5qdqee20.cloudfront.net/${s3Key}`;
 
             return new Response(JSON.stringify({ success: true, imageUrl }), { status: 200 });
 
@@ -63,7 +63,7 @@ export async function POST(req) {
 
         const { title, date, content, subtitle, source, target, position, lock, fixed, Password } = data;
 
-        if (Password !== validPassword) {
+        if (Password && Password !== validPassword) {
             return NextResponse.json(
                 { success: false, message: "비밀번호가 일치하지 않습니다." },
                 { status: 403 }

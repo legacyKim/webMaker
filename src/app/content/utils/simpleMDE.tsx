@@ -37,7 +37,7 @@ export const MemoizedEditor = memo(function Editor({
         }
     }, [initialContent]);
 
-    const handleImageUpload = () => {
+    const ImageUpload = () => {
         const input = document.createElement("input");
         input.type = "file";
         input.accept = "image/*";
@@ -90,7 +90,6 @@ export const MemoizedEditor = memo(function Editor({
             if (!editorRef.current) return;
 
             const editorToolbar = editorRef.current?.toolbar_div;
-            console.log(editorToolbar);
             if (!editorToolbar) return;
 
             const scrollY = window.scrollY;
@@ -123,7 +122,7 @@ export const MemoizedEditor = memo(function Editor({
                     "bold", "italic", "heading", "|", "quote", "unordered-list", "ordered-list", "|",
                     {
                         name: "image",
-                        action: handleImageUpload,
+                        action: ImageUpload,
                         className: "fa fa-image",
                         title: "Insert Image",
                     },

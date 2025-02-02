@@ -24,6 +24,7 @@ export default function Write() {
     const currentDate = new Date().toISOString().split("T")[0];
 
     const handleSubmit = async () => {
+        
         const title = titleRef.current?.value || "";
         const subtitle = subtitleRef.current?.value || "";
         const content = contentRef.current?.value() || "";

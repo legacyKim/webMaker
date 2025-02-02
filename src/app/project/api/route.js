@@ -67,7 +67,7 @@ export async function POST(req) {
         const uploadCommand = new PutObjectCommand(s3Params);
         await s3.send(uploadCommand);
 
-        const imgPath = `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${filename}`;
+        const imgPath = `https://d3gdgz5qdqee20.cloudfront.net/${filename}`;
 
         const [result] = await promisePool.query(
             'INSERT INTO tb_project (project, company, imgsrc, link) VALUES (?, ?, ?, ?)',

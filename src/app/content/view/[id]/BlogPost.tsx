@@ -39,10 +39,7 @@ export default function BlogPost({ content }: BlogEditorProps) {
 
     return (
         <div className="simpoeMDE_custom">
-            <ReactMarkdown
-                components={components}
-                rehypePlugins={[rehypeSanitize]}
-            >
+            <ReactMarkdown components={components} rehypePlugins={[rehypeSanitize]} >
                 {content}
             </ReactMarkdown>
         </div>
