@@ -30,7 +30,7 @@ const CustomNode: React.FC<CustomNodeProps> = ({ data, onRightClick }) => {
             onRightClick(e, data);
         }}>
             <Handle type="source" position={Position.Top} id="a" />
-            <Link href={`${data.lock !== 1 ? `/content/view/${encodeURIComponent(data.id)}` : 'javascript:void(0)'}`}>
+            <Link href={`${data.lock !== 1 ? `/content/view/${encodeURIComponent(data.slug)}` : 'javascript:void(0)'}`}>
                 <div className="content_factor_title">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d2513c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>

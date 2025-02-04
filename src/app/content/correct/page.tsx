@@ -11,10 +11,11 @@ import '../../css/simpleMDE.custom.scss';
 import PasswordCheckModal from "../../component/Password";
 import Loading from "../../component/Loading"
 import { MemoizedEditor } from "../utils/simpleMDE"
+import { createSlug } from "../utils/slug"
 
 export default function Correct() {
     return (
-        <Suspense fallback={<Loading/>}>
+        <Suspense fallback={<Loading />}>
             <CorrectContent />
         </Suspense>
     );
@@ -46,6 +47,7 @@ function CorrectContent() {
         const title = titleRef.current?.value || "";
         const subtitle = subtitleRef.current?.value || "";
         const content = contentRef.current?.value() || "";
+        const slug = createSlug(title);
 
         const contentId = searchParams.get("id");
 
@@ -53,6 +55,7 @@ function CorrectContent() {
             title,
             subtitle,
             content,
+            slug,
             date: currentDate,
             id: contentId,
             Password,

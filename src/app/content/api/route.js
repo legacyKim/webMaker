@@ -61,7 +61,7 @@ export async function POST(req) {
             data = await req.json();
         }
 
-        const { title, date, content, subtitle, source, target, position, lock, fixed, Password } = data;
+        const { title, date, content, subtitle, slug, source, target, position, Password } = data;
 
         if (Password && Password !== validPassword) {
             return NextResponse.json(
@@ -71,9 +71,10 @@ export async function POST(req) {
         } else {
             let contentResult = null;
             if (position) {
+
                 const [contentInsertResult] = await promisePool.query(
-                    'INSERT INTO tb_content (type, data, position) VALUES (?, ?, ?)',
-                    ['custom', JSON.stringify({ title, date, content, subtitle }), JSON.stringify(lock), JSON.stringify(fixed), JSON.stringify(position)]
+                    'INSERT INTO tb_content (type, data, position, slug) VALUES (?, ?, ?, ?)',
+                    ['custom', JSON.stringify({ title, date, content, subtitle }), JSON.stringify(position), slug]
                 );
                 contentResult = contentInsertResult;
             }
@@ -107,7 +108,7 @@ export async function PUT(req) {
         const validPassword = process.env.API_PASSWORD;
 
         const data = await req.json();
-        const { position, id, edge, title, date, content, subtitle, lock, fixed, Password } = data;
+        const { position, id, edge, title, date, content, subtitle, slug, lock, fixed, Password } = data;
 
         if (position) {
             const [updateResult] = await promisePool.query(
@@ -166,8 +167,8 @@ export async function PUT(req) {
                 const contentData = JSON.stringify({ title, date, content, subtitle });
 
                 const [contentUpdateResult] = await promisePool.query(
-                    'UPDATE tb_content SET data = ? WHERE id = ?',
-                    [contentData, id]
+                    'UPDATE tb_content SET data = ?, slug = ? WHERE id = ?',
+                    [contentData, slug, id]
                 );
 
                 if (contentUpdateResult.affectedRows === 0) {

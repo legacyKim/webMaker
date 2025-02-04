@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 
-import BlogPost from "./BlogPost";
+import BlogPost from "./BlogPost.tsx";
 import axios from 'axios';
 
 import PasswordCheckModal from "../../../component/Password.js"
@@ -19,11 +19,12 @@ type ContentData = {
         date: string;
         content: string;
     };
+    slug: string;
 };
 
 export default function ViewContent() {
 
-    const { id } = useParams();
+    const { slug } = useParams();
     const router = useRouter();
 
     const [contentData, setContentData] = useState<ContentData>({
@@ -33,16 +34,18 @@ export default function ViewContent() {
             subtitle: '',
             date: '',
             content: '',
-        }
+        },
+        slug: ''
     });
 
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
-            if (id) {
+            if (slug) {
                 try {
-                    const response = await axios.get(`/content/api/${id}`);
+                    const response = await axios.get(`/content/api/${slug}`);
+                    console.log(response.data);
                     setContentData(response.data);
                     setIsLoading(false);
                 } catch (err) {
@@ -51,14 +54,14 @@ export default function ViewContent() {
             }
         };
         fetchData();
-    }, [id]);
+    }, [slug]);
 
     const handleDelete = async () => {
 
         const dataToSend = {
             type: "content",
             Password,
-            id: id,
+            id: contentData.id,
         };
 
         try {
@@ -82,13 +85,13 @@ export default function ViewContent() {
     };
 
     const handleCorrect = () => {
-        if (!id) {
+        if (!contentData?.id) {
             alert("Content ID is missing.");
             return;
         }
 
         const encodedContent = contentData.data.content ? encodeURIComponent(contentData.data.content) : "";
-        router.push(`/content/correct?id=${id}&title=${contentData.data.title}&subtitle=${contentData.data.subtitle}&content=${encodedContent}`);
+        router.push(`/content/correct?id=${contentData?.id}&title=${contentData.data.title}&subtitle=${contentData.data.subtitle}&content=${encodedContent}`);
     };
 
     const [isPasswordCheck, setIsPasswordCheck] = useState(false);

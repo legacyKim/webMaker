@@ -59,7 +59,7 @@ export default function ContentMap() {
 
     useMemo(() => {
         if (data) {
-            const fetchedNodes = data.contentData.map((item: { id: string; data: { title: string, date: string, subtitle: string, content: string }; lock: boolean; fixed: boolean; position: { x: number, y: number } }) => ({
+            const fetchedNodes = data.contentData.map((item: { id: string; data: { title: string, date: string, subtitle: string, content: string }; lock: boolean; fixed: boolean; position: { x: number, y: number }, slug: string; }) => ({
                 id: `${item.id}`,
                 type: "custom",
                 data: {
@@ -70,6 +70,7 @@ export default function ContentMap() {
                     content: item.data.content,
                     lock: item.lock,
                     fixed: item.fixed,
+                    slug: item.slug,
                 },
                 position: item.position,
             }));
@@ -96,7 +97,6 @@ export default function ContentMap() {
     const nodeTypes = useMemo(() => ({
         custom: (props: NodeProps) => <CustomNode {...props} onRightClick={handleRightClick} />,
     }), []);
-
 
     const handleFixed = async (updatedNodes: NodeStatus[]) => {
         try {

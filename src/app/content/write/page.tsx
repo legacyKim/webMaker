@@ -11,8 +11,10 @@ import '../../css/simpleMDE.custom.scss';
 import PasswordCheckModal from "../../component/Password"
 
 import { MemoizedEditor } from "../utils/simpleMDE"
+import { createSlug } from "../utils/slug"
 
 export default function Write() {
+
     const router = useRouter();
 
     const titleRef = useRef<HTMLInputElement | null>(null);
@@ -24,15 +26,17 @@ export default function Write() {
     const currentDate = new Date().toISOString().split("T")[0];
 
     const handleSubmit = async () => {
-        
+
         const title = titleRef.current?.value || "";
         const subtitle = subtitleRef.current?.value || "";
         const content = contentRef.current?.value() || "";
+        const slug = createSlug(title);
 
         const dataToSend = {
             title,
             subtitle,
             content,
+            slug,
             date: currentDate,
             position: { x: Math.random() * 400, y: Math.random() * 400 },
             lock: false,

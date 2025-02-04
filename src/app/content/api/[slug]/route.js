@@ -3,12 +3,12 @@ import { promisePool } from '../../../api/db.js';
 
 export async function GET(request) {
     try {
-        const id = request.url.split('/').pop();
-        if (!id) {
-            return NextResponse.json({ status: 400, message: "ID is required" });
+        const slug = request.url.split('/').pop();
+        if (!slug) {
+            return NextResponse.json({ status: 400, message: "SLUG is required" });
         }
 
-        const [contentData] = await promisePool.query("SELECT * FROM tb_content WHERE id = ?", [id]);
+        const [contentData] = await promisePool.query("SELECT * FROM tb_content WHERE slug = ?", [slug]);
 
         if (contentData.length > 0) {
             return NextResponse.json(contentData[0]);

@@ -49,3 +49,6 @@ view 페이지에서 MarkDown 렌더링
 
 ** npm install recoil
 리코일 - 전역변수 상태 관리.
+
+** npm install slugify
+SEO 설정을 위한 SLUG 활용.
