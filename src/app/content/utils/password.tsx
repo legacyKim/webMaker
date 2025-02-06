@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-
 
 interface ContentPasswordProps {
     passEnv: string;
@@ -9,12 +7,11 @@ interface ContentPasswordProps {
 
 export default function ContentPassword({ passEnv, slug }: ContentPasswordProps) {
 
-    const router = useRouter();
     const [contentPass, setContentPass] = useState<string>();
 
     useEffect(() => {
         if (contentPass === passEnv) {
-            // router.push(`/content/view/${encodeURIComponent(slug)}`);
+            console.log(slug);
         }
     }, [contentPass]);
 
