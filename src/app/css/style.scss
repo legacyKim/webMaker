@@ -782,16 +782,20 @@ nav a {
         opacity: 0.56;
     }
 
+    &.active {
+        border: 1px solid $main-color;
+    }
+
     .content_factor_title {
 
-        @include flex-sb;
+        @include flex-start;
 
         padding: 18px 16px 16px;
         border-radius: 8px 8px 0 0;
         background-color: $dark-background-color;
 
         h3 {
-            @include font_small;
+            @include font_basic;
             @include oneline;
             min-width: 180px;
             padding-top: 4px;
@@ -818,14 +822,44 @@ nav a {
         }
     }
 
+    .content_factor_keywords {
+        @include flex-start();
+        @include relative_block();
+
+        padding: 12px 12px 0;
+
+        & button {
+            @include font_sssmall;
+            border: 1px solid #fff;
+            border-radius: 100px;
+            padding: 3px 10px 1px;
+            margin-right: 4px;
+            margin-bottom: 4px;
+            opacity: 0.5;
+            transition: all 0.3s ease-in-out;
+
+            &:hover {
+                opacity: 1;
+            }
+
+            &.active {
+                border: 1px solid $main-color;
+                color: $main-color;
+                opacity: 1;
+            }
+        }
+    }
+
     .sec_box {
+        @include flex-start;
         width: calc(100% - 24px);
-        padding: 8px 12px;
+        padding: 8px 12px 8px;
         background-color: $dark-box2-bg;
         border-radius: 0 0 8px 8px;
 
         span {
             @include font_ssmall;
+            @include relative_block;
             color: $dark-font2-color;
             margin-left: 4px;
         }
@@ -845,14 +879,13 @@ nav a {
         height: 100%;
         z-index: 9;
 
-        @include flex-center();
-
         .content_pass_bg {
             position: absolute;
             width: 100%;
             height: 100%;
             background-color: $dark-background-color;
             opacity: 0.7;
+            @include flex-center();
         }
 
         & input {
@@ -940,6 +973,23 @@ nav a {
         border-radius: 4px;
     }
 
+    .write_keyword_box {
+        padding-bottom: 48px;
+
+        .write_keyword {
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 10px;
+            padding-top: 4px;
+
+            @include font_basic;
+            height: 40px;
+
+        }
+    }
+
     .content_line {
         border-bottom: 1px solid $dark-border-line;
         margin-bottom: 24px;
@@ -1003,6 +1053,23 @@ nav a {
         }
     }
 
+    .view_content_keyword {
+        @include flex-start;
+        @include page;
+        border-top: 1px solid $dark-border-line;
+        padding-top: 16px;
+        padding-bottom: 32px;
+
+        span {
+            @include font_basic;
+            border: 1px solid #fff;
+            border-radius: 100px;
+            padding: 3px 14px 0px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+    }
+
     pre {
         div {
             background-color: #2e3338 !important;
@@ -1015,13 +1082,13 @@ nav a {
                 padding-top: 51px;
                 overflow: auto;
             }
-    
+
             &::-webkit-scrollbar {
                 background-color: transparent;
                 width: 4px;
                 height: 4px;
             }
-    
+
             &::-webkit-scrollbar-thumb {
                 background-color: #d2513c;
                 border-radius: 100px;
@@ -1031,7 +1098,7 @@ nav a {
 
     .simpoeMDE_custom {
         @include page;
-        padding-bottom: 100px;
+        padding-bottom: 16px;
     }
 }
 
@@ -1045,7 +1112,7 @@ nav a {
 }
 
 .simpleMDE_wrap {
-    padding-bottom: 100px;
+    padding-bottom: 16px;
 }
 
 @keyframes content_opacity {
@@ -1118,6 +1185,7 @@ nav a {
             font-weight: 600;
             opacity: 0.5;
             transition: all 0.3s ease-in-out;
+            text-align: left;
 
             &:hover {
                 color: $main-color;

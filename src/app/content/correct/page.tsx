@@ -29,6 +29,7 @@ function CorrectContent() {
     const titleRef = useRef<HTMLInputElement | null>(null);
     const subtitleRef = useRef<HTMLInputElement | null>(null);
     const contentRef = useRef<SimpleMDEEditor | null>(null);
+    const keywordRef = useRef<HTMLInputElement | null>(null);
 
     const currentDate = new Date().toISOString().split("T")[0];
 
@@ -41,12 +42,14 @@ function CorrectContent() {
     useEffect(() => {
         if (titleRef.current) titleRef.current.value = searchParams.get("title") || "";
         if (subtitleRef.current) subtitleRef.current.value = searchParams.get("subtitle") || "";
+        if (keywordRef.current) keywordRef.current.value = searchParams.get("keywords") || "";
     }, [searchParams]);
 
     const handleSubmit = async () => {
         const title = titleRef.current?.value || "";
         const subtitle = subtitleRef.current?.value || "";
         const content = contentRef.current?.value() || "";
+        const keywords = keywordRef.current?.value || "";
         const slug = createSlug(title);
 
         const contentId = searchParams.get("id");
@@ -55,6 +58,7 @@ function CorrectContent() {
             title,
             subtitle,
             content,
+            keywords,
             slug,
             date: currentDate,
             id: contentId,
@@ -115,6 +119,10 @@ function CorrectContent() {
                 </div>
                 <div className="simpleMDE_wrap">
                     <MemoizedEditor initialContent={initialContent} contentRef={contentRef} />
+                </div>
+
+                <div className="write_keyword_box">
+                    <input className="write_keyword" type="text" name="keywords" ref={keywordRef} placeholder="KEYWORDS"></input>
                 </div>
 
                 {isModalOpen &&

@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { Handle, Position, NodeProps } from "react-flow-renderer";
 import Link from 'next/link';
+import ContentPassword from './utils/password'
 
 type NodePosition = {
     id: string;
@@ -8,10 +9,12 @@ type NodePosition = {
 };
 
 interface CustomNodeProps extends NodeProps {
+    keywordArr: string[];
     onRightClick: (e: React.MouseEvent, node: NodePosition) => void;
+    onKeywordClick: (k: string) => void;
 }
 
-const CustomNode: React.FC<CustomNodeProps> = ({ data, onRightClick }) => {
+const CustomNode: React.FC<CustomNodeProps> = ({ data, keywordArr, onRightClick, onKeywordClick }) => {
 
     const getRelativeDate = (dateString: string) => {
         const inputDate = new Date(dateString);
@@ -24,13 +27,27 @@ const CustomNode: React.FC<CustomNodeProps> = ({ data, onRightClick }) => {
         return `${diffDays}일 전`;
     };
 
+    const [passPop, setPassPop] = useState(false);
+    const beReady = () => {
+        alert('준비 중 입니다.');
+        setPassPop(true);
+    }
+
+    const keywordMap = data.keywords !== null ? data.keywords.split(',').map((keyword: string) => keyword.trim()) : [];
+    const isActive = keywordArr.some((keyword) => keywordMap.includes(keyword));
+
     return (
-        <div className={`content_factor ${data.lock === 1 ? 'lock' : ''}`} onContextMenu={(e) => {
+        <div className={`content_factor ${data.lock === 1 ? 'lock' : ''} ${isActive ? 'active' : ''}`} onContextMenu={(e) => {
             e.preventDefault();
             onRightClick(e, data);
         }}>
             <Handle type="source" position={Position.Top} id="a" />
-            <Link href={`${data.lock !== 1 ? `/content/view/${encodeURIComponent(data.slug)}` : 'javascript:void(0)'}`}>
+            <Link href={`${data.lock !== 1 ? `/content/view/${encodeURIComponent(data.slug)}` : "#"}`} onClick={(e) => {
+                if (data.lock === 1) {
+                    e.preventDefault();
+                    beReady();
+                }
+            }}>
                 <div className="content_factor_title">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d2513c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
@@ -41,12 +58,26 @@ const CustomNode: React.FC<CustomNodeProps> = ({ data, onRightClick }) => {
                 <div className="content_factor_subtitle">
                     <p>{data.subtitle}</p>
                 </div>
+                {data.keywords && (
+                    <div className="content_factor_keywords">
+                        {keywordMap.map((k: string, i: number) => {
+                            return <button className={keywordArr.includes(k) ? "active" : ""} key={i} onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                onKeywordClick(k);
+                            }}>{k}</button>;
+                        })}
+                    </div>
+                )}
                 <div className="sec_box">
                     <i className="icon-clock-1"></i>
                     <span>{getRelativeDate(data.date)}</span>
                 </div>
+
             </Link>
             <Handle type="target" position={Position.Bottom} id="b" />
+
+            {data.lock === 1 && passPop === true && <ContentPassword passEnv={process.env.MYSQL_PUBLIC_URL as string} slug={data.slug} />}
 
         </div>
     );

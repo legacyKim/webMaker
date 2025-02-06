@@ -20,6 +20,7 @@ export default function Write() {
     const titleRef = useRef<HTMLInputElement | null>(null);
     const subtitleRef = useRef<HTMLInputElement | null>(null);
     const contentRef = useRef<SimpleMDEEditor | null>(null);
+    const keywordRef = useRef<HTMLInputElement | null>(null);
 
     const initialContent = "";
 
@@ -30,12 +31,14 @@ export default function Write() {
         const title = titleRef.current?.value || "";
         const subtitle = subtitleRef.current?.value || "";
         const content = contentRef.current?.value() || "";
+        const keywords = keywordRef.current?.value || "";
         const slug = createSlug(title);
 
         const dataToSend = {
             title,
             subtitle,
             content,
+            keywords,
             slug,
             date: currentDate,
             position: { x: Math.random() * 400, y: Math.random() * 400 },
@@ -99,6 +102,10 @@ export default function Write() {
                 </div>
                 <div className="simpleMDE_wrap">
                     <MemoizedEditor initialContent={initialContent} contentRef={contentRef} />
+                </div>
+
+                <div className="write_keyword_box">
+                    <input className="write_keyword" type="text" name="keywords" ref={keywordRef} placeholder="KEYWORDS"></input>
                 </div>
 
                 {isModalOpen &&

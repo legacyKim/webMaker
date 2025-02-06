@@ -59,7 +59,7 @@ export default function ContentMap() {
 
     useMemo(() => {
         if (data) {
-            const fetchedNodes = data.contentData.map((item: { id: string; data: { title: string, date: string, subtitle: string, content: string }; lock: boolean; fixed: boolean; position: { x: number, y: number }, slug: string; }) => ({
+            const fetchedNodes = data.contentData.map((item: { id: string; data: { title: string, date: string, subtitle: string, content: string }; lock: boolean; fixed: boolean; position: { x: number, y: number }, slug: string; keywords: string; }) => ({
                 id: `${item.id}`,
                 type: "custom",
                 data: {
@@ -71,6 +71,7 @@ export default function ContentMap() {
                     lock: item.lock,
                     fixed: item.fixed,
                     slug: item.slug,
+                    keywords: item.keywords,
                 },
                 position: item.position,
             }));
@@ -94,9 +95,17 @@ export default function ContentMap() {
         setSelectedNode(node);
     };
 
+    const [keywordArr, setKeywordArr] = useState<string[]>([]);
+
+    const keywordCheck = (k: string) => {
+        setKeywordArr((prev) =>
+            prev.includes(k) ? prev.filter((keyword) => keyword !== k) : [...prev, k]
+        );
+    };
+
     const nodeTypes = useMemo(() => ({
-        custom: (props: NodeProps) => <CustomNode {...props} onRightClick={handleRightClick} />,
-    }), []);
+        custom: (props: NodeProps) => <CustomNode {...props} keywordArr={keywordArr} onRightClick={handleRightClick} onKeywordClick={keywordCheck} />,
+    }), [keywordArr]);
 
     const handleFixed = async (updatedNodes: NodeStatus[]) => {
         try {
