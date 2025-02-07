@@ -23,13 +23,13 @@ interface PageProps {
 }
 
 async function fetchContentData(slug: string): Promise<ContentData> {
-    const res = await fetch(`http://localhost:3000/content/api/${slug}`, {
+    const res = await fetch(`${process.env.PORTFOLIO_URL}/content/api/${slug}`, {
         cache: "no-store",
     });
     return res.json();
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
     try {
         const contentData = await fetchContentData(params.slug);
         return {
