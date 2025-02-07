@@ -29,7 +29,7 @@ async function fetchContentData(slug: string): Promise<ContentData> {
     return res.json();
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     try {
         const contentData = await fetchContentData(params.slug);
         return {
