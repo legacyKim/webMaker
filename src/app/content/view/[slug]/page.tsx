@@ -18,11 +18,7 @@ type ContentData = {
     keywords: string;
 };
 
-interface PageProps {
-    params: {
-        slug: string;
-    };
-}
+type PageParams = Promise<{ slug: string }>;
 
 async function fetchContentData(slug: string): Promise<ContentData> {
     try {
@@ -36,9 +32,10 @@ async function fetchContentData(slug: string): Promise<ContentData> {
     }
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: PageParams }): Promise<Metadata> {
+    const { slug } = await params;
     try {
-        const contentData = await fetchContentData(params.slug);
+        const contentData = await fetchContentData(slug);
         return {
             title: contentData.data.title,
             description: contentData.data.subtitle,
@@ -53,9 +50,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     }
 }
 
-export default async function ViewContent({ params }: { params: { slug: string } }) {
-
-    const contentData = await fetchContentData(params.slug);
+export default async function ViewContent({ params }: { params: PageParams }) {
+    const { slug } = await params;
+    const contentData = await fetchContentData(slug);
     const keywordArray = contentData.keywords !== null ? contentData.keywords.split(',').map((keyword: string) => keyword.trim()) : [];
 
     return (
