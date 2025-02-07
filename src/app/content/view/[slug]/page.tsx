@@ -18,6 +18,12 @@ type ContentData = {
     keywords: string;
 };
 
+interface PageProps {
+    params: {
+        slug: string;
+    };
+}
+
 async function fetchContentData(slug: string): Promise<ContentData> {
     try {
         const res = await fetch(`${process.env.PORTFOLIO_URL}/content/api/${slug}`, {
@@ -30,7 +36,7 @@ async function fetchContentData(slug: string): Promise<ContentData> {
     }
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     try {
         const contentData = await fetchContentData(params.slug);
         return {
