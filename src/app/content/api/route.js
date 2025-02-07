@@ -132,18 +132,6 @@ export async function PUT(req) {
             }
         }
 
-        if (lock !== undefined && lock !== null) {
-            const lockValue = lock ? 1 : 0;
-            const [updateResult] = await promisePool.query(
-                'UPDATE tb_content SET `lock` = ? WHERE id = ?',
-                [lockValue, id]
-            );
-
-            if (updateResult.affectedRows === 0) {
-                return NextResponse.json({ success: false }, { status: 404 });
-            }
-        }
-
         if (fixed !== undefined && fixed !== null) {
             const fixedValue = fixed ? 1 : 0;
             const [updateResult] = await promisePool.query(
@@ -162,6 +150,20 @@ export async function PUT(req) {
                 { status: 403 }
             );
         } else {
+
+            console.log(lock);
+
+            if (lock !== undefined && lock !== null) {
+                const lockValue = lock ? 1 : 0;
+                const [updateResult] = await promisePool.query(
+                    'UPDATE tb_content SET `lock` = ? WHERE id = ?',
+                    [lockValue, id]
+                );
+
+                if (updateResult.affectedRows === 0) {
+                    return NextResponse.json({ success: false }, { status: 404 });
+                }
+            }
 
             if (content) {
                 const contentData = JSON.stringify({ title, date, content, subtitle });

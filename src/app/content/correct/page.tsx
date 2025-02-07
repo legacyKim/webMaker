@@ -37,13 +37,30 @@ function CorrectContent() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [Password, setPassword] = useState('');
 
-    const initialContent = searchParams.get("content") || "";
+    const slug = searchParams.get("slug");
+    const [conId, setConId] = useState<number>();
+    const [initialContent, setInitialContent] = useState<string>("");
 
     useEffect(() => {
-        if (titleRef.current) titleRef.current.value = searchParams.get("title") || "";
-        if (subtitleRef.current) subtitleRef.current.value = searchParams.get("subtitle") || "";
-        if (keywordRef.current) keywordRef.current.value = searchParams.get("keywords") || "";
-    }, [searchParams]);
+        const fetchData = async () => {
+            if (!slug) return;
+
+            try {
+                const res = await fetch(`/content/api/${slug}`);
+                const content = await res.json();
+
+                setInitialContent(content.data.content);
+                setConId(content.id);
+
+                if (titleRef.current) titleRef.current.value = content.data.title || "";
+                if (subtitleRef.current) subtitleRef.current.value = content.data.subtitle || "";
+                if (keywordRef.current) keywordRef.current.value = content.keywords || "";
+            } catch (error) {
+                console.error("Error fetching content:", error);
+            }
+        };
+        fetchData();
+    }, [slug]);
 
     const handleSubmit = async () => {
         const title = titleRef.current?.value || "";
@@ -52,7 +69,7 @@ function CorrectContent() {
         const keywords = keywordRef.current?.value || "";
         const slug = createSlug(title);
 
-        const contentId = searchParams.get("id");
+        const contentId = conId;
 
         const dataToSend = {
             title,
@@ -118,7 +135,9 @@ function CorrectContent() {
                     />
                 </div>
                 <div className="simpleMDE_wrap">
-                    <MemoizedEditor initialContent={initialContent} contentRef={contentRef} />
+                    {initialContent !== "" && (
+                        <MemoizedEditor initialContent={initialContent} contentRef={contentRef} />
+                    )}
                 </div>
 
                 <div className="write_keyword_box">

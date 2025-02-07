@@ -2,6 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import axios from 'axios';
+
 import PasswordCheckModal from "../../../component/Password.js";
 
 type ContentData = {
@@ -48,12 +50,11 @@ export default function ContentActions({ contentData }: { contentData: ContentDa
         }
     };
 
-    const handleCorrect = () => {
+    const handleCorrect = async () => {
         if (!contentData?.slug) {
             return;
         }
-        const encodedContent = contentData.data.content ? encodeURIComponent(contentData.data.content) : "";
-        router.push(`/content/correct?id=${contentData?.id}&title=${contentData.data.title}&subtitle=${contentData.data.subtitle}&content=${encodedContent}&keywords=${contentData.keywords}`);
+        router.push(`/content/correct?slug=${contentData?.slug}`);
     };
 
     useEffect(() => {

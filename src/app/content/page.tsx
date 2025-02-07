@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useCallback, useRef } from "react";
+import React, { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import ReactFlow, { NodeChange, EdgeChange, Connection, applyNodeChanges, applyEdgeChanges, addEdge, Node, Edge, NodeProps } from "react-flow-renderer";
 import { useQuery } from "react-query";
 import { fetchContent } from './api/api.js';
@@ -8,6 +8,8 @@ import CustomNode from "./CustomNode.tsx";
 import Loading from "../component/Loading.js";
 import Link from 'next/link';
 import axios from 'axios';
+
+import PasswordCheckModal from '../component/Password.js'
 
 type NodePosition = {
     id: string;
@@ -129,14 +131,21 @@ export default function ContentMap() {
         try {
             for (const node of updatedNodes) {
                 const updatedlock = !node.lock;
-                await axios.put(`/content/api`, {
+                const response = await axios.put(`/content/api`, {
                     id: node.id,
                     lock: updatedlock,
+                    password: Password
                 }, {
                     headers: {
                         'Content-Type': 'application/json'
                     }
                 });
+    
+                if (response.status === 200) {
+                    setIsModalOpen(undefined);
+                    setIsPasswordCheck(false);
+                }
+
             }
         } catch (error) {
             console.error('Failed to update lock:', error);
@@ -264,6 +273,22 @@ export default function ContentMap() {
         }
     }, []);
 
+    const [isPasswordCheck, setIsPasswordCheck] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState<NodeStatus[] | undefined>();
+    const [Password, setPassword] = useState('');
+
+    console.log(isModalOpen);
+    console.log(isPasswordCheck);
+
+    useEffect(() => {
+        console.log(isPasswordCheck);
+        console.log(isModalOpen);
+
+        if (isPasswordCheck && isModalOpen) {
+            handlelock(isModalOpen);
+        }
+    }, [isPasswordCheck]);
+
     if (isLoading) return <Loading />;
 
     return (
@@ -286,6 +311,10 @@ export default function ContentMap() {
                 <ContentOption position={optionPos} selectedNode={selectedNode} />
             )}
 
+            {isModalOpen &&
+                <PasswordCheckModal setIsModalOpen={setIsModalOpen} setIsPasswordCheck={setIsPasswordCheck} setPassword={setPassword}></PasswordCheckModal>
+            }
+
             <div className="btn_wrap">
                 <Link
                     className="customBtn"
@@ -303,7 +332,7 @@ export default function ContentMap() {
                 left: `${position.x}px`,
                 top: `${position.y}px`,
             }}>
-                <button onClick={() => { handlelock([selectedNode]) }}><i className={`icon-lock ${Boolean(selectedNode.lock) !== false ? 'active' : ''}`}></i></button>
+                <button onClick={() => { setIsModalOpen([selectedNode]) }}><i className={`icon-lock ${Boolean(selectedNode.lock) !== false ? 'active' : ''}`}></i></button>
                 <button onClick={() => { handleFixed([selectedNode]) }}><i className={`icon-pinboard ${Boolean(selectedNode.fixed) !== false ? 'active' : ''}`}></i></button>
             </div>
         )

@@ -166,6 +166,16 @@ $dark-box2-bg: hsl(246, 15%, 15%);
     a:-webkit-any-link {
         cursor: pointer;
         text-decoration: underline;
+
+        ::before {
+            content: '';
+            position: relative;
+            display: block;
+            width: 4px;
+            height: 13px;
+            background-color: $sub2-color;
+            border-radius: 4px;
+        }
     }
 
     pre {

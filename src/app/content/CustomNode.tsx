@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Handle, Position, NodeProps } from "react-flow-renderer";
 import Link from 'next/link';
-import ContentPassword from './utils/password'
 
 type NodePosition = {
     id: string;
@@ -27,10 +26,8 @@ const CustomNode: React.FC<CustomNodeProps> = ({ data, keywordArr, onRightClick,
         return `${diffDays}일 전`;
     };
 
-    const [passPop, setPassPop] = useState(false);
     const beReady = () => {
         alert('준비 중 입니다.');
-        setPassPop(true);
     }
 
     const keywordMap = data.keywords !== null ? data.keywords.split(',').map((keyword: string) => keyword.trim()) : [];
@@ -76,8 +73,6 @@ const CustomNode: React.FC<CustomNodeProps> = ({ data, keywordArr, onRightClick,
 
             </Link>
             <Handle type="target" position={Position.Bottom} id="b" />
-
-            {data.lock === 1 && passPop === true && <ContentPassword passEnv={process.env.MYSQL_PUBLIC_URL as string} slug={data.slug} />}
 
         </div>
     );
