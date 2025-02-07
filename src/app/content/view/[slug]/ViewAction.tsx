@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import axios from 'axios';
 
 import PasswordCheckModal from "../../../component/Password.js";
 
