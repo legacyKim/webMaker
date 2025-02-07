@@ -23,13 +23,18 @@ interface PageProps {
 }
 
 async function fetchContentData(slug: string): Promise<ContentData> {
-    const res = await fetch(`${process.env.PORTFOLIO_URL}/content/api/${slug}`, {
-        cache: "no-store",
-    });
-    return res.json();
+    try {
+        const res = await fetch(`${process.env.PORTFOLIO_URL}/content/api/${slug}`, {
+            cache: "no-store",
+        });
+        return res.json();
+    } catch (error) {
+        console.error("Error fetching content data:", error);
+        throw new Error("Failed to fetch content data");
+    }
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
     try {
         const contentData = await fetchContentData(params.slug);
         return {
@@ -46,7 +51,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     }
 }
 
-export default async function ViewContent({ params }: PageProps) {
+export default async function ViewContent({ params }: { params: { slug: string } }) {
 
     const contentData = await fetchContentData(params.slug);
     const keywordArray = contentData.keywords !== null ? contentData.keywords.split(',').map((keyword: string) => keyword.trim()) : [];
