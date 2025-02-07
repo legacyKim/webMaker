@@ -18,10 +18,6 @@ type ContentData = {
     keywords: string;
 };
 
-interface PageProps {
-    params: { slug: string };
-}
-
 async function fetchContentData(slug: string): Promise<ContentData> {
     try {
         const res = await fetch(`${process.env.PORTFOLIO_URL}/content/api/${slug}`, {
