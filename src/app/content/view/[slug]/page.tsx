@@ -22,7 +22,7 @@ type PageParams = Promise<{ slug: string }>;
 
 async function fetchContentData(slug: string): Promise<ContentData> {
     try {
-        const res = await fetch(`${process.env.PORTFOLIO_URL}/content/api/${slug}`, {
+        const res = await fetch(`${process.env.API_PORTFOLIO_URL}/content/api/${slug}`, {
             cache: "no-store",
         });
         return res.json();
