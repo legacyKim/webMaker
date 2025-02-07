@@ -1,4 +1,5 @@
 import React from "react";
+import { Metadata } from "next";
 
 import BlogPost from "./BlogPost.tsx";
 import ViewAction from "./ViewAction.tsx";
@@ -17,6 +18,10 @@ type ContentData = {
     keywords: string;
 };
 
+interface PageProps {
+    params: { slug: string };
+}
+
 async function fetchContentData(slug: string): Promise<ContentData> {
     const res = await fetch(`http://localhost:3000/content/api/${slug}`, {
         cache: "no-store",
@@ -24,7 +29,7 @@ async function fetchContentData(slug: string): Promise<ContentData> {
     return res.json();
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     try {
         const contentData = await fetchContentData(params.slug);
         return {
@@ -41,7 +46,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     }
 }
 
-export default async function ViewContent({ params }: { params: { slug: string } }) {
+export default async function ViewContent({ params }: PageProps) {
 
     const contentData = await fetchContentData(params.slug);
     const keywordArray = contentData.keywords !== null ? contentData.keywords.split(',').map((keyword: string) => keyword.trim()) : [];
