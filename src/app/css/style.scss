@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 // common
 
 $main-color: #d2513c;
@@ -532,7 +534,7 @@ nav a {
     transition: all 0.3s ease-in-out;
 
     &:hover {
-        background-color: color.adjust($main-color, $lightness: -10%);
+        background-color: darken($main-color, 10%);
     }
 }
 
