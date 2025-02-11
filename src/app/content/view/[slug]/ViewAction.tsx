@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import PasswordCheckModal from "../../../component/Password.js";
 
@@ -15,13 +15,38 @@ type ContentData = {
     };
     slug: string;
     keywords: string;
+    view: number;
 };
 
+async function updateViewCount({ contentData }: { contentData: ContentData }) {
+    try {
+        await fetch(`/content/api/${contentData?.slug}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ view: contentData?.view }),
+        });
+    } catch (error) {
+        console.error("조회수 업데이트 오류:", error);
+    }
+}
+
 export default function ContentActions({ contentData }: { contentData: ContentData }) {
+
     const router = useRouter();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isPasswordCheck, setIsPasswordCheck] = useState(false);
     const [Password, setPassword] = useState("");
+
+    const hasUpdated = useRef(false);
+
+    useEffect(() => {
+        if (!hasUpdated.current) {
+            hasUpdated.current = true;
+            updateViewCount({ contentData });
+        }
+    }, [hasUpdated]);
 
     const handleDelete = async () => {
         const dataToSend = {

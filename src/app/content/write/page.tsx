@@ -44,6 +44,7 @@ export default function Write() {
             position: { x: Math.random() * 400, y: Math.random() * 400 },
             lock: false,
             fixed: false,
+            view: 0,
             Password
         };
 

@@ -21,6 +21,8 @@ $dark-box-bg: hsl(250, 21%, 11%);
 $dark-box2-bg: hsl(246, 15%, 15%);
 $dark-box3-bg: hsl(246, 6%, 18%);
 
+$headHeight: 50px;
+
 .light {
     background-color: $light-background-color;
 }
@@ -755,6 +757,63 @@ nav a {
     }
 }
 
+.indexing {
+    position: fixed;
+    top: $headHeight;
+    left: -312px;
+    max-width: 280px;
+    width: 100%;
+    height: calc(100% - $headHeight);
+    background-color: $dark-box3-bg;
+    padding: 16px;
+
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease-in-out;
+
+    .indexing_btn {
+        position: absolute;
+        top: 7px;
+        right: -26px;
+        opacity: 0.4;
+
+        &:hover {
+            opacity: 1;
+        }
+
+        &.active {
+            opacity: 1
+        }
+    }
+
+    a {
+        @include relative_block();
+        @include font_small();
+        margin-bottom: 6px;
+        opacity: 0.4;
+        padding-left: 10px;
+
+        &:before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 0;
+            width: 5px;
+            height: 5px;
+            background-color: $main-color;
+            border-radius: 50%;
+        }
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+
+    &.active {
+        left: 0;
+    }
+}
+
 .content_factor {
 
     @include relative_block;
@@ -851,11 +910,12 @@ nav a {
     }
 
     .sec_box {
-        @include flex-start;
+        @include flex-sb();
         width: calc(100% - 24px);
         padding: 8px 12px 8px;
         background-color: $dark-box2-bg;
         border-radius: 0 0 8px 8px;
+
 
         span {
             @include font_ssmall;
@@ -869,6 +929,15 @@ nav a {
             color: $dark-font2-color;
             font-weight: 100;
         }
+
+        .time {
+            @include flex-start;
+        }
+
+        .view {
+            @include flex-start;
+        }
+
     }
 
     .content_pass {
@@ -1016,26 +1085,6 @@ nav a {
             @include font_tit;
         }
 
-        .view_info {
-            @include flex-start();
-
-            .view_info_box {
-                @include flex-start();
-
-                i {
-                    @include font_ssmall();
-                    opacity: 0.5;
-                    margin-right: 4px;
-                }
-
-                .view_content_date {
-                    @include font_ssmall();
-                    opacity: 0.5;
-                    min-width: 68px;
-                }
-            }
-        }
-
         p {
             @include font_basic;
         }
@@ -1045,11 +1094,40 @@ nav a {
         border-bottom: 1px solid $dark-border-line;
         margin-bottom: 24px;
 
-        .view_content_subtitle {
+        .view_content_sub {
             @include page;
-            font-size: 18px;
-            opacity: 0.78;
+            @include flex-sb;
             margin-bottom: 24px;
+
+            .view_content_subtitle {
+                font-size: 18px;
+                opacity: 0.78;
+                flex: 1;
+            }
+
+            .view_info {
+                @include flex-start();
+
+                .view_info_box {
+                    @include flex-start();
+                    margin-left: 8px;
+
+                    i {
+                        @include font_ssmall();
+                        opacity: 0.5;
+                        margin-right: 4px;
+                    }
+
+                    .view_info_box_text {
+                        @include font_ssmall();
+                        opacity: 0.5;
+
+                        &.date {
+                            min-width: 70px;
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -1064,7 +1142,7 @@ nav a {
             @include font_basic;
             border: 1px solid #fff;
             border-radius: 100px;
-            padding: 3px 14px 0px;
+            padding: 3px 18px 2px;
             margin-right: 8px;
             margin-bottom: 8px;
         }
@@ -1155,12 +1233,12 @@ nav a {
 
 .sidebar {
     position: fixed;
-    top: 50px;
+    top: $headHeight;
     right: -288px;
     width: 240px;
     transition: all 0.3s ease-in-out;
     background-color: $dark-box3-bg;
-    height: calc(100% - 50px);
+    height: calc(100% - $headHeight);
     padding: 20px 24px;
 
     &.active {

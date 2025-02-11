@@ -61,7 +61,7 @@ export default function ContentMap() {
 
     useMemo(() => {
         if (data) {
-            const fetchedNodes = data.contentData.map((item: { id: string; data: { title: string, date: string, subtitle: string, content: string }; lock: boolean; fixed: boolean; position: { x: number, y: number }, slug: string; keywords: string; }) => ({
+            const fetchedNodes = data.contentData.map((item: { id: string; data: { title: string, date: string, subtitle: string, content: string }; lock: boolean; fixed: boolean; position: { x: number, y: number }, slug: string; keywords: string; view: number; }) => ({
                 id: `${item.id}`,
                 type: "custom",
                 data: {
@@ -74,6 +74,7 @@ export default function ContentMap() {
                     fixed: item.fixed,
                     slug: item.slug,
                     keywords: item.keywords,
+                    view: item.view,
                 },
                 position: item.position,
             }));
@@ -140,7 +141,7 @@ export default function ContentMap() {
                         'Content-Type': 'application/json'
                     }
                 });
-    
+
                 if (response.status === 200) {
                     setIsModalOpen(undefined);
                     setIsPasswordCheck(false);
@@ -277,17 +278,13 @@ export default function ContentMap() {
     const [isModalOpen, setIsModalOpen] = useState<NodeStatus[] | undefined>();
     const [Password, setPassword] = useState('');
 
-    console.log(isModalOpen);
-    console.log(isPasswordCheck);
-
     useEffect(() => {
-        console.log(isPasswordCheck);
-        console.log(isModalOpen);
-
         if (isPasswordCheck && isModalOpen) {
             handlelock(isModalOpen);
         }
     }, [isPasswordCheck]);
+
+    const [indexOpen, setIndexOpen] = useState<boolean>(false);
 
     if (isLoading) return <Loading />;
 
@@ -321,6 +318,20 @@ export default function ContentMap() {
                     href={{ pathname: "/content/write" }} >
                     <i className="icon-vector-pencil"></i>
                 </Link>
+            </div>
+
+            <div className={`indexing ${indexOpen ? 'active' : ''}`}>
+
+                <div className={`indexing_btn ${indexOpen ? 'active' : ''}`}>
+                    <button className="" onClick={() => { setIndexOpen(!indexOpen) }}>
+                        <i className="icon-italic"></i>
+                    </button>
+                </div>
+                {
+                    nodes.map((k, i) => (
+                        <Link key={k.data.id} href={`${`/content/view/${encodeURIComponent(k.data.slug)}`}`}>{k.data.title}</Link>
+                    ))
+                }
             </div>
         </div>
     );

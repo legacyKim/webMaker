@@ -67,8 +67,14 @@ const CustomNode: React.FC<CustomNodeProps> = ({ data, keywordArr, onRightClick,
                     </div>
                 )}
                 <div className="sec_box">
-                    <i className="icon-clock-1"></i>
-                    <span>{getRelativeDate(data.date)}</span>
+                    <div className="time">
+                        <i className="icon-clock-1"></i>
+                        <span>{getRelativeDate(data.date)}</span>
+                    </div>
+                    <div className="view">
+                        <i className="icon-eye"></i>
+                        <span>{data.view}</span>
+                    </div>
                 </div>
 
             </Link>

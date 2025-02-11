@@ -61,7 +61,7 @@ export async function POST(req) {
             data = await req.json();
         }
 
-        const { title, date, content, subtitle, slug, source, target, position, Password, keywords } = data;
+        const { title, date, content, subtitle, slug, source, target, position, Password, keywords, view } = data;
 
         if (Password && Password !== validPassword) {
             return NextResponse.json(
@@ -73,8 +73,8 @@ export async function POST(req) {
             if (position) {
 
                 const [contentInsertResult] = await promisePool.query(
-                    'INSERT INTO tb_content (type, data, position, slug, keywords) VALUES (?, ?, ?, ?, ?)',
-                    ['custom', JSON.stringify({ title, date, content, subtitle }), JSON.stringify(position), slug, keywords]
+                    'INSERT INTO tb_content (type, data, position, slug, keywords, view) VALUES (?, ?, ?, ?, ?, ?)',
+                    ['custom', JSON.stringify({ title, date, content, subtitle }), JSON.stringify(position), slug, keywords, view]
                 );
                 contentResult = contentInsertResult;
             }
@@ -150,8 +150,6 @@ export async function PUT(req) {
                 { status: 403 }
             );
         } else {
-
-            console.log(lock);
 
             if (lock !== undefined && lock !== null) {
                 const lockValue = lock ? 1 : 0;

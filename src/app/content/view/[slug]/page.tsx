@@ -16,6 +16,7 @@ type ContentData = {
     };
     slug: string;
     keywords: string;
+    view: number;
 };
 
 type PageParams = Promise<{ slug: string }>;
@@ -51,6 +52,7 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
 }
 
 export default async function ViewContent({ params }: { params: PageParams }) {
+
     const { slug } = await params;
     const contentData = await fetchContentData(slug);
     const keywordArray = contentData.keywords !== null ? contentData.keywords.split(',').map((keyword: string) => keyword.trim()) : [];
@@ -60,17 +62,25 @@ export default async function ViewContent({ params }: { params: PageParams }) {
             <div className="view_content">
                 <div className="view_content_header">
                     <h5 className="view_content_title">{contentData.data.title}</h5>
-                    <div className="view_info">
-                        <div className="view_info_box">
-                            <i className="icon-clock"></i>
-                            <span className="view_content_date">{contentData.data.date}</span>
-                        </div>
-                    </div>
                 </div>
                 <div className="content_line">
-                    <p className="view_content_subtitle">
-                        {contentData.data.subtitle}
-                    </p>
+                    <div className="view_content_sub">
+                        <p className="view_content_subtitle">
+                            {contentData.data.subtitle}
+                        </p>
+
+                        <div className="view_info">
+                            <div className="view_info_box">
+                                <i className="icon-clock"></i>
+                                <span className="view_info_box_text">{contentData.data.date}</span>
+                            </div>
+
+                            <div className="view_info_box">
+                                <i className="icon-eye"></i>
+                                <span className="view_info_box_text">{contentData.view + 1}</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div>
                     <BlogPost content={contentData.data.content} />
