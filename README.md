@@ -1,3 +1,5 @@
+개발 블로그를 위해 프로젝트를 진행 중입니다.
+
 ** Next.js 설치
 npx create-next-app@latest my-next-app
 
