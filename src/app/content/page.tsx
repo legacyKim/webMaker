@@ -328,7 +328,7 @@ export default function ContentMap() {
                     </button>
                 </div>
                 {
-                    nodes.map((k, i) => (
+                    nodes.map((k) => (
                         <Link key={k.data.id} href={`${`/content/view/${encodeURIComponent(k.data.slug)}`}`}>{k.data.title}</Link>
                     ))
                 }
