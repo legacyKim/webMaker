@@ -43,3 +43,6 @@ next-env.d.ts
 .vercel
 
 /src/app/test.tsx
+
+src/credentials.json
+server/task

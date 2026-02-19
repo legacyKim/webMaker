@@ -55,7 +55,7 @@ export default function TxtFileManager() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          folderName: "webMaker", // 구글 드라이브 폴더명
+          folderName: "task", // 구글 드라이브 폴더명
         }),
       });
 
@@ -101,7 +101,6 @@ export default function TxtFileManager() {
               <body>
                 <div class="header">
                   <h1>${fileData.title || fileName}</h1>
-                  ${fileData.subtitle ? `<h2>${fileData.subtitle}</h2>` : ""}
                   <div class="meta">작성자: ${fileData.author || "알 수 없음"}</div>
                   <div class="meta">작성일: ${new Date(fileData.created_at).toLocaleString()}</div>
                   ${fileData.keywords ? `<div class="meta">키워드: ${fileData.keywords}</div>` : ""}
@@ -234,7 +233,6 @@ export default function TxtFileManager() {
         .file-table td {
           padding: 12px;
           text-align: left;
-          border-bottom: 1px solid #eee;
         }
 
         .file-table th {
@@ -277,6 +275,7 @@ export default function TxtFileManager() {
           padding: 40px;
           color: #666;
           font-style: italic;
+          font-size: 16px;
         }
       `}</style>
     </div>

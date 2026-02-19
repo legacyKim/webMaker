@@ -16,13 +16,14 @@ const CustomNode: React.FC<CustomNodeProps> = ({
 }) => {
   const getRelativeDate = (dateString: string) => {
     const inputDate = new Date(dateString);
-    const currentDate = new Date();
-    const diffTime = currentDate.getTime() - inputDate.getTime();
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffDays === 0) return "오늘";
-    if (diffDays === 1) return "어제";
-    return `${diffDays}일 전`;
+    
+    const year = inputDate.getFullYear();
+    const month = String(inputDate.getMonth() + 1).padStart(2, "0");
+    const day = String(inputDate.getDate()).padStart(2, "0");
+    const hours = String(inputDate.getHours()).padStart(2, "0");
+    const minutes = String(inputDate.getMinutes()).padStart(2, "0");
+    
+    return `${year}년 ${month}월 ${day}일 ${hours}:${minutes}`;
   };
 
   const keywords = data.keywords
@@ -35,7 +36,7 @@ const CustomNode: React.FC<CustomNodeProps> = ({
 
   return (
     <div
-      className={`content_factor ${isActive ? "active" : ""} ${isFileNode ? "file-node" : ""}`}
+      className={`content_factor ${keywordArr.length === 0 ? "" : isActive ? "active" : "non-active"} ${isFileNode ? "file-node" : ""}`}
       onContextMenu={(e) => {
         e.preventDefault();
         if (onRightClick) onRightClick(e, data);
@@ -57,10 +58,6 @@ const CustomNode: React.FC<CustomNodeProps> = ({
             <path d="M22 4 12 14.01l-3-3"></path>
           </svg>
           <h3>{data.title}</h3>
-        </div>
-
-        <div className="content_factor_subtitle">
-          <p>{data.subtitle}</p>
         </div>
 
         {data.keywords && (

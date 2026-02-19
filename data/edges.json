@@ -1,7 +1,32 @@
 [
   {
-    "id": "edge-1",
-    "source": "sample-1",
-    "target": "sample-2"
+    "id": "reactflow__edge-file-testa-file-test1b",
+    "source": "file-test",
+    "target": "file-test1"
+  },
+  {
+    "id": "reactflow__edge-file-글쓰기 테스트a-file-testb",
+    "source": "file-글쓰기 테스트",
+    "target": "file-test"
+  },
+  {
+    "id": "reactflow__edge-file-제목 입력a-file-글쓰기 테스트b",
+    "source": "file-제목 입력",
+    "target": "file-글쓰기 테스트"
+  },
+  {
+    "id": "reactflow__edge-file-testtesta-file-testb",
+    "source": "file-testtest",
+    "target": "file-test"
+  },
+  {
+    "id": "reactflow__edge-file-교감신경 과활성 문제a-file-글쓰기 테스트b",
+    "source": "file-교감신경 과활성 문제",
+    "target": "file-글쓰기 테스트"
+  },
+  {
+    "id": "reactflow__edge-file-신경 역치a-file-자폐b",
+    "source": "file-신경 역치",
+    "target": "file-자폐"
   }
 ]

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useRef } from "react";
 import ReactFlow, {
   NodeChange,
   EdgeChange,
@@ -8,12 +8,14 @@ import ReactFlow, {
   addEdge,
   Node,
   Edge,
+  ReactFlowProvider,
 } from "react-flow-renderer";
 import { useQuery } from "react-query";
 import { fetchContent } from "../api/contentApi";
 import CustomNode from "../components/CustomNode";
 import Loading from "../components/shared/Loading";
 import { Link } from "react-router-dom";
+import debounce from "lodash.debounce";
 
 export default function ContentMap() {
   const { data, isLoading, error } = useQuery("contentData", fetchContent, {
@@ -71,6 +73,71 @@ export default function ContentMap() {
   const [edges, setEdges] = useState<Edge[]>([]);
   const [keywordArr, setKeywordArr] = useState<string[]>([]);
 
+  // 노드 위치 저장 API 호출 (디바운싱됨)
+  const saveNodePositionsFn = useRef(
+    debounce(async (nodesToSave: Node[]) => {
+      try {
+        const updates: { [key: string]: { position_x: number; position_y: number } } = {};
+        
+        console.log("🔍 저장할 노드들 분석:");
+        nodesToSave.forEach((node) => {
+          console.log(`  - ID: "${node.id}" (type: ${typeof node.id}), pos: (${node.position.x}, ${node.position.y})`);
+          updates[node.id] = {
+            position_x: Math.round(node.position.x),
+            position_y: Math.round(node.position.y),
+          };
+        });
+
+        console.log("💾 노드 위치 저장 시도:", updates);
+
+        const response = await fetch("/api/content/batch/positions", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ updates }),
+        });
+
+        const responseData = await response.json();
+        
+        if (!response.ok) {
+          console.error("❌ 노드 위치 저장 실패:", responseData);
+        } else {
+          console.log("✅ 노드 위치 저장됨:", responseData);
+        }
+      } catch (err) {
+        console.error("❌ 노드 위치 저장 중 오류:", err);
+      }
+    }, 1000)
+  );
+
+  // 엣지 저장 API 호출 (디바운싱됨)
+  const saveEdgesFn = useRef(
+    debounce(async (edgesToSave: Edge[]) => {
+      try {
+        console.log("💾 엣지 저장 시도:", edgesToSave);
+
+        const response = await fetch("/api/edges", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ edges: edgesToSave }),
+        });
+
+        const responseData = await response.json();
+
+        if (!response.ok) {
+          console.error("엣지 저장 실패:", responseData);
+        } else {
+          console.log("✅ 엣지 저장됨:", responseData);
+        }
+      } catch (err) {
+        console.error("엣지 저장 중 오류:", err);
+      }
+    }, 1000)
+  );
+
   const onKeywordClick = useCallback((keyword: string) => {
     setKeywordArr((prev) =>
       prev.includes(keyword)
@@ -101,23 +168,21 @@ export default function ContentMap() {
   useMemo(() => {
     console.log("데이터 로딩:", data);
     if (data) {
-      const fetchedNodes = data.contentData.map((item: any) => ({
-        id: `${item.id}`,
-        type: "custom",
-        data: {
-          id: item.id,
-          title: item.title,
-          date: item.created_at,
-          subtitle: item.subtitle || "",
-          content: item.content,
-          lock: false, // 로그인 로직 제거로 항상 false
-          fixed: Boolean(item.fixed),
-          slug: item.slug || "",
-          keywords: item.keyword || "",
-          view: item.view || 0,
-        },
-        position: { x: item.position_x, y: item.position_y },
-      }));
+      // API에서 이미 올바른 형식으로 반환되므로, position만 수정
+      const fetchedNodes = data.contentData.map((item: any) => {
+        // position 형식 통일
+        let position;
+        if (item.position) {
+          position = { x: item.position.x, y: item.position.y };
+        } else {
+          position = { x: item.position_x || 100, y: item.position_y || 100 };
+        }
+
+        return {
+          ...item,
+          position,
+        };
+      });
 
       const fetchedEdge = data.edgeData.map((item: any) => ({
         id: `${item.id}`,
@@ -134,70 +199,81 @@ export default function ContentMap() {
   }, [data]);
 
   const onNodesChange = useCallback(
-    (changes: NodeChange[]) =>
-      setNodes((nds) => applyNodeChanges(changes, nds)),
-    [],
+    (changes: NodeChange[]) => {
+      setNodes((nds) => {
+        const updatedNodes = applyNodeChanges(changes, nds);
+        // 노드 변경이 있을 때마다 위치 저장
+        saveNodePositionsFn.current(updatedNodes);
+        return updatedNodes;
+      });
+    },
+    []
   );
 
   const onEdgesChange = useCallback(
-    (changes: EdgeChange[]) =>
-      setEdges((eds) => applyEdgeChanges(changes, eds)),
-    [],
+    (changes: EdgeChange[]) => {
+      setEdges((eds) => {
+        const updatedEdges = applyEdgeChanges(changes, eds);
+        // 엣지 변경이 있을 때마다 저장
+        saveEdgesFn.current(updatedEdges);
+        return updatedEdges;
+      });
+    },
+    []
   );
 
   const onConnect = useCallback(
-    (connection: Connection) => setEdges((eds) => addEdge(connection, eds)),
-    [],
+    (connection: Connection) => {
+      setEdges((eds) => {
+        const updatedEdges = addEdge(connection, eds);
+        saveEdgesFn.current(updatedEdges);
+        return updatedEdges;
+      });
+    },
+    []
   );
 
   if (isLoading) return <Loading />;
 
   return (
-    <main style={{ height: "100vh", width: "100%" }}>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        nodeTypes={nodeTypes}
-        elementsSelectable={true}
-        nodesDraggable={true}
-        nodesConnectable={true}
-        zoomOnScroll={true}
-        panOnDrag={true}
-        panOnScroll={true}
-        zoomOnDoubleClick={false}
-        fitView
-        style={{ background: "#f0f0f0" }}
-      />
+    <ReactFlowProvider>
+      <main className="dark" style={{ height: "94vh", width: "100%" }}>
+        <ReactFlow
+          className="dark"
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          nodeTypes={nodeTypes}
+          elementsSelectable={true}
+          nodesDraggable={true}
+          nodesConnectable={true}
+          zoomOnScroll={true}
+          panOnDrag={true}
+          panOnScroll={false}
+          zoomOnDoubleClick={false}
+          minZoom={0.1}
+          maxZoom={4}
+          fitView
+        />
 
-      <div
-        style={{
-          position: "fixed",
-          bottom: "20px",
-          right: "20px",
-          zIndex: 1000,
-        }}
-      >
-        <Link
-          to="/content/write"
+        {/* 새 컨텐츠 추가 버튼 */}
+        <div
           style={{
-            background: "#007bff",
-            color: "white",
-            padding: "12px",
-            borderRadius: "50%",
-            textDecoration: "none",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: "48px",
-            height: "48px",
+            position: "fixed",
+            bottom: "20px",
+            right: "20px",
+            zIndex: 1000,
           }}
         >
-          +
-        </Link>
-      </div>
-    </main>
+          <Link
+            to="/content/write"
+          >
+            <i className="icon-pencil-alt"></i>
+          </Link>
+        </div>
+      </main>
+    </ReactFlowProvider>
   );
 }

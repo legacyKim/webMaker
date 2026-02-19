@@ -20,6 +20,10 @@ $dark-border-line-light: hsl(25, 15%, 50%);
 $dark-box-bg: hsl(250, 21%, 11%);
 $dark-box2-bg: hsl(246, 15%, 15%);
 
+.CodeMirror-cursors {
+  position: absolute !important;
+}
+
 .editor-preview {
   background-color: $dark-background-color;
 }
@@ -199,15 +203,17 @@ $dark-box2-bg: hsl(246, 15%, 15%);
 
 .editor-toolbar {
   position: fixed !important;
-  top: 69%;
+  top: 50%;
   transform: translateY(-50%);
-  right: 100px;
+  right: 2%;
   display: flex;
   flex-direction: column;
   align-items: center;
   border-radius: 4px;
   border: 1px solid #ced4da;
   transition: all 0.3s ease-in-out;
+
+  padding: 8px;
 
   i.separator {
     width: 10px;
@@ -220,7 +226,7 @@ $dark-box2-bg: hsl(246, 15%, 15%);
 
   button {
     border: none;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
     color: #fff;
 
     i {

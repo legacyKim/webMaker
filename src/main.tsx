@@ -7,7 +7,6 @@ import App from "./App.tsx";
 import "./styles/base.css";
 import "./styles/style.css";
 import "./styles/style.scss";
-import "./styles/simpleMDE.custom.scss";
 import "./styles/fontello/css/fontello.css";
 import "./styles/fontello/css/animation.css";
 

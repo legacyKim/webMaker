@@ -1,25 +1,19 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
 
 import "easymde/dist/easymde.min.css";
-import type SimpleMDEEditor from 'easymde';
 
 import '../../css/simpleMDE.custom.scss';
 
-import PasswordCheckModal from "../../component/Password"
-
-import { MemoizedEditor } from "../utils/simpleMDE"
-import { createSlug } from "../utils/slug"
+const sanitizeTitle = (value: string) =>
+    value.replace(/[^0-9A-Za-z\uac00-\ud7a3\s]/g, "");
 
 export default function Write() {
 
     const router = useRouter();
 
     const titleRef = useRef<HTMLInputElement | null>(null);
-    const subtitleRef = useRef<HTMLInputElement | null>(null);
-    const contentRef = useRef<SimpleMDEEditor | null>(null);
     const keywordRef = useRef<HTMLInputElement | null>(null);
 
     const initialContent = "";
@@ -29,14 +23,12 @@ export default function Write() {
     const handleSubmit = async () => {
 
         const title = titleRef.current?.value || "";
-        const subtitle = subtitleRef.current?.value || "";
         const content = contentRef.current?.value() || "";
         const keywords = keywordRef.current?.value || "";
         const slug = createSlug(title);
 
         const dataToSend = {
             title,
-            subtitle,
             content,
             keywords,
             slug,
@@ -90,17 +82,13 @@ export default function Write() {
                         name="title"
                         ref={titleRef}
                         placeholder="Title"
+                        onChange={(e) => {
+                            const sanitized = sanitizeTitle(e.target.value);
+                            e.currentTarget.value = sanitized;
+                        }}
                     />
                 </div>
-                <div className="content_line">
-                    <input
-                        className="write_subtitle"
-                        type="text"
-                        name="subtitle"
-                        ref={subtitleRef}
-                        placeholder="Subtitle"
-                    />
-                </div>
+              
                 <div className="simpleMDE_wrap">
                     <MemoizedEditor initialContent={initialContent} contentRef={contentRef} />
                 </div>

@@ -1,27 +1,30 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
-import ReactMarkdown from "react-markdown";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
-import remarkGfm from "remark-gfm";
+import { useState, useEffect, useRef } from "react";
+import { useParams, Link } from "react-router-dom";
 
 interface PostData {
-  id: string;
   title: string;
   subtitle?: string;
   content: string;
   keywords?: string;
   slug: string;
   created_at: string;
-  view: number;
+  updated_at?: string;
+  isFileNode?: boolean;
 }
 
 export default function ContentView() {
   const { slug } = useParams<{ slug: string }>();
-  const navigate = useNavigate();
+  const contentRef = useRef<HTMLDivElement>(null);
+  const editorContainerRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLInputElement>(null);
+  const keywordsRef = useRef<HTMLDivElement>(null);
+
   const [post, setPost] = useState<PostData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | "">("");
+  const [isEditing, setIsEditing] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isEditorFocused, setIsEditorFocused] = useState(false);
 
   useEffect(() => {
     if (!slug) {
@@ -30,77 +33,27 @@ export default function ContentView() {
       return;
     }
 
-    // 포스트 데이터 로드
     const loadPost = async () => {
       try {
-        // 파일 노드인지 확인 (file-로 시작하는 slug)
         if (slug.startsWith("file-")) {
-          // 파일 노드인 경우 서버에서 파일 내용을 가져옴
           const fileName = slug.replace("file-", "") + ".txt";
+          const response = await fetch(`/api/txt-file/${fileName}`);
+          const result = await response.json();
 
-          try {
-            const response = await fetch(`/api/txt-file/${fileName}`);
-            const result = await response.json();
-
-            if (response.ok) {
-              const fileData = JSON.parse(result.content);
-              setPost({
-                id: slug,
-                title: fileData.title || fileName.replace(".txt", ""),
-                subtitle: fileData.subtitle || "",
-                content: fileData.content || "내용을 불러올 수 없습니다.",
-                keywords: fileData.keywords || "",
-                slug: slug,
-                created_at: fileData.created_at || new Date().toISOString(),
-                view: 0, // 파일 노드는 조회수 추적 안함
-              });
-            } else {
-              throw new Error("파일을 찾을 수 없습니다.");
-            }
-          } catch (fileError) {
-            console.error("파일 로드 오류:", fileError);
-            setError("파일을 불러오는 중 오류가 발생했습니다.");
-          }
-        } else {
-          // 기존 localStorage 로직
-          const savedPosts = JSON.parse(localStorage.getItem("posts") || "[]");
-          const foundPost = savedPosts.find((p: PostData) => p.slug === slug);
-
-          if (foundPost) {
-            setPost(foundPost);
-            // 조회수 증가
-            foundPost.view = (foundPost.view || 0) + 1;
-            localStorage.setItem("posts", JSON.stringify(savedPosts));
-          } else {
-            // 샘플 데이터 반환
+          if (response.ok) {
+            const fileData = JSON.parse(result.content);
             setPost({
-              id: "sample",
-              title: "샘플 포스트",
-              subtitle: "이것은 샘플 포스트입니다",
-              content: `# 샘플 포스트
-
-이것은 **마크다운**으로 작성된 샘플 포스트입니다.
-
-## 주요 기능
-
-- 마크다운 렌더링
-- 코드 신택스 하이라이팅
-- 이미지 및 링크 지원
-
-\`\`\`javascript
-function hello() {
-  console.log("Hello, World!");
-}
-\`\`\`
-
-> 이것은 인용구입니다.
-
-**포스트가 없으면 이 샘플이 보입니다.**`,
-              keywords: "샘플,마크다운,테스트",
+              title: fileData.title || fileName.replace(".txt", ""),
+              subtitle: fileData.subtitle || "",
+              content: fileData.content || "내용을 불러올 수 없습니다.",
+              keywords: fileData.keywords || "",
               slug: slug,
-              created_at: new Date().toISOString(),
-              view: 1,
+              created_at: fileData.created_at || new Date().toISOString(),
+              updated_at: fileData.updated_at || new Date().toISOString(),
+              isFileNode: true,
             });
+          } else {
+            throw new Error("파일을 찾을 수 없습니다.");
           }
         }
       } catch (err) {
@@ -113,20 +66,79 @@ function hello() {
     loadPost();
   }, [slug]);
 
-  const handleEdit = () => {
-    // Write 페이지로 이동하면서 현재 포스트 데이터 전달
-    navigate(`/write?edit=${slug}`);
+  const handleCancel = () => {
+    setIsEditing(false);
+    // 원본 데이터로 복원 (페이지 새로고침으로 처리)
+    window.location.reload();
   };
 
-  const handleDelete = () => {
-    if (!confirm("정말로 이 포스트를 삭제하시겠습니까?")) return;
+  const applyFormat = (command: string, value?: string) => {
+    contentRef.current?.focus();
+    document.execCommand(command, false, value);
+    contentRef.current?.focus();
+  };
 
-    const savedPosts = JSON.parse(localStorage.getItem("posts") || "[]");
-    const filteredPosts = savedPosts.filter((p: PostData) => p.slug !== slug);
-    localStorage.setItem("posts", JSON.stringify(filteredPosts));
+  const handleSave = async () => {
+    if (!post) return;
 
-    alert("포스트가 삭제되었습니다.");
-    navigate("/content");
+    const title = titleRef.current?.value.trim() || "";
+    const content = contentRef.current?.innerHTML || "";
+    const keywords = keywordsRef.current?.innerHTML.trim() || post.keywords || "";
+
+    if (!title) {
+      alert("제목을 입력해주세요!");
+      return;
+    }
+
+    if (!content.trim()) {
+      alert("내용을 입력해주세요!");
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const fileName = post.slug.replace("file-", "") + ".txt";
+      const response = await fetch("/api/save-txt", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title,
+          content,
+          keywords,
+          originalFileName: fileName,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert("파일이 성공적으로 저장되었습니다!");
+        // 저장 후 데이터 새로고침
+        const updated = await fetch(`/api/txt-file/${fileName}`);
+        const updatedResult = await updated.json();
+        if (updated.ok) {
+          const fileData = JSON.parse(updatedResult.content);
+          setPost({
+            ...post,
+            title: fileData.title,
+            subtitle: fileData.subtitle || "",
+            content: fileData.content,
+            keywords: fileData.keywords || "",
+            updated_at: new Date().toISOString(),
+          });
+        }
+        setIsEditing(false);
+      } else {
+        alert("저장 중 오류가 발생했습니다: " + result.error);
+      }
+    } catch (error) {
+      console.error("저장 오류:", error);
+      alert("저장 중 오류가 발생했습니다.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const getRelativeDate = (dateString: string) => {
@@ -174,24 +186,25 @@ function hello() {
   return (
     <div className="view_content">
       <div className="view_content_header">
-        <div className="view_content_title">
-          <h1>{post.title}</h1>
-          {post.subtitle && <h2>{post.subtitle}</h2>}
-        </div>
-
-        <div className="view_actions">
-          <button onClick={handleEdit}>
-            <i className="icon-edit-alt"></i>
-            편집
-          </button>
-
-          <button onClick={handleDelete} className="delete-btn">
-            <i className="icon-trash"></i>
-            삭제
-          </button>
-        </div>
+        <input
+          ref={titleRef}
+          type="text"
+          className="view_content_title"
+          defaultValue={post.title}
+          placeholder="제목"
+        />
+      
       </div>
 
+      <div className="view_actions">
+        <Link to="/content" className="back-link">
+          <i className="icon-list-bullet"></i>
+        </Link>
+        <button onClick={handleSave} disabled={isSaving}>
+          <i className="icon-edit-alt"></i>
+        </button>
+      </div>
+      
       <div className="content_line">
         <div className="view_content_sub">
           <div className="view_info">
@@ -199,58 +212,89 @@ function hello() {
               <i className="icon-clock-1"></i>
               <span>{getRelativeDate(post.created_at)}</span>
             </div>
-
-            <div className="view_info_box">
-              <i className="icon-eye"></i>
-              <span>{post.view}회</span>
-            </div>
-
-            {post.keywords && (
-              <div className="view_keywords">
-                {post.keywords.split(",").map((keyword, index) => (
-                  <button key={index} className="keyword-tag">
-                    {keyword.trim()}
-                  </button>
-                ))}
-              </div>
-            )}
           </div>
         </div>
       </div>
-
-      <div className="simpoeMDE_custom">
-        <ReactMarkdown
-          remarkPlugins={[remarkGfm]}
-          components={{
-            code({ node, inline, className, children, ...props }) {
-              const match = /language-(\w+)/.exec(className || "");
-              return !inline && match ? (
-                <SyntaxHighlighter
-                  style={atomDark}
-                  language={match[1]}
-                  PreTag="div"
-                  {...props}
-                >
-                  {String(children).replace(/\n$/, "")}
-                </SyntaxHighlighter>
-              ) : (
-                <code className={className} {...props}>
-                  {children}
-                </code>
-              );
-            },
-          }}
+  
+      {isEditing && isEditorFocused && (
+        <div
+          className="editor_toolbar"
+          onMouseDown={(event) => event.preventDefault()}
         >
-          {post.content}
-        </ReactMarkdown>
+        <button type="button" onClick={() => applyFormat("bold")} title="Bold (Ctrl+B)">
+          <i className="icon-bold"></i>
+        </button>
+        <button type="button" onClick={() => applyFormat("italic")} title="Italic (Ctrl+I)">
+          <i className="icon-italic"></i>
+        </button>
+        <button type="button" onClick={() => applyFormat("underline")} title="Underline (Ctrl+U)">
+          <i className="icon-underline"></i>
+        </button>
+        <span className="toolbar_separator"></span>
+
+        <button type="button" onClick={() => applyFormat("createLink", prompt("URL을 입력하세요:") || "")} title="Link">
+          <i className="icon-link"></i>
+        </button>
+      
+        <span className="toolbar_separator"></span>
+
+        <button type="button" onClick={() => applyFormat("formatBlock", "<h1>")} title="Heading 1">
+          H1
+        </button>
+        <button type="button" onClick={() => applyFormat("formatBlock", "<h2>")} title="Heading 2">
+          H2
+        </button>
+        <button type="button" onClick={() => applyFormat("formatBlock", "<h3>")} title="Heading 3">
+          H3
+        </button>
+        <span className="toolbar_separator"></span>
+
+        <button type="button" onClick={() => applyFormat("insertUnorderedList")} title="Bullet List">
+          <i className="icon-list-bullet"></i>
+        </button>
+        <button type="button" onClick={() => applyFormat("insertOrderedList")} title="Numbered List">
+          <i className="icon-list-bullet"></i>
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            document.execCommand("formatBlock", false, "<blockquote>");
+            contentRef.current?.focus();
+          }}
+          title="Quote"
+        >
+          <i className="icon-quote-left"></i>
+        </button>
+      </div>
+      )}
+
+      <div
+        className="html_editor_container"
+        ref={editorContainerRef}
+        onFocusCapture={() => setIsEditorFocused(true)}
+        onBlurCapture={(event) => {
+          const nextTarget = event.relatedTarget as Node | null;
+          if (nextTarget && editorContainerRef.current?.contains(nextTarget)) {
+            return;
+          }
+          setIsEditorFocused(false);
+        }}
+      >
+        <div
+          ref={contentRef}
+          contentEditable="true"
+          className="html_editor"
+          dangerouslySetInnerHTML={{ __html: post.content || "" }}
+        />
       </div>
 
-      <div className="view_footer">
-        <Link to="/content" className="back-link">
-          <i className="icon-back"></i>
-          목록으로 돌아가기
-        </Link>
-      </div>
+      <div
+        ref={keywordsRef}
+        className="view_keywords"
+        contentEditable="true"
+        dangerouslySetInnerHTML={{ __html: post.keywords || "" }}
+      />
+
     </div>
   );
 }

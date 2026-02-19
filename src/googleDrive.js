@@ -16,7 +16,40 @@ const CREDENTIALS_PATH = path.join(__dirname, "credentials.json");
 // 간단한 인증
 function authorize() {
   if (!fs.existsSync(CREDENTIALS_PATH)) {
-    throw new Error("credentials.json 파일이 필요합니다.");
+    const guide = `
+╔════════════════════════════════════════════════════════════════╗
+║          credentials.json 파일이 없습니다                      ║
+╚════════════════════════════════════════════════════════════════╝
+
+📚 Google Drive 기능을 사용하려면:
+
+1️⃣  Google Cloud Console 접속
+   👉 https://console.cloud.google.com/
+
+2️⃣  새 프로젝트 생성 또는 기존 프로젝트 선택
+
+3️⃣  Google Drive API 활성화
+   - "API 및 서비스" > "라이브러리" 클릭
+   - "Google Drive API" 검색 후 활성화
+
+4️⃣  OAuth 2.0 클라이언트 생성
+   - "사용자 인증 정보" > "사용자 인증 정보 만들기" 클릭
+   - "OAuth 클라이언트 ID" 선택
+   - 애플리케이션 유형: "데스크톱 애플리케이션"
+   - 생성 후 JSON 파일 다운로드
+
+5️⃣  파일 저장
+   - 다운로드한 파일을 다음 경로에 저장:
+   📁 ${CREDENTIALS_PATH}
+
+6️⃣  구글 드라이브 폴더 생성
+   - My Drive에서 "task" 폴더 생성
+
+📖 더 자세한 가이드: GOOGLE_DRIVE_SETUP.md 참고
+    `;
+    
+    console.error(guide);
+    throw new Error("credentials.json 파일이 필요합니다. 콘솔의 가이드를 참고하세요.");
   }
 
   const credentials = JSON.parse(fs.readFileSync(CREDENTIALS_PATH, "utf8"));
@@ -221,26 +254,43 @@ async function getFilesFromFolder(folderName) {
 
 // 특정 파일 다운로드
 async function downloadFile(fileId, fileName, localPath) {
-  const auth = authorize();
-  const drive = google.drive({ version: "v3", auth });
-
   try {
-    const res = await drive.files.get({
-      fileId: fileId,
-      alt: "media",
-    });
+    const auth = authorize();
+    const drive = google.drive({ version: "v3", auth });
+
+    // google drive api로 파일 다운로드
+    const response = await drive.files.get(
+      {
+        fileId: fileId,
+        alt: "media",
+      },
+      { responseType: "stream" }
+    );
 
     const dest = fs.createWriteStream(localPath);
-    res.data.pipe(dest);
+    response.data.pipe(dest);
 
     return new Promise((resolve, reject) => {
       dest.on("error", reject);
       dest.on("finish", () => {
-        resolve({ fileName, localPath, size: res.headers["content-length"] });
+        resolve({ fileName, localPath });
       });
     });
   } catch (error) {
     throw new Error(`파일 다운로드 실패: ${error.message}`);
+  }
+}
+
+// 인증 상태 확인
+function isAuthenticated() {
+  try {
+    if (!fs.existsSync(CREDENTIALS_PATH)) {
+      return false;
+    }
+    const credentials = JSON.parse(fs.readFileSync(CREDENTIALS_PATH, "utf8"));
+    return credentials.refresh_token ? true : false;
+  } catch (error) {
+    return false;
   }
 }
 
@@ -250,4 +300,5 @@ export {
   uploadFileToFolder,
   getFilesFromFolder,
   downloadFile,
+  isAuthenticated,
 };

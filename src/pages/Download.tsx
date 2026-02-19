@@ -14,6 +14,7 @@ export default function Download() {
   const [loading, setLoading] = useState(false);
   const [driveLoading, setDriveLoading] = useState(false);
   const [uploadLoading, setUploadLoading] = useState<string | null>(null);
+  const [downloadLoading, setDownloadLoading] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"local" | "drive">("local");
 
   // 저장된 txt 파일 목록 불러오기
@@ -45,7 +46,7 @@ export default function Download() {
   const loadDriveFiles = useCallback(async () => {
     setDriveLoading(true);
     try {
-      const response = await fetch("/api/drive/webMaker/files");
+      const response = await fetch("/api/drive/task/files");
       const result = await response.json();
       setDriveFiles(result.files || []);
     } catch (error) {
@@ -78,7 +79,7 @@ export default function Download() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          folderName: "webMaker", // 구글 드라이브 폴더명
+          folderName: "task", // 구글 드라이브 폴더명
         }),
       });
 
@@ -105,38 +106,41 @@ export default function Download() {
     }
   }, []);
 
-  // 로컬 다운로드
-  const downloadFile = useCallback(async (fileName: string) => {
+  // 구글 드라이브에서 다운로드
+  const downloadFromGoogleDrive = useCallback(async (fileId: string, fileName: string) => {
+    setDownloadLoading(fileId);
     try {
-      const response = await fetch(`/api/txt-file/${fileName}`);
+      const response = await fetch(`/api/drive/task/download/${fileId}?fileName=${encodeURIComponent(fileName)}`, {
+        method: "GET",
+      });
+
+      if (!response.ok) {
+        throw new Error("다운로드 실패");
+      }
+
       const result = await response.json();
 
-      if (response.ok) {
-        const blob = new Blob([result.content], {
-          type: "text/plain;charset=utf-8",
-        });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-
-        a.href = url;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+      if (result.success) {
+        alert(
+          `${fileName} 파일이 성공적으로 다운로드되었습니다!\n로컬 task 폴더에 저장되었습니다.`,
+        );
+        // 다운로드 완료 후 로컬 파일 목록 새로고침
+        loadTxtFiles();
       } else {
         alert("다운로드 중 오류가 발생했습니다: " + result.error);
       }
     } catch (error) {
-      console.error("다운로드 오류:", error);
-      alert("다운로드 중 오류가 발생했습니다.");
+      console.error("구글 드라이브 다운로드 오류:", error);
+      alert("다운로드에 실패했습니다.");
+    } finally {
+      setDownloadLoading(null);
     }
-  }, []);
+  }, [loadTxtFiles]);
 
   return (
     <div className="download">
       <div className="download-header">
-        <h2>파일 관리</h2>
+        <h2></h2>
         <div className="header-actions">
           <div className="tabs">
             <button
@@ -152,16 +156,6 @@ export default function Download() {
               구글 드라이브
             </button>
           </div>
-
-          {activeTab === "local" ? (
-            <button onClick={loadTxtFiles} disabled={loading}>
-              {loading ? "불러오는 중..." : "새로고침"}
-            </button>
-          ) : (
-            <button onClick={loadDriveFiles} disabled={driveLoading}>
-              {driveLoading ? "불러오는 중..." : "드라이브 새로고침"}
-            </button>
-          )}
         </div>
       </div>
 
@@ -188,36 +182,20 @@ export default function Download() {
                     <tr key={`${file.name}-${index}`}>
                       <td>
                         <strong>{file.title || "제목 없음"}</strong>
-                        <br />
-                        <small style={{ color: "#666" }}>
-                          {file.name || "파일명 없음"}
-                        </small>
                       </td>
                       <td>{new Date(file.updated_at).toLocaleString()}</td>
                       <td>{Math.round((file.size || 0) / 1024)}KB</td>
                       <td>
                         <div className="file-actions">
-                          <button
-                            onClick={() => downloadFile(file.name || "")}
-                            title="로컬에 다운로드"
-                            disabled={!file.name}
-                          >
-                            📥 다운로드
-                          </button>
 
                           <button
                             onClick={() => uploadToGoogleDrive(file.name || "")}
                             disabled={uploadLoading === file.name || !file.name}
-                            title="구글 드라이브에 업로드"
-                            style={{
-                              backgroundColor: "#4285f4",
-                              color: "white",
-                            }}
+                            
                           >
-                            ☁️{" "}
                             {uploadLoading === file.name
-                              ? "업로드 중..."
-                              : "구글 업로드"}
+                              ? <i className="icon-upload" title="업로드 중..."></i>
+                              : <i className="icon-upload" title="구글 업로드"></i>}
                           </button>
                         </div>
                       </td>
@@ -255,12 +233,24 @@ export default function Download() {
                     <td>{new Date(file.modifiedTime).toLocaleString()}</td>
                     <td>
                       <div className="file-actions">
+                        <button
+                          onClick={() => downloadFromGoogleDrive(file.id, file.name)}
+                          disabled={downloadLoading === file.id}
+                          title="로컬 task 폴더에 다운로드"
+                        >
+                          {downloadLoading === file.id
+                            ?
+                              <i className="icon-download" title="다운로드 중..."></i>
+                            : 
+                              <i className="icon-download" title="로컬 task 폴더에 다운로드"></i>
+                            }
+                        </button>
                         <a
                           href={`https://drive.google.com/file/d/${file.id}/view`}
                           target="_blank"
                           rel="noopener noreferrer"
                         >
-                          <button>👁️ 드라이브에서 보기</button>
+                          <i className="icon-link" title="구글 드라이브에서 보기"></i>
                         </a>
                       </div>
                     </td>
@@ -276,16 +266,13 @@ export default function Download() {
         .download {
           max-width: 1200px;
           margin: 20px auto;
-          padding: 20px;
+          padding: 12px;
         }
 
         .download-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 30px;
-          padding-bottom: 20px;
-          border-bottom: 2px solid #eee;
         }
 
         .download-header h2 {
@@ -296,12 +283,12 @@ export default function Download() {
         .header-actions {
           display: flex;
           align-items: center;
-          gap: 20px;
+          gap: 8px;
         }
 
         .tabs {
           display: flex;
-          gap: 10px;
+          gap: 8px;
         }
 
         .tabs button {
@@ -340,37 +327,36 @@ export default function Download() {
         .loading {
           text-align: center;
           padding: 40px;
-          font-size: 18px;
+          font-size: 16px;
           color: #666;
         }
 
         .file-table {
           width: 100%;
           border-collapse: collapse;
-          margin-top: 20px;
-          background: white;
+          margin-top: 8px;
           box-shadow: 0 2px 10px rgba(0,0,0,0.1);
           border-radius: 8px;
           overflow: hidden;
+          color: #fff;
         }
 
         .file-table th {
-          background: #f8f9fa;
           padding: 15px;
           text-align: left;
           font-weight: 600;
-          color: #333;
-          border-bottom: 2px solid #dee2e6;
+          color: #fff;
+          border-bottom: 1px solid #494949;
         }
 
         .file-table td {
           padding: 15px;
-          border-bottom: 1px solid #dee2e6;
+          border-bottom: 1px solid #494949;
           vertical-align: top;
         }
 
         .file-table tr:hover {
-          background-color: #f8f9fa;
+        background-color: rgba(255, 255, 255, 0.1);
         }
 
         .file-actions {
@@ -380,7 +366,6 @@ export default function Download() {
         }
 
         .file-actions button {
-          padding: 6px 12px;
           border: none;
           border-radius: 4px;
           cursor: pointer;
@@ -388,8 +373,7 @@ export default function Download() {
           transition: all 0.2s;
         }
 
-        .file-actions button:first-child {
-          background: #28a745;
+        .file-actions button:first-child, .file-actions a i {
           color: white;
         }
 
@@ -398,11 +382,11 @@ export default function Download() {
           color: white;
         }
 
-        .file-actions button:hover {
+        .file-actions button:hover, .file-actions a:hover {
           opacity: 0.8;
         }
 
-        .file-actions button:disabled {
+        .file-actions button:disabled, .file-actions a:disabled {
           background: #ccc;
           cursor: not-allowed;
         }

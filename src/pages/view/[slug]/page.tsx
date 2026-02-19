@@ -10,7 +10,6 @@ type ContentData = {
     id: number;
     data: {
         title: string;
-        subtitle: string;
         date: string;
         content: string;
     };
@@ -39,7 +38,6 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
         const contentData = await fetchContentData(slug);
         return {
             title: contentData.data.title,
-            description: contentData.data.subtitle,
             keywords: contentData.keywords,
         };
     } catch (error) {
@@ -65,9 +63,6 @@ export default async function ViewContent({ params }: { params: PageParams }) {
                 </div>
                 <div className="content_line">
                     <div className="view_content_sub">
-                        <p className="view_content_subtitle">
-                            {contentData.data.subtitle}
-                        </p>
 
                         <div className="view_info">
                             <div className="view_info_box">

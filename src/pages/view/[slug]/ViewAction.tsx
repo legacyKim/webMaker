@@ -9,7 +9,6 @@ type ContentData = {
     id: number;
     data: {
         title: string;
-        subtitle: string;
         date: string;
         content: string;
     };

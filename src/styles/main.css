@@ -69,11 +69,6 @@ main {
   margin-bottom: 0.5rem;
 }
 
-.content_factor_subtitle p {
-  font-size: 12px;
-  color: #666;
-}
-
 .sec_box {
   display: flex;
   gap: 1rem;
@@ -88,7 +83,7 @@ main {
   justify-content: center;
   align-items: center;
   height: 50vh;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 /* Modal */
