@@ -1122,7 +1122,7 @@ nav a {
     padding: 48px 0px 16px;
 
     .view_content_title {
-      @include font_tit;
+      @include font_tit_2;
       margin-bottom: 4px;
       background-color: transparent;
       color: #fff;
@@ -1228,6 +1228,11 @@ nav a {
   padding: 8px 16px;
   border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: 4px;
+  outline: none;
+ 
+  &:focus {
+    border: 1px solid #d2513c;
+  }
 
   button {
 
