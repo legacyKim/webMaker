@@ -1141,6 +1141,8 @@ nav a {
 
     .view_content_sub {
       @include page;
+      max-width: 954px;
+      padding: 0;
       @include flex-sb;
       margin-bottom: 12px;
 

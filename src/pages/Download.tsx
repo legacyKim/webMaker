@@ -301,9 +301,9 @@ export default function Download() {
         }
 
         .tabs button.active {
-          background: #007bff;
+          background: #d2513c;
           color: white;
-          border-color: #007bff;
+          border-color: #d2513c;
         }
 
         .tabs button:hover:not(.active) {

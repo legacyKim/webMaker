@@ -143,13 +143,13 @@ export default function ContentView() {
 
   const getRelativeDate = (dateString: string) => {
     const inputDate = new Date(dateString);
-    const currentDate = new Date();
-    const diffTime = currentDate.getTime() - inputDate.getTime();
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffDays === 0) return "오늘";
-    if (diffDays === 1) return "어제";
-    return `${diffDays}일 전`;
+    const year = inputDate.getFullYear();
+    const month = String(inputDate.getMonth() + 1).padStart(2, "0");
+    const day = String(inputDate.getDate()).padStart(2, "0");
+    const hours = String(inputDate.getHours()).padStart(2, "0");
+    const minutes = String(inputDate.getMinutes()).padStart(2, "0");
+    
+    return `${year}년 ${month}월 ${day}일 ${hours}:${minutes}`;
   };
 
   if (isLoading) {

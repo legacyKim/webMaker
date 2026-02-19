@@ -94,7 +94,11 @@ export default function Write() {
       if (result.success) {
         const action = editSlug ? "수정" : "저장";
         alert(`파일이 성공적으로 ${action}되었습니다!\n파일명: ${result.fileName}`);
-        navigate("/content/download");
+        
+        // 저장된 파일로 이동
+        const fileName = result.fileName.replace(".txt", "");
+        const slug = `file-${encodeURIComponent(fileName)}`;
+        navigate(`/content/view/${slug}`);
       } else {
         alert("저장 중 오류가 발생했습니다: " + result.error);
       }
