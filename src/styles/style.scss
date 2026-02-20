@@ -1043,6 +1043,7 @@ nav a {
     @include flex-sb;
     padding: 16px;
     border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 4px;
 
     .write_meta_item {
       @include flex-start();
