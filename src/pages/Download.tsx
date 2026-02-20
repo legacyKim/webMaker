@@ -46,7 +46,7 @@ export default function Download() {
   const loadDriveFiles = useCallback(async () => {
     setDriveLoading(true);
     try {
-      const response = await fetch("/api/drive/task/files");
+      const response = await fetch("/api/drive/legecy/files");
       const result = await response.json();
       setDriveFiles(result.files || []);
     } catch (error) {
@@ -79,7 +79,7 @@ export default function Download() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          folderName: "task", // 구글 드라이브 폴더명
+          folderName: "legecy", // 구글 드라이브 폴더명
         }),
       });
 
@@ -110,7 +110,7 @@ export default function Download() {
   const downloadFromGoogleDrive = useCallback(async (fileId: string, fileName: string) => {
     setDownloadLoading(fileId);
     try {
-      const response = await fetch(`/api/drive/task/download/${fileId}?fileName=${encodeURIComponent(fileName)}`, {
+      const response = await fetch(`/api/drive/legecy/download/${fileId}?fileName=${encodeURIComponent(fileName)}`, {
         method: "GET",
       });
 
@@ -122,7 +122,7 @@ export default function Download() {
 
       if (result.success) {
         alert(
-          `${fileName} 파일이 성공적으로 다운로드되었습니다!\n로컬 task 폴더에 저장되었습니다.`,
+          `${fileName} 파일이 성공적으로 다운로드되었습니다!\n로컬 legecy 폴더에 저장되었습니다.`,
         );
         // 다운로드 완료 후 로컬 파일 목록 새로고침
         loadTxtFiles();
@@ -236,13 +236,13 @@ export default function Download() {
                         <button
                           onClick={() => downloadFromGoogleDrive(file.id, file.name)}
                           disabled={downloadLoading === file.id}
-                          title="로컬 task 폴더에 다운로드"
+                          title="로컬 legecy 폴더에 다운로드"
                         >
                           {downloadLoading === file.id
                             ?
                               <i className="icon-download" title="다운로드 중..."></i>
                             : 
-                              <i className="icon-download" title="로컬 task 폴더에 다운로드"></i>
+                              <i className="icon-download" title="로컬 legecy 폴더에 다운로드"></i>
                             }
                         </button>
                         <a

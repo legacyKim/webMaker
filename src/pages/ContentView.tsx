@@ -114,7 +114,6 @@ export default function ContentView() {
       const result = await response.json();
 
       if (result.success) {
-        alert("파일이 성공적으로 저장되었습니다!");
         // 저장 후 데이터 새로고침
         const updated = await fetch(`/api/txt-file/${fileName}`);
         const updatedResult = await updated.json();

@@ -43,7 +43,7 @@ function authorize() {
    📁 ${CREDENTIALS_PATH}
 
 6️⃣  구글 드라이브 폴더 생성
-   - My Drive에서 "task" 폴더 생성
+   - My Drive에서 "legecy" 폴더 생성
 
 📖 더 자세한 가이드: GOOGLE_DRIVE_SETUP.md 참고
     `;

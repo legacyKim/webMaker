@@ -46,4 +46,5 @@ next-env.d.ts
 
 src/credentials.json
 server/task
+server/legecy
 server/download

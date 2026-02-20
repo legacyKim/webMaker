@@ -25,7 +25,7 @@ const app = express();
 const PORT = 3003;
 
 // txt 파일들이 저장될 폴더
-const filesFolderPath = path.join(__dirname, "../server/task");
+const filesFolderPath = path.join(__dirname, "../server/legecy");
 const downloadFolderPath = path.join(__dirname, "../server/download");
 
 // files 폴더가 없으면 생성
@@ -166,7 +166,7 @@ app.get("/api/content", async (req, res) => {
     const contentData = await getContentData();
     const edgeData = await getEdgeData();
 
-    // server/task 폴더에서 파일 노드 읽기
+    // server/legecy 폴더에서 파일 노드 읽기
     let fileNodes = [];
     if (fs.existsSync(filesFolderPath)) {
       const files = fs
@@ -589,7 +589,7 @@ app.get("/api/txt-file/:filename", (req, res) => {
 app.post("/api/upload-to-drive/:filename", async (req, res) => {
   try {
     const { filename } = req.params;
-    const { folderName = "task" } = req.body;
+    const { folderName = "legecy" } = req.body;
 
     const filePath = path.join(filesFolderPath, filename);
 
@@ -728,17 +728,17 @@ app.get("/api/drive/:folderName/download/:fileId", async (req, res) => {
       return res.status(400).json({ error: "파일명이 필요합니다." });
     }
 
-    const taskPath = path.join(filesFolderPath, fileName);
-    const hasTaskFile = fs.existsSync(taskPath);
-    const savePath = hasTaskFile
+    const legecyPath = path.join(filesFolderPath, fileName);
+    const haslegecyFile = fs.existsSync(legecyPath);
+    const savePath = haslegecyFile
       ? path.join(downloadFolderPath, fileName)
-      : taskPath;
+      : legecyPath;
 
     // 파일 다운로드 및 저장
     const result = await downloadFile(fileId, fileName, savePath);
 
     if (result) {
-      const targetFolder = hasTaskFile ? "download" : "task";
+      const targetFolder = haslegecyFile ? "download" : "legecy";
       res.json({
         success: true,
         message: `${fileName} 파일이 ${targetFolder} 폴더에 저장되었습니다.`,

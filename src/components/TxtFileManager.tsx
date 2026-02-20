@@ -55,7 +55,7 @@ export default function TxtFileManager() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          folderName: "task", // 구글 드라이브 폴더명
+          folderName: "legecy", // 구글 드라이브 폴더명
         }),
       });
 
