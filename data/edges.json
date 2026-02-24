@@ -18,5 +18,50 @@
     "id": "reactflow__edge-file-글루타메이트 과활성a-file-장기강화b",
     "source": "file-글루타메이트 과활성",
     "target": "file-장기강화"
+  },
+  {
+    "id": "reactflow__edge-file-아데노신 삼인산 ATPa-file-에너지 공급 체계 이해b",
+    "source": "file-아데노신 삼인산 ATP",
+    "target": "file-에너지 공급 체계 이해"
+  },
+  {
+    "id": "reactflow__edge-file-HPA axis 체계a-file-내분비계 체계 이해b",
+    "source": "file-HPA axis 체계",
+    "target": "file-내분비계 체계 이해"
+  },
+  {
+    "id": "reactflow__edge-file-코르티솔의 필요성과 기능a-file-HPA axis 체계b",
+    "source": "file-코르티솔의 필요성과 기능",
+    "target": "file-HPA axis 체계"
+  },
+  {
+    "id": "reactflow__edge-file-HPT Axisa-file-내분비계 체계 이해b",
+    "source": "file-HPT Axis",
+    "target": "file-내분비계 체계 이해"
+  },
+  {
+    "id": "reactflow__edge-file-뉴런 발화 조건 및 신경 역치a-file-신경계의 기본 매커니즘 이해b",
+    "source": "file-뉴런 발화 조건 및 신경 역치",
+    "target": "file-신경계의 기본 매커니즘 이해"
+  },
+  {
+    "id": "reactflow__edge-file-뇌유래신경영양인자a-file-뉴런 발화 조건 및 신경 역치b",
+    "source": "file-뇌유래신경영양인자",
+    "target": "file-뉴런 발화 조건 및 신경 역치"
+  },
+  {
+    "id": "reactflow__edge-file-감각 정보와 인지 활동a-file-감각 자극 변환 체계b",
+    "source": "file-감각 정보와 인지 활동",
+    "target": "file-감각 자극 변환 체계"
+  },
+  {
+    "id": "reactflow__edge-file-신경계의 기본 매커니즘 이해a-file-감각 정보와 인지 활동b",
+    "source": "file-신경계의 기본 매커니즘 이해",
+    "target": "file-감각 정보와 인지 활동"
+  },
+  {
+    "id": "reactflow__edge-file-감각 연계와 인간 보편 성향a-file-감각 자극 변환 체계b",
+    "source": "file-감각 연계와 인간 보편 성향",
+    "target": "file-감각 자극 변환 체계"
   }
 ]
