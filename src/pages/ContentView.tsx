@@ -209,7 +209,7 @@ export default function ContentView() {
           <div className="view_info">
             <div className="view_info_box">
               <i className="icon-clock-1"></i>
-              <span>{getRelativeDate(post.created_at)}</span>
+              <span>{getRelativeDate(post.updated_at ? post.updated_at : post.created_at)}</span>
             </div>
           </div>
         </div>

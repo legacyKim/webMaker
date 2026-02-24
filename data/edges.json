@@ -13,5 +13,10 @@
     "id": "reactflow__edge-file-신경 역치a-file-자폐b",
     "source": "file-신경 역치",
     "target": "file-자폐"
+  },
+  {
+    "id": "reactflow__edge-file-글루타메이트 과활성a-file-장기강화b",
+    "source": "file-글루타메이트 과활성",
+    "target": "file-장기강화"
   }
 ]
