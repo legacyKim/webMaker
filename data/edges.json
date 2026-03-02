@@ -13,5 +13,10 @@
     "id": "reactflow__edge-file-신경 역치a-file-자폐b",
     "source": "file-신경 역치",
     "target": "file-자폐"
+  },
+  {
+    "id": "reactflow__edge-file-뉴런 발화 조건 및 신경 역치a-file-신경계의 기본 매커니즘 이해b",
+    "source": "file-뉴런 발화 조건 및 신경 역치",
+    "target": "file-신경계의 기본 매커니즘 이해"
   }
 ]
