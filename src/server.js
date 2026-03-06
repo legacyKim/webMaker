@@ -66,7 +66,7 @@ fileWatcher.on("add", async (filePath) => {
 
     // 파일 내용 읽기
     let fileContent = fs.readFileSync(filePath, "utf8");
-    
+
     // JSON 파싱 시도
     let fileData;
     try {
@@ -193,6 +193,7 @@ app.get("/api/content", async (req, res) => {
                 fixed: false,
                 slug: `file-${fileNameWithoutExt}`,
                 keywords: fileData.keywords || "",
+                category: fileData.category || "미분류",
                 view: 0,
               },
               position: {
@@ -222,6 +223,7 @@ app.get("/api/content", async (req, res) => {
           fixed: Boolean(item.fixed),
           slug: item.slug || "",
           keywords: item.keyword || "",
+          category: item.category || "미분류",
           view: item.view || 0,
         },
         position: { x: item.position_x, y: item.position_y },
@@ -433,7 +435,7 @@ app.put("/api/edges", async (req, res) => {
 // .txt 파일로 저장하는 API
 app.post("/api/save-txt", async (req, res) => {
   try {
-    const { title, content, keywords, originalFileName } = req.body;
+    const { title, content, keywords, category, originalFileName } = req.body;
 
     if (!title || !content) {
       return res.status(400).json({ error: "제목과 내용은 필수입니다." });
@@ -471,6 +473,7 @@ app.post("/api/save-txt", async (req, res) => {
       {
         title,
         keywords: keywords || "",
+        category: category || "미분류",
         content,
         created_at: created_at || new Date().toISOString(),
         updated_at: new Date().toISOString(),
@@ -482,7 +485,7 @@ app.post("/api/save-txt", async (req, res) => {
     );
 
     fs.writeFileSync(filePath, fileData, "utf8");
-    console.log(`✅ 파일 저장/수정: ${fileName} (${position_x}, ${position_y})`);
+    console.log(`✅ 파일 저장/수정: ${fileName} (${position_x}, ${position_y}) [${category || "미분류"}]`);
 
     res.json({
       success: true,
@@ -610,6 +613,72 @@ app.post("/api/upload-to-drive/:filename", async (req, res) => {
     console.error("구글 드라이브 업로드 오류:", error);
     res.status(500).json({
       error: "구글 드라이브 업로드 중 오류가 발생했습니다.",
+      details: error.message,
+    });
+  }
+});
+
+// 모든 .txt 파일을 구글 드라이브에 업로드
+app.post("/api/upload-to-drive-all", async (req, res) => {
+  try {
+    const { folderName = "legecy" } = req.body;
+
+    if (!fs.existsSync(filesFolderPath)) {
+      return res.status(404).json({ error: "로컬 파일 폴더를 찾을 수 없습니다." });
+    }
+
+    const files = fs
+      .readdirSync(filesFolderPath)
+      .filter((file) => file && typeof file === "string" && file.endsWith(".txt"));
+
+    if (files.length === 0) {
+      return res.json({
+        success: true,
+        message: "업로드할 .txt 파일이 없습니다.",
+        total: 0,
+        uploaded: 0,
+        failed: 0,
+        failedFiles: [],
+      });
+    }
+
+    const uploadedFiles = [];
+    const failedFiles = [];
+
+    // 과도한 동시 요청을 피하기 위해 순차 업로드
+    for (const fileName of files) {
+      try {
+        const filePath = path.join(filesFolderPath, fileName);
+        const result = await uploadFileToFolder(filePath, fileName, folderName);
+        uploadedFiles.push({ fileName, fileId: result.id });
+      } catch (error) {
+        failedFiles.push({
+          fileName,
+          error: error.message || "업로드 실패",
+        });
+      }
+    }
+
+    const uploadedCount = uploadedFiles.length;
+    const failedCount = failedFiles.length;
+
+    res.json({
+      success: failedCount === 0,
+      message:
+        failedCount === 0
+          ? `총 ${uploadedCount}개 파일 업로드 완료`
+          : `총 ${files.length}개 중 ${uploadedCount}개 업로드, ${failedCount}개 실패`,
+      folderName,
+      total: files.length,
+      uploaded: uploadedCount,
+      failed: failedCount,
+      uploadedFiles,
+      failedFiles,
+    });
+  } catch (error) {
+    console.error("전체 구글 드라이브 업로드 오류:", error);
+    res.status(500).json({
+      error: "전체 업로드 중 오류가 발생했습니다.",
       details: error.message,
     });
   }
@@ -766,7 +835,7 @@ app.get("*", (req, res) => {
   try {
     // 기존 파일 노드 초기화
     await initializeFileNodes();
-    
+
     // 서버 시작
     app.listen(PORT, () => {
       console.log(`🚀 Server running on http://localhost:${PORT}`);

@@ -106,6 +106,43 @@ export default function Download() {
     }
   }, []);
 
+  // 모든 로컬 파일을 구글 드라이브에 업로드
+  const uploadAllToGoogleDrive = useCallback(async () => {
+    const confirmed = window.confirm("전체 업로드 한다?");
+    if (!confirmed) return;
+
+    try {
+      const response = await fetch("/api/upload-to-drive-all", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          folderName: "legecy",
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert(result.message || "전체 업로드가 완료되었습니다.");
+        if (activeTab === "drive") {
+          loadDriveFiles();
+        }
+      } else if (result?.error?.includes("credentials.json")) {
+        alert(
+          "구글 드라이브 업로드를 위해서는 credentials.json 파일 설정이 필요합니다.\nGOOGLE_DRIVE_SETUP.md 파일을 참고해주세요.",
+        );
+      } else {
+        alert("전체 업로드 중 오류가 발생했습니다: " + (result.error || "알 수 없는 오류"));
+      }
+    } catch (error) {
+      console.error("전체 구글 드라이브 업로드 오류:", error);
+      alert("전체 업로드 중 오류가 발생했습니다.");
+    } finally {
+    }
+  }, [activeTab, loadDriveFiles]);
+
   // 구글 드라이브에서 다운로드
   const downloadFromGoogleDrive = useCallback(async (fileId: string, fileName: string) => {
     setDownloadLoading(fileId);
@@ -142,6 +179,7 @@ export default function Download() {
       <div className="download-header">
         <h2></h2>
         <div className="header-actions">
+
           <div className="tabs">
             <button
               className={activeTab === "local" ? "active" : ""}
@@ -191,7 +229,7 @@ export default function Download() {
                           <button
                             onClick={() => uploadToGoogleDrive(file.name || "")}
                             disabled={uploadLoading === file.name || !file.name}
-                            
+
                           >
                             {uploadLoading === file.name
                               ? <i className="icon-upload" title="업로드 중..."></i>
@@ -207,59 +245,69 @@ export default function Download() {
           </div>
         )
       ) : // 구글 드라이브 파일 목록
-      driveLoading ? (
-        <div className="loading">구글 드라이브 파일 목록을 불러오는 중...</div>
-      ) : (
-        <div className="file-list">
-          {driveFiles.length === 0 ? (
-            <p>구글 드라이브에 파일이 없습니다.</p>
-          ) : (
-            <table className="file-table">
-              <thead>
-                <tr>
-                  <th>파일명</th>
-                  <th>크기</th>
-                  <th>수정일</th>
-                  <th>작업</th>
-                </tr>
-              </thead>
-              <tbody>
-                {driveFiles.map((file, index) => (
-                  <tr key={`drive-${file.id}-${index}`}>
-                    <td>
-                      <strong>{file.name}</strong>
-                    </td>
-                    <td>{file.size ? Math.round(file.size / 1024) : 0}KB</td>
-                    <td>{new Date(file.modifiedTime).toLocaleString()}</td>
-                    <td>
-                      <div className="file-actions">
-                        <button
-                          onClick={() => downloadFromGoogleDrive(file.id, file.name)}
-                          disabled={downloadLoading === file.id}
-                          title="로컬 legecy 폴더에 다운로드"
-                        >
-                          {downloadLoading === file.id
-                            ?
+        driveLoading ? (
+          <div className="loading">구글 드라이브 파일 목록을 불러오는 중...</div>
+        ) : (
+          <div className="file-list">
+            {driveFiles.length === 0 ? (
+              <p>구글 드라이브에 파일이 없습니다.</p>
+            ) : (
+              <table className="file-table">
+                <thead>
+                  <tr>
+                    <th>파일명</th>
+                    <th>크기</th>
+                    <th>수정일</th>
+                    <th>작업</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {driveFiles.map((file, index) => (
+                    <tr key={`drive-${file.id}-${index}`}>
+                      <td>
+                        <strong>{file.name}</strong>
+                      </td>
+                      <td>{file.size ? Math.round(file.size / 1024) : 0}KB</td>
+                      <td>{new Date(file.modifiedTime).toLocaleString()}</td>
+                      <td>
+                        <div className="file-actions">
+                          <button
+                            onClick={() => downloadFromGoogleDrive(file.id, file.name)}
+                            disabled={downloadLoading === file.id}
+                            title="로컬 legecy 폴더에 다운로드"
+                          >
+                            {downloadLoading === file.id
+                              ?
                               <i className="icon-download" title="다운로드 중..."></i>
-                            : 
+                              :
                               <i className="icon-download" title="로컬 legecy 폴더에 다운로드"></i>
                             }
-                        </button>
-                        <a
-                          href={`https://drive.google.com/file/d/${file.id}/view`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <i className="icon-link" title="구글 드라이브에서 보기"></i>
-                        </a>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
+                          </button>
+                          <a
+                            href={`https://drive.google.com/file/d/${file.id}/view`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <i className="icon-link" title="구글 드라이브에서 보기"></i>
+                          </a>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        )}
+
+      {activeTab === "local" && (
+        <button
+          className="all_upload"
+          onClick={uploadAllToGoogleDrive}
+          title="로컬 .txt 파일 전체를 구글 드라이브에 업로드"
+        >
+          <i className="icon-upload"></i>
+        </button>
       )}
 
       <style>{`
@@ -312,7 +360,7 @@ export default function Download() {
 
         .download-header button:not(.tabs button) {
           padding: 10px 20px;
-          background: #28a745;
+          background: #f07360;
           color: white;
           border: none;
           border-radius: 5px;
@@ -322,7 +370,7 @@ export default function Download() {
         .download-header button:disabled {
           background: #ccc;
           cursor: not-allowed;
-        }
+        } 
 
         .loading {
           text-align: center;
@@ -397,7 +445,15 @@ export default function Download() {
           color: #666;
           font-size: 16px;
         }
-      `}</style>
+
+        .all_upload {
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          color: #fff;
+          
+          }
+        `}</style>
     </div>
   );
 }

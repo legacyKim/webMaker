@@ -3,12 +3,6 @@
     "id": "reactflow__edge-file-신경 역치a-file-자폐b",
     "source": "file-신경 역치",
     "target": "file-자폐"
-  }
-]a[
-  {
-    "id": "reactflow__edge-file-신경 역치a-file-자폐b",
-    "source": "file-신경 역치",
-    "target": "file-자폐"
   },
   {
     "id": "reactflow__edge-file-글루타메이트 과활성a-file-장기강화b",
@@ -59,5 +53,20 @@
     "id": "reactflow__edge-file-감각 연계와 인간 보편 성향a-file-감각 자극 변환 체계b",
     "source": "file-감각 연계와 인간 보편 성향",
     "target": "file-감각 자극 변환 체계"
+  },
+  {
+    "id": "reactflow__edge-file-장기강화a-file-해마b",
+    "source": "file-장기강화",
+    "target": "file-해마"
+  },
+  {
+    "id": "reactflow__edge-file-스트레스 개념 이해a-file-뉴런 발화 조건 및 신경 역치b",
+    "source": "file-스트레스 개념 이해",
+    "target": "file-뉴런 발화 조건 및 신경 역치"
+  },
+  {
+    "id": "reactflow__edge-file-내분비계 체계 이해a-file-스트레스 개념 이해b",
+    "source": "file-내분비계 체계 이해",
+    "target": "file-스트레스 개념 이해"
   }
 ]

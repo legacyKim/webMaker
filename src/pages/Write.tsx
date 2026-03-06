@@ -5,7 +5,16 @@ interface PostData {
   title: string;
   content: string;
   keywords: string;
+  category: string;
 }
+
+// 카테고리 목록
+const CATEGORIES = [
+  "전체 매커니즘",
+  "감각과 성향",
+  "뇌구조",
+  "비고",
+] as const;
 
 const sanitizeTitle = (value: string) =>
   value.replace(/[^0-9A-Za-z\u3131-\u318e\uac00-\ud7a3\s]/g, "");
@@ -22,6 +31,7 @@ export default function Write() {
     title: "",
     content: "",
     keywords: "",
+    category: CATEGORIES[0],
   });
 
   // Edit 모드일 때 데이터 로드
@@ -40,6 +50,7 @@ export default function Write() {
                 title: fileData.title || "",
                 content: fileData.content || "",
                 keywords: fileData.keywords || "",
+                category: fileData.category || CATEGORIES[0],
               });
             }
           }
@@ -64,6 +75,7 @@ export default function Write() {
     const title = postData.title.trim();
     const content = contentRef.current?.innerHTML || "";
     const keywords = postData.keywords;
+    const category = postData.category;
 
     if (!title) {
       alert("제목을 입력해주세요!");
@@ -85,6 +97,7 @@ export default function Write() {
           title,
           content,
           keywords,
+          category,
           originalFileName: editSlug ? originalFileName : null,
         }),
       });
@@ -156,6 +169,19 @@ export default function Write() {
             setPostData((prev) => ({ ...prev, keywords: e.target.value }))
           }
         />
+        <select
+          value={postData.category}
+          onChange={(e) =>
+            setPostData((prev) => ({ ...prev, category: e.target.value }))
+          }
+          className="category_select"
+        >
+          {CATEGORIES.map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className="write_actions">

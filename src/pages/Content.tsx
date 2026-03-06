@@ -17,6 +17,13 @@ import Loading from "../components/shared/Loading";
 import { Link } from "react-router-dom";
 import debounce from "lodash.debounce";
 
+// 카테고리 목록
+const CATEGORIES = [
+  "전체 매커니즘",
+  "감각과 성향",
+  "뇌구조",
+  "비고",
+] as const;
 export default function ContentMap() {
   const { data, isLoading, error } = useQuery("contentData", fetchContent, {
     refetchInterval: 120000,
@@ -72,6 +79,12 @@ export default function ContentMap() {
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
   const [keywordArr, setKeywordArr] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>(CATEGORIES[0]);
+  const [categoryOpen, setCategoryOpen] = useState<boolean>(false);
+
+  // 원본 데이터 저장 (필터링 전)
+  const [allNodes, setAllNodes] = useState<Node[]>([]);
+  const [allEdges, setAllEdges] = useState<Edge[]>([]);
 
   // 노드 위치 저장 API 호출 (디바운싱됨)
   const saveNodePositionsFn = useRef(
@@ -193,10 +206,38 @@ export default function ContentMap() {
       console.log("생성된 노드들:", fetchedNodes);
       console.log("생성된 엣지들:", fetchedEdge);
 
-      setNodes(fetchedNodes);
-      setEdges(fetchedEdge);
+      // 원본 데이터 저장
+      setAllNodes(fetchedNodes);
+      setAllEdges(fetchedEdge);
     }
   }, [data]);
+
+  // 카테고리 필터링
+  useMemo(() => {
+    if (selectedCategory === "전체") {
+      setNodes(allNodes);
+      setEdges(allEdges);
+    } else {
+      // 선택된 카테고리의 노드만 필터링
+      const filteredNodes = allNodes.filter(
+        (node) => node.data?.category === selectedCategory
+      );
+
+      // 필터링된 노드 ID 목록
+      const filteredNodeIds = new Set(filteredNodes.map((node) => node.id));
+
+      // 필터링된 노드들 간의 엣지만 필터링
+      const filteredEdges = allEdges.filter(
+        (edge) =>
+          filteredNodeIds.has(edge.source) && filteredNodeIds.has(edge.target)
+      );
+
+      console.log(`📂 카테고리 "${selectedCategory}": ${filteredNodes.length}개 노드, ${filteredEdges.length}개 엣지`);
+
+      setNodes(filteredNodes);
+      setEdges(filteredEdges);
+    }
+  }, [selectedCategory, allNodes, allEdges]);
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => {
@@ -206,6 +247,9 @@ export default function ContentMap() {
         saveNodePositionsFn.current(updatedNodes);
         return updatedNodes;
       });
+      
+      // allNodes도 업데이트 (위치 변경 동기화)
+      setAllNodes((allNds) => applyNodeChanges(changes, allNds));
     },
     []
   );
@@ -218,6 +262,9 @@ export default function ContentMap() {
         saveEdgesFn.current(updatedEdges);
         return updatedEdges;
       });
+      
+      // allEdges도 업데이트 (엣지 삭제 동기화)
+      setAllEdges((allEds) => applyEdgeChanges(changes, allEds));
     },
     []
   );
@@ -229,6 +276,9 @@ export default function ContentMap() {
         saveEdgesFn.current(updatedEdges);
         return updatedEdges;
       });
+      
+      // allEdges에도 추가
+      setAllEdges((allEds) => addEdge(connection, allEds));
     },
     []
   );
@@ -237,7 +287,30 @@ export default function ContentMap() {
 
   return (
     <ReactFlowProvider>
-      <main className="dark" style={{ height: "94vh", width: "100%" }}>
+      <main className="dark" style={{ height: "94vh", width: "100%", position: "relative" }}>
+        {/* 카테고리 메뉴 */}
+        <button className={`content_category_btn ${categoryOpen ? "open" : ""}`} onClick={() => {
+          setCategoryOpen(!categoryOpen);
+        }}>
+          <i className="icon-list-bullet"></i>
+        </button>
+        <div className={`content_category ${categoryOpen ? "open" : ""}`}>
+          {CATEGORIES.map((category) => (
+            <button
+              key={category}
+              className={selectedCategory === category ? "active" : ""}
+              onClick={() => setSelectedCategory(category)}
+            >
+              {category}
+              {category !== "전체 매커니즘" && (
+                <span style={{ float: "right", opacity: 0.6, fontSize: "11px" }}>
+                  {allNodes.filter((n) => n.data?.category === category).length}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+
         <ReactFlow
           className="dark"
           nodes={nodes}

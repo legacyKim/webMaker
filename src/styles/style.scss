@@ -914,6 +914,7 @@ nav a {
       opacity: 0.78;
       transition: all 0.3s ease-in-out;
       color: #fff;
+      text-decoration: none;
 
       &:hover {
         opacity: 1;
@@ -1010,6 +1011,55 @@ nav a {
   }
 }
 
+.content_category_btn {
+  position: absolute;
+      top: 8px;
+    left: 8px;
+  z-index: 9;
+  transition: all 0.7s ease-in-out;
+
+  &.open  {
+    left: 220px;
+  }
+}
+
+.content_category {
+  position: absolute;
+  left: -224px;
+  z-index: 9;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+
+  transition: all 0.7s ease-in-out;
+  width: 214px;
+  height: calc(100% - 16px);
+  padding: 8px 0;
+
+  background-color: $dark-box2-bg;
+
+  &.open {
+    left: 0px;
+  }
+
+  button {
+    text-align: left;
+    font-weight: 500;
+    font-size: 14px;
+    padding: 6px 8px;
+
+    &.active {
+      color: $main-color;
+    }
+
+    &:hover {
+      color: rgba($color: $main-color, $alpha: 0.8);
+    }
+  }
+
+}
+
 .write {
   @include relative_block;
 
@@ -1047,6 +1097,39 @@ nav a {
     padding: 16px;
     border: 1px solid rgba(255, 255, 255, 0.4);
     border-radius: 4px;
+    gap: 12px;
+
+    input,
+    select {
+      flex: 1;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 14px;
+      transition: all 0.2s ease;
+
+      &:focus {
+        outline: none;
+        border-color: rgba(102, 126, 234, 0.6);
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.4);
+      }
+    }
+
+    select {
+      cursor: pointer;
+      max-width: 180px;
+
+      option {
+        background: #1e1e1e;
+        color: #fff;
+      }
+    }
 
     .write_meta_item {
       @include flex-start();
