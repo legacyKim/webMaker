@@ -6,6 +6,7 @@ interface PostData {
   subtitle?: string;
   content: string;
   keywords?: string;
+  category?: string;
   slug: string;
   created_at: string;
   updated_at?: string;
@@ -47,6 +48,7 @@ export default function ContentView() {
               subtitle: fileData.subtitle || "",
               content: fileData.content || "내용을 불러올 수 없습니다.",
               keywords: fileData.keywords || "",
+              category: fileData.category || "미분류",
               slug: slug,
               created_at: fileData.created_at || new Date().toISOString(),
               updated_at: fileData.updated_at || new Date().toISOString(),
@@ -83,7 +85,8 @@ export default function ContentView() {
 
     const title = titleRef.current?.value.trim() || "";
     const content = contentRef.current?.innerHTML || "";
-    const keywords = keywordsRef.current?.innerHTML.trim() || post.keywords || "";
+    const keywords =
+      keywordsRef.current?.innerHTML.trim() || post.keywords || "";
 
     if (!title) {
       alert("제목을 입력해주세요!");
@@ -107,6 +110,7 @@ export default function ContentView() {
           title,
           content,
           keywords,
+          category: post.category,
           originalFileName: fileName,
         }),
       });
@@ -125,6 +129,7 @@ export default function ContentView() {
             subtitle: fileData.subtitle || "",
             content: fileData.content,
             keywords: fileData.keywords || "",
+            category: fileData.category || "미분류",
             updated_at: new Date().toISOString(),
           });
         }
@@ -147,7 +152,7 @@ export default function ContentView() {
     const day = String(inputDate.getDate()).padStart(2, "0");
     const hours = String(inputDate.getHours()).padStart(2, "0");
     const minutes = String(inputDate.getMinutes()).padStart(2, "0");
-    
+
     return `${year}년 ${month}월 ${day}일 ${hours}:${minutes}`;
   };
 
@@ -192,7 +197,6 @@ export default function ContentView() {
           defaultValue={post.title}
           placeholder="제목"
         />
-      
       </div>
 
       <div className="view_actions">
@@ -203,68 +207,110 @@ export default function ContentView() {
           <i className="icon-edit-alt"></i>
         </button>
       </div>
-      
+
       <div className="content_line">
         <div className="view_content_sub">
           <div className="view_info">
             <div className="view_info_box">
               <i className="icon-clock-1"></i>
-              <span>{getRelativeDate(post.updated_at ? post.updated_at : post.created_at)}</span>
+              <span>
+                {getRelativeDate(
+                  post.updated_at ? post.updated_at : post.created_at,
+                )}
+              </span>
             </div>
           </div>
         </div>
       </div>
-  
+
       {isEditing && isEditorFocused && (
         <div
           className="editor_toolbar"
           onMouseDown={(event) => event.preventDefault()}
         >
-        <button type="button" onClick={() => applyFormat("bold")} title="Bold (Ctrl+B)">
-          <i className="icon-bold"></i>
-        </button>
-        <button type="button" onClick={() => applyFormat("italic")} title="Italic (Ctrl+I)">
-          <i className="icon-italic"></i>
-        </button>
-        <button type="button" onClick={() => applyFormat("underline")} title="Underline (Ctrl+U)">
-          <i className="icon-underline"></i>
-        </button>
-        <span className="toolbar_separator"></span>
+          <button
+            type="button"
+            onClick={() => applyFormat("bold")}
+            title="Bold (Ctrl+B)"
+          >
+            <i className="icon-bold"></i>
+          </button>
+          <button
+            type="button"
+            onClick={() => applyFormat("italic")}
+            title="Italic (Ctrl+I)"
+          >
+            <i className="icon-italic"></i>
+          </button>
+          <button
+            type="button"
+            onClick={() => applyFormat("underline")}
+            title="Underline (Ctrl+U)"
+          >
+            <i className="icon-underline"></i>
+          </button>
+          <span className="toolbar_separator"></span>
 
-        <button type="button" onClick={() => applyFormat("createLink", prompt("URL을 입력하세요:") || "")} title="Link">
-          <i className="icon-link"></i>
-        </button>
-      
-        <span className="toolbar_separator"></span>
+          <button
+            type="button"
+            onClick={() =>
+              applyFormat("createLink", prompt("URL을 입력하세요:") || "")
+            }
+            title="Link"
+          >
+            <i className="icon-link"></i>
+          </button>
 
-        <button type="button" onClick={() => applyFormat("formatBlock", "<h1>")} title="Heading 1">
-          H1
-        </button>
-        <button type="button" onClick={() => applyFormat("formatBlock", "<h2>")} title="Heading 2">
-          H2
-        </button>
-        <button type="button" onClick={() => applyFormat("formatBlock", "<h3>")} title="Heading 3">
-          H3
-        </button>
-        <span className="toolbar_separator"></span>
+          <span className="toolbar_separator"></span>
 
-        <button type="button" onClick={() => applyFormat("insertUnorderedList")} title="Bullet List">
-          <i className="icon-list-bullet"></i>
-        </button>
-        <button type="button" onClick={() => applyFormat("insertOrderedList")} title="Numbered List">
-          <i className="icon-list-bullet"></i>
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            document.execCommand("formatBlock", false, "<blockquote>");
-            contentRef.current?.focus();
-          }}
-          title="Quote"
-        >
-          <i className="icon-quote-left"></i>
-        </button>
-      </div>
+          <button
+            type="button"
+            onClick={() => applyFormat("formatBlock", "<h1>")}
+            title="Heading 1"
+          >
+            H1
+          </button>
+          <button
+            type="button"
+            onClick={() => applyFormat("formatBlock", "<h2>")}
+            title="Heading 2"
+          >
+            H2
+          </button>
+          <button
+            type="button"
+            onClick={() => applyFormat("formatBlock", "<h3>")}
+            title="Heading 3"
+          >
+            H3
+          </button>
+          <span className="toolbar_separator"></span>
+
+          <button
+            type="button"
+            onClick={() => applyFormat("insertUnorderedList")}
+            title="Bullet List"
+          >
+            <i className="icon-list-bullet"></i>
+          </button>
+          <button
+            type="button"
+            onClick={() => applyFormat("insertOrderedList")}
+            title="Numbered List"
+          >
+            <i className="icon-list-bullet"></i>
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              document.execCommand("formatBlock", false, "<blockquote>");
+              contentRef.current?.focus();
+            }}
+            title="Quote"
+          >
+            <i className="icon-quote-left"></i>
+          </button>
+        </div>
       )}
 
       <div
@@ -293,7 +339,6 @@ export default function ContentView() {
         contentEditable="true"
         dangerouslySetInnerHTML={{ __html: post.keywords || "" }}
       />
-
     </div>
   );
 }

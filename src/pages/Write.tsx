@@ -9,12 +9,7 @@ interface PostData {
 }
 
 // 카테고리 목록
-const CATEGORIES = [
-  "전체 매커니즘",
-  "감각과 성향",
-  "뇌구조",
-  "비고",
-] as const;
+const CATEGORIES = ["메커니즘", "감각과 성향", "뇌구조", "비고"] as const;
 
 const sanitizeTitle = (value: string) =>
   value.replace(/[^0-9A-Za-z\u3131-\u318e\uac00-\ud7a3\s]/g, "");
@@ -106,8 +101,10 @@ export default function Write() {
 
       if (result.success) {
         const action = editSlug ? "수정" : "저장";
-        alert(`파일이 성공적으로 ${action}되었습니다!\n파일명: ${result.fileName}`);
-        
+        alert(
+          `파일이 성공적으로 ${action}되었습니다!\n파일명: ${result.fileName}`,
+        );
+
         // 저장된 파일로 이동
         const fileName = result.fileName.replace(".txt", "");
         const slug = `file-${encodeURIComponent(fileName)}`;
@@ -190,41 +187,81 @@ export default function Write() {
         </button>
       </div>
 
-      
       {/* HTML 에디터 툴바 */}
-      <div className="editor_toolbar" onMouseDown={(event) => event.preventDefault()}>
-        <button type="button" onClick={() => applyFormat("bold")} title="Bold (Ctrl+B)">
+      <div
+        className="editor_toolbar"
+        onMouseDown={(event) => event.preventDefault()}
+      >
+        <button
+          type="button"
+          onClick={() => applyFormat("bold")}
+          title="Bold (Ctrl+B)"
+        >
           <i className="icon-bold"></i>
         </button>
-        <button type="button" onClick={() => applyFormat("italic")} title="Italic (Ctrl+I)">
+        <button
+          type="button"
+          onClick={() => applyFormat("italic")}
+          title="Italic (Ctrl+I)"
+        >
           <i className="icon-italic"></i>
         </button>
-        <button type="button" onClick={() => applyFormat("underline")} title="Underline (Ctrl+U)">
+        <button
+          type="button"
+          onClick={() => applyFormat("underline")}
+          title="Underline (Ctrl+U)"
+        >
           <i className="icon-underline"></i>
         </button>
         <span className="toolbar_separator"></span>
 
-        <button type="button" onClick={() => applyFormat("createLink", prompt("URL을 입력하세요:") || "")} title="Link">
+        <button
+          type="button"
+          onClick={() =>
+            applyFormat("createLink", prompt("URL을 입력하세요:") || "")
+          }
+          title="Link"
+        >
           <i className="icon-link"></i>
         </button>
-      
+
         <span className="toolbar_separator"></span>
 
-        <button type="button" onClick={() => applyFormat("formatBlock", "<h1>")} title="Heading 1">
+        <button
+          type="button"
+          onClick={() => applyFormat("formatBlock", "<h1>")}
+          title="Heading 1"
+        >
           H1
         </button>
-        <button type="button" onClick={() => applyFormat("formatBlock", "<h2>")} title="Heading 2">
+        <button
+          type="button"
+          onClick={() => applyFormat("formatBlock", "<h2>")}
+          title="Heading 2"
+        >
           H2
         </button>
-        <button type="button" onClick={() => applyFormat("formatBlock", "<h3>")} title="Heading 3">
+        <button
+          type="button"
+          onClick={() => applyFormat("formatBlock", "<h3>")}
+          title="Heading 3"
+        >
           H3
         </button>
         <span className="toolbar_separator"></span>
 
-        <button type="button" onClick={() => applyFormat("insertUnorderedList")} title="Bullet List">
+        <button
+          type="button"
+          onClick={() => applyFormat("insertUnorderedList")}
+          title="Bullet List"
+        >
           <i className="icon-list-bullet"></i>
         </button>
-        <button type="button" onClick={() => applyFormat("insertOrderedList")} title="Numbered List">
+        <button
+          type="button"
+          onClick={() => applyFormat("insertOrderedList")}
+          title="Numbered List"
+        >
           <i className="icon-list-bullet"></i>
         </button>
         <button

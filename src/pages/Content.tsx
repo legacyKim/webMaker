@@ -17,9 +17,10 @@ import Loading from "../components/shared/Loading";
 import { Link } from "react-router-dom";
 import debounce from "lodash.debounce";
 
-// 카테고리 목록
+// 카테고리 목록 (전체 추가)
 const CATEGORIES = [
-  "전체 매커니즘",
+  "전체",
+  "메커니즘",
   "감각과 성향",
   "뇌구조",
   "비고",
@@ -79,8 +80,22 @@ export default function ContentMap() {
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
   const [keywordArr, setKeywordArr] = useState<string[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>(CATEGORIES[0]);
+
+  // localStorage에서 마지막 선택한 카테고리 불러오기
+  const [selectedCategory, setSelectedCategory] = useState<string>(() => {
+    const savedCategory = localStorage.getItem("selectedCategory");
+    return savedCategory && CATEGORIES.includes(savedCategory as any)
+      ? savedCategory
+      : CATEGORIES[0];
+  });
+
   const [categoryOpen, setCategoryOpen] = useState<boolean>(false);
+
+  // 카테고리 변경 함수 (localStorage 저장 포함)
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+    localStorage.setItem("selectedCategory", category);
+  };
 
   // 원본 데이터 저장 (필터링 전)
   const [allNodes, setAllNodes] = useState<Node[]>([]);
@@ -90,11 +105,15 @@ export default function ContentMap() {
   const saveNodePositionsFn = useRef(
     debounce(async (nodesToSave: Node[]) => {
       try {
-        const updates: { [key: string]: { position_x: number; position_y: number } } = {};
-        
+        const updates: {
+          [key: string]: { position_x: number; position_y: number };
+        } = {};
+
         console.log("🔍 저장할 노드들 분석:");
         nodesToSave.forEach((node) => {
-          console.log(`  - ID: "${node.id}" (type: ${typeof node.id}), pos: (${node.position.x}, ${node.position.y})`);
+          console.log(
+            `  - ID: "${node.id}" (type: ${typeof node.id}), pos: (${node.position.x}, ${node.position.y})`,
+          );
           updates[node.id] = {
             position_x: Math.round(node.position.x),
             position_y: Math.round(node.position.y),
@@ -112,7 +131,7 @@ export default function ContentMap() {
         });
 
         const responseData = await response.json();
-        
+
         if (!response.ok) {
           console.error("❌ 노드 위치 저장 실패:", responseData);
         } else {
@@ -121,7 +140,7 @@ export default function ContentMap() {
       } catch (err) {
         console.error("❌ 노드 위치 저장 중 오류:", err);
       }
-    }, 1000)
+    }, 1000),
   );
 
   // 엣지 저장 API 호출 (디바운싱됨)
@@ -148,7 +167,7 @@ export default function ContentMap() {
       } catch (err) {
         console.error("엣지 저장 중 오류:", err);
       }
-    }, 1000)
+    }, 1000),
   );
 
   const onKeywordClick = useCallback((keyword: string) => {
@@ -220,7 +239,7 @@ export default function ContentMap() {
     } else {
       // 선택된 카테고리의 노드만 필터링
       const filteredNodes = allNodes.filter(
-        (node) => node.data?.category === selectedCategory
+        (node) => node.data?.category === selectedCategory,
       );
 
       // 필터링된 노드 ID 목록
@@ -229,69 +248,68 @@ export default function ContentMap() {
       // 필터링된 노드들 간의 엣지만 필터링
       const filteredEdges = allEdges.filter(
         (edge) =>
-          filteredNodeIds.has(edge.source) && filteredNodeIds.has(edge.target)
+          filteredNodeIds.has(edge.source) && filteredNodeIds.has(edge.target),
       );
 
-      console.log(`📂 카테고리 "${selectedCategory}": ${filteredNodes.length}개 노드, ${filteredEdges.length}개 엣지`);
+      console.log(
+        `📂 카테고리 "${selectedCategory}": ${filteredNodes.length}개 노드, ${filteredEdges.length}개 엣지`,
+      );
 
       setNodes(filteredNodes);
       setEdges(filteredEdges);
     }
   }, [selectedCategory, allNodes, allEdges]);
 
-  const onNodesChange = useCallback(
-    (changes: NodeChange[]) => {
-      setNodes((nds) => {
-        const updatedNodes = applyNodeChanges(changes, nds);
-        // 노드 변경이 있을 때마다 위치 저장
-        saveNodePositionsFn.current(updatedNodes);
-        return updatedNodes;
-      });
-      
-      // allNodes도 업데이트 (위치 변경 동기화)
-      setAllNodes((allNds) => applyNodeChanges(changes, allNds));
-    },
-    []
-  );
+  const onNodesChange = useCallback((changes: NodeChange[]) => {
+    setNodes((nds) => {
+      const updatedNodes = applyNodeChanges(changes, nds);
+      // 노드 변경이 있을 때마다 위치 저장
+      saveNodePositionsFn.current(updatedNodes);
+      return updatedNodes;
+    });
 
-  const onEdgesChange = useCallback(
-    (changes: EdgeChange[]) => {
-      setEdges((eds) => {
-        const updatedEdges = applyEdgeChanges(changes, eds);
-        // 엣지 변경이 있을 때마다 저장
-        saveEdgesFn.current(updatedEdges);
-        return updatedEdges;
-      });
-      
-      // allEdges도 업데이트 (엣지 삭제 동기화)
-      setAllEdges((allEds) => applyEdgeChanges(changes, allEds));
-    },
-    []
-  );
+    // allNodes도 업데이트 (위치 변경 동기화)
+    setAllNodes((allNds) => applyNodeChanges(changes, allNds));
+  }, []);
 
-  const onConnect = useCallback(
-    (connection: Connection) => {
-      setEdges((eds) => {
-        const updatedEdges = addEdge(connection, eds);
-        saveEdgesFn.current(updatedEdges);
-        return updatedEdges;
-      });
-      
-      // allEdges에도 추가
-      setAllEdges((allEds) => addEdge(connection, allEds));
-    },
-    []
-  );
+  const onEdgesChange = useCallback((changes: EdgeChange[]) => {
+    setEdges((eds) => {
+      const updatedEdges = applyEdgeChanges(changes, eds);
+      // 엣지 변경이 있을 때마다 저장
+      saveEdgesFn.current(updatedEdges);
+      return updatedEdges;
+    });
+
+    // allEdges도 업데이트 (엣지 삭제 동기화)
+    setAllEdges((allEds) => applyEdgeChanges(changes, allEds));
+  }, []);
+
+  const onConnect = useCallback((connection: Connection) => {
+    setEdges((eds) => {
+      const updatedEdges = addEdge(connection, eds);
+      saveEdgesFn.current(updatedEdges);
+      return updatedEdges;
+    });
+
+    // allEdges에도 추가
+    setAllEdges((allEds) => addEdge(connection, allEds));
+  }, []);
 
   if (isLoading) return <Loading />;
 
   return (
     <ReactFlowProvider>
-      <main className="dark" style={{ height: "94vh", width: "100%", position: "relative" }}>
+      <main
+        className="dark"
+        style={{ height: "94vh", width: "100%", position: "relative" }}
+      >
         {/* 카테고리 메뉴 */}
-        <button className={`content_category_btn ${categoryOpen ? "open" : ""}`} onClick={() => {
-          setCategoryOpen(!categoryOpen);
-        }}>
+        <button
+          className={`content_category_btn ${categoryOpen ? "open" : ""}`}
+          onClick={() => {
+            setCategoryOpen(!categoryOpen);
+          }}
+        >
           <i className="icon-list-bullet"></i>
         </button>
         <div className={`content_category ${categoryOpen ? "open" : ""}`}>
@@ -299,14 +317,12 @@ export default function ContentMap() {
             <button
               key={category}
               className={selectedCategory === category ? "active" : ""}
-              onClick={() => setSelectedCategory(category)}
+              onClick={() => handleCategoryChange(category)}
             >
               {category}
-              {category !== "전체 매커니즘" && (
-                <span style={{ float: "right", opacity: 0.6, fontSize: "11px" }}>
-                  {allNodes.filter((n) => n.data?.category === category).length}
-                </span>
-              )}
+              <span style={{ float: "right", opacity: 0.6, fontSize: "11px" }}>
+                {allNodes.filter((n) => n.data?.category === category).length}
+              </span>
             </button>
           ))}
         </div>
@@ -340,9 +356,7 @@ export default function ContentMap() {
             zIndex: 1000,
           }}
         >
-          <Link
-            to="/content/write"
-          >
+          <Link to="/content/write">
             <i className="icon-pencil-alt"></i>
           </Link>
         </div>

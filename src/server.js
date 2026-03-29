@@ -3,6 +3,8 @@ import cors from "cors";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
+import { spawn } from "child_process";
+import * as readline from "readline";
 import chokidar from "chokidar";
 import {
   getContentData,
@@ -72,7 +74,10 @@ fileWatcher.on("add", async (filePath) => {
     try {
       fileData = JSON.parse(fileContent);
     } catch (parseError) {
-      console.error(`❌ 파일 JSON 파싱 실패: ${fileNameWithoutExt}`, parseError.message);
+      console.error(
+        `❌ 파일 JSON 파싱 실패: ${fileNameWithoutExt}`,
+        parseError.message,
+      );
       // 파일이 유효하지 않은 JSON이면 기본값으로 초기화
       fileData = {
         title: fileNameWithoutExt,
@@ -82,7 +87,9 @@ fileWatcher.on("add", async (filePath) => {
         position_y: Math.floor(Math.random() * 600 + 100),
       };
       fs.writeFileSync(filePath, JSON.stringify(fileData, null, 2), "utf8");
-      console.log(`✔️ 파일을 유효한 JSON으로 변환하고 position 추가: ${fileNameWithoutExt}`);
+      console.log(
+        `✔️ 파일을 유효한 JSON으로 변환하고 position 추가: ${fileNameWithoutExt}`,
+      );
       return;
     }
 
@@ -95,7 +102,6 @@ fileWatcher.on("add", async (filePath) => {
       typeof fileData.position_x === "number" &&
       typeof fileData.position_y === "number"
     ) {
-      console.log(`✅ 파일에 이미 유효한 position이 있습니다: ${fileNameWithoutExt}`);
       return;
     }
 
@@ -105,7 +111,9 @@ fileWatcher.on("add", async (filePath) => {
 
     // 파일에 다시 저장
     fs.writeFileSync(filePath, JSON.stringify(fileData, null, 2), "utf8");
-    console.log(`✅ 파일에 position 추가됨: ${fileNameWithoutExt} (${fileData.position_x}, ${fileData.position_y})`);
+    console.log(
+      `✅ 파일에 position 추가됨: ${fileNameWithoutExt} (${fileData.position_x}, ${fileData.position_y})`,
+    );
   } catch (error) {
     console.error(`❌ 파일 감시 중 오류 (add): ${filePath}`, error.message);
   }
@@ -146,7 +154,9 @@ async function initializeFileNodes() {
           fileData.position_x = Math.floor(Math.random() * 800 + 100);
           fileData.position_y = Math.floor(Math.random() * 600 + 100);
           fs.writeFileSync(filePath, JSON.stringify(fileData, null, 2), "utf8");
-          console.log(`✅ 기존 파일 초기화: ${fileName} (${fileData.position_x}, ${fileData.position_y})`);
+          console.log(
+            `✅ 기존 파일 초기화: ${fileName} (${fileData.position_x}, ${fileData.position_y})`,
+          );
         }
       } catch (err) {
         console.error(`⚠️ 파일 초기화 실패 (${fileName}):`, err.message);
@@ -156,7 +166,6 @@ async function initializeFileNodes() {
     console.error("❌ 파일 초기화 중 오류:", error);
   }
 }
-
 
 // ========== API 라우트 ==========
 
@@ -197,8 +206,14 @@ app.get("/api/content", async (req, res) => {
                 view: 0,
               },
               position: {
-                x: typeof fileData.position_x === "number" ? fileData.position_x : 100 + Math.random() * 200,
-                y: typeof fileData.position_y === "number" ? fileData.position_y : 100 + Math.random() * 200,
+                x:
+                  typeof fileData.position_x === "number"
+                    ? fileData.position_x
+                    : 100 + Math.random() * 200,
+                y:
+                  typeof fileData.position_y === "number"
+                    ? fileData.position_y
+                    : 100 + Math.random() * 200,
               },
             };
           } catch (err) {
@@ -325,7 +340,9 @@ app.put("/api/content/:id/position", async (req, res) => {
     const contentIndex = contentData.findIndex((item) => item.id === id);
 
     if (contentIndex === -1) {
-      return res.status(404).json({ success: false, error: "컨텐츠를 찾을 수 없습니다." });
+      return res
+        .status(404)
+        .json({ success: false, error: "컨텐츠를 찾을 수 없습니다." });
     }
 
     contentData[contentIndex].position_x = position_x;
@@ -350,12 +367,17 @@ app.put("/api/content/batch/positions", async (req, res) => {
     let fileUpdateCount = 0;
     let contentUpdateCount = 0;
 
-    for (const [nodeId, { position_x, position_y }] of Object.entries(updates)) {
+    for (const [nodeId, { position_x, position_y }] of Object.entries(
+      updates,
+    )) {
       // 파일 노드인 경우 (file-xxx)
       if (nodeId.startsWith("file-")) {
         try {
           const fileNameWithoutExt = nodeId.replace("file-", "");
-          const filePath = path.join(filesFolderPath, `${fileNameWithoutExt}.txt`);
+          const filePath = path.join(
+            filesFolderPath,
+            `${fileNameWithoutExt}.txt`,
+          );
 
           if (fs.existsSync(filePath)) {
             const fileContent = fs.readFileSync(filePath, "utf8");
@@ -364,8 +386,14 @@ app.put("/api/content/batch/positions", async (req, res) => {
             fileData.position_x = position_x;
             fileData.position_y = position_y;
 
-            fs.writeFileSync(filePath, JSON.stringify(fileData, null, 2), "utf8");
-            console.log(`✏️ 파일 위치 업데이트: ${fileNameWithoutExt} -> (${position_x}, ${position_y})`);
+            fs.writeFileSync(
+              filePath,
+              JSON.stringify(fileData, null, 2),
+              "utf8",
+            );
+            console.log(
+              `✏️ 파일 위치 업데이트: ${fileNameWithoutExt} -> (${position_x}, ${position_y})`,
+            );
             fileUpdateCount++;
           } else {
             console.warn(`⚠️ 파일을 찾을 수 없음: ${filePath}`);
@@ -377,24 +405,33 @@ app.put("/api/content/batch/positions", async (req, res) => {
         // 고정 노드인 경우 content.json에 저장
         try {
           const contentData = await getContentData();
-          const contentIndex = contentData.findIndex((item) => item.id === nodeId);
+          const contentIndex = contentData.findIndex(
+            (item) => item.id === nodeId,
+          );
 
           if (contentIndex !== -1) {
             contentData[contentIndex].position_x = position_x;
             contentData[contentIndex].position_y = position_y;
             await saveContentData(contentData);
-            console.log(`✏️ 고정 노드 위치 업데이트: ${nodeId} -> (${position_x}, ${position_y})`);
+            console.log(
+              `✏️ 고정 노드 위치 업데이트: ${nodeId} -> (${position_x}, ${position_y})`,
+            );
             contentUpdateCount++;
           } else {
             console.warn(`⚠️ 노드를 찾을 수 없음: ${nodeId}`);
           }
         } catch (err) {
-          console.error(`❌ content.json 업데이트 실패 (${nodeId}):`, err.message);
+          console.error(
+            `❌ content.json 업데이트 실패 (${nodeId}):`,
+            err.message,
+          );
         }
       }
     }
 
-    console.log(`✅ 파일 ${fileUpdateCount}개, 고정 노드 ${contentUpdateCount}개 위치 저장됨`);
+    console.log(
+      `✅ 파일 ${fileUpdateCount}개, 고정 노드 ${contentUpdateCount}개 위치 저장됨`,
+    );
 
     res.json({
       success: true,
@@ -425,7 +462,11 @@ app.put("/api/edges", async (req, res) => {
 
     console.log(`✅ data/edges.json에 ${edgeData.length}개 엣지 저장됨`);
 
-    res.json({ success: true, message: "엣지가 저장되었습니다.", count: edgeData.length });
+    res.json({
+      success: true,
+      message: "엣지가 저장되었습니다.",
+      count: edgeData.length,
+    });
   } catch (error) {
     console.error("❌ 엣지 저장 오류:", error);
     res.status(500).json({ success: false, error: error.message });
@@ -485,7 +526,9 @@ app.post("/api/save-txt", async (req, res) => {
     );
 
     fs.writeFileSync(filePath, fileData, "utf8");
-    console.log(`✅ 파일 저장/수정: ${fileName} (${position_x}, ${position_y}) [${category || "미분류"}]`);
+    console.log(
+      `✅ 파일 저장/수정: ${fileName} (${position_x}, ${position_y}) [${category || "미분류"}]`,
+    );
 
     res.json({
       success: true,
@@ -624,12 +667,16 @@ app.post("/api/upload-to-drive-all", async (req, res) => {
     const { folderName = "legecy" } = req.body;
 
     if (!fs.existsSync(filesFolderPath)) {
-      return res.status(404).json({ error: "로컬 파일 폴더를 찾을 수 없습니다." });
+      return res
+        .status(404)
+        .json({ error: "로컬 파일 폴더를 찾을 수 없습니다." });
     }
 
     const files = fs
       .readdirSync(filesFolderPath)
-      .filter((file) => file && typeof file === "string" && file.endsWith(".txt"));
+      .filter(
+        (file) => file && typeof file === "string" && file.endsWith(".txt"),
+      );
 
     if (files.length === 0) {
       return res.json({
@@ -688,7 +735,7 @@ app.post("/api/upload-to-drive-all", async (req, res) => {
 app.get("/api/auth/google", async (req, res) => {
   try {
     const credentials = JSON.parse(
-      fs.readFileSync(path.join(__dirname, "credentials.json"), "utf8")
+      fs.readFileSync(path.join(__dirname, "credentials.json"), "utf8"),
     );
 
     // 이미 refresh_token이 있으면 인증 완료
@@ -720,7 +767,7 @@ app.get("/api/auth/google", async (req, res) => {
     const oAuth2Client = new google.auth.OAuth2(
       client_id,
       client_secret,
-      redirectUri
+      redirectUri,
     );
 
     const authUrl = oAuth2Client.generateAuthUrl({
@@ -830,19 +877,242 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../dist/index.html"));
 });
 
-// 서버 시작
-(async () => {
+// Google 인증 상태 체크 및 URL 출력
+async function checkGoogleAuth(authCodeFromArgs) {
   try {
+    const credentials = JSON.parse(
+      fs.readFileSync(path.join(__dirname, "credentials.json"), "utf8"),
+    );
+
+    // 이미 refresh_token이 있으면 인증 완료
+    if (credentials.refresh_token) {
+      console.log("✅ Google Drive 인증이 완료되었습니다!");
+      return;
+    }
+
+    // 명령줄에서 인증 코드를 받은 경우
+    if (authCodeFromArgs) {
+      console.log("🔄 명령줄 인증 코드 처리 중...");
+      try {
+        const tokens = await getTokenFromCode(authCodeFromArgs);
+        console.log("✅ 인증이 완료되었습니다!");
+        console.log("🎉 Google Drive 연동이 성공적으로 설정되었습니다!");
+        console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+        return;
+      } catch (error) {
+        console.error("❌ 명령줄 인증 실패:", error.message);
+        console.log("💡 인증 코드를 다시 확인해주세요.");
+        process.exit(1);
+      }
+    }
+
+    // refresh_token이 없으면 인증 URL 제공
+    console.log("\n📢 Google Drive 인증이 필요합니다!");
+    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+
+    const { google } = await import("googleapis");
+    const SCOPES = [
+      "https://www.googleapis.com/auth/drive.file",
+      "https://www.googleapis.com/auth/drive",
+    ];
+
+    let client_id, client_secret, redirect_uris;
+
+    if (credentials.installed) {
+      ({ client_id, client_secret, redirect_uris } = credentials.installed);
+    } else if (credentials.web) {
+      ({ client_id, client_secret, redirect_uris } = credentials.web);
+    } else {
+      throw new Error("Unsupported credentials format");
+    }
+
+    const redirectUri = redirect_uris?.[0] || "urn:ietf:wg:oauth:2.0:oob";
+    const oAuth2Client = new google.auth.OAuth2(
+      client_id,
+      client_secret,
+      redirectUri,
+    );
+
+    const authUrl = oAuth2Client.generateAuthUrl({
+      access_type: "offline",
+      scope: SCOPES,
+    });
+
+    console.log("🔗 구글 인증 페이지가 자동으로 열립니다...");
+
+    // 브라우저에서 자동으로 인증 URL 열기
+    spawn("start", [authUrl], { shell: true });
+
+    console.log(`\n🌐 인증 URL: ${authUrl}\n`);
+    console.log("📝 구글에서 인증 후 나오는 코드를 복사하세요.");
+    console.log("💡 사용법: node server.js [인증코드]");
+    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+
+    // 콘솔에서 인증 코드 입력 받기 (대안 방법)
+    console.log("\n또는 아래에서 직접 입력하세요:");
+    await promptForAuthCode();
+  } catch (error) {
+    console.error("❌ Google 인증 URL 생성 오류:", error.message);
+  }
+}
+
+// 인증 코드 입력 받아서 자동 처리
+async function promptForAuthCode() {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  return new Promise((resolve) => {
+    rl.question(
+      "\n🔑 인증 코드를 입력하고 Enter를 누르세요: ",
+      async (authCode) => {
+        rl.close();
+
+        if (!authCode || authCode.trim() === "") {
+          console.log(
+            "❌ 인증 코드가 비어있습니다. 서버를 다시 시작해 주세요.",
+          );
+          resolve();
+          return;
+        }
+
+        console.log("🔄 인증 코드 처리 중...");
+
+        try {
+          // 인증 코드로 토큰 받기
+          const tokens = await getTokenFromCode(authCode.trim());
+
+          console.log("✅ 인증이 완료되었습니다!");
+          console.log("🎉 Google Drive 연동이 성공적으로 설정되었습니다!");
+          console.log("🔄 이제 서버를 재시작합니다...");
+          console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+
+          // 서버 재시작
+          setTimeout(() => {
+            console.log("🚀 서버 재시작 중...");
+            process.exit(0);
+          }, 1000);
+        } catch (error) {
+          console.error("❌ 인증 실패:", error.message);
+          console.log("💡 인증 코드를 다시 확인해주세요.");
+          console.log(
+            "   또는 브라우저에서 구글 계정의 앱 권한을 초기화하고 다시 시도해보세요.",
+          );
+          console.log("   https://myaccount.google.com/permissions");
+        }
+
+        resolve();
+      },
+    );
+  });
+}
+
+// 포트 사용 여부 확인 및 프로세스 종료
+async function killProcessUsingPort(port) {
+  return new Promise(async (resolve) => {
+    // Windows에서 포트를 사용하는 프로세스 찾기
+    const netstat = spawn("netstat", ["-ano"], { shell: true });
+    let output = "";
+
+    netstat.stdout.on("data", (data) => {
+      output += data.toString();
+    });
+
+    netstat.on("close", async () => {
+      const lines = output.split("\n");
+      const processIds = new Set();
+
+      // 해당 포트를 사용하는 PID 찾기
+      for (const line of lines) {
+        if (line.includes(`:${port} `) && line.includes("LISTENING")) {
+          const parts = line.trim().split(/\s+/);
+          const pid = parts[parts.length - 1];
+          if (pid && !isNaN(pid) && pid !== "0") {
+            processIds.add(pid);
+          }
+        }
+      }
+
+      if (processIds.size > 0) {
+        console.log(`🔄 포트 ${port}를 사용하는 프로세스 종료 중...`);
+        for (const pid of processIds) {
+          try {
+            const taskkill = spawn("taskkill", ["/PID", pid, "/F"], {
+              shell: true,
+            });
+            await new Promise((resolveKill) => {
+              taskkill.on("close", () => resolveKill());
+            });
+            console.log(`✅ PID ${pid} 프로세스 종료됨`);
+          } catch (error) {
+            console.log(`⚠️ PID ${pid} 종료 실패: ${error.message}`);
+          }
+        }
+        // 프로세스가 완전히 종료될 때까지 잠시 대기
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
+
+      resolve();
+    });
+  });
+}
+
+// 서버 시작 with 포트 충돌 방지
+async function startServer() {
+  try {
+    // 명령줄에서 인증 코드 확인 (node server.js AUTH_CODE)
+    const authCodeFromArgs = process.argv[2];
+
+    if (authCodeFromArgs) {
+      console.log("🔑 명령줄에서 인증 코드를 받았습니다.");
+    } else {
+      console.log("🚀 webMaker 서버 시작 중...");
+      console.log("💡 Google 인증이 필요한 경우: node server.js [인증코드]");
+    }
+
     // 기존 파일 노드 초기화
     await initializeFileNodes();
 
+    // 포트 충돌 방지
+    await killProcessUsingPort(PORT);
+
+    // Google 인증 상태 체크
+    await checkGoogleAuth(authCodeFromArgs);
+
+    // 명령줄 인증 코드가 있는 경우 인증만 처리하고 종료
+    if (authCodeFromArgs) {
+      console.log(
+        "🎯 인증 처리 완료. 이제 'node server.js'로 서버를 시작하세요.",
+      );
+      process.exit(0);
+    }
+
     // 서버 시작
-    app.listen(PORT, () => {
+    const server = app.listen(PORT, () => {
       console.log(`🚀 Server running on http://localhost:${PORT}`);
+    });
+
+    // 서버 에러 처리
+    server.on("error", async (error) => {
+      if (error.code === "EADDRINUSE") {
+        console.log(`⚠️  포트 ${PORT}가 여전히 사용 중입니다. 다시 시도 중...`);
+        await killProcessUsingPort(PORT);
+
+        // 잠시 후 재시도
+        setTimeout(() => {
+          startServer();
+        }, 2000);
+      } else {
+        console.error("❌ 서버 오류:", error);
+      }
     });
   } catch (error) {
     console.error("❌ 서버 시작 실패:", error);
   }
-})();
+}
+
+// 서버 시작
+startServer();
 
 export default app;
