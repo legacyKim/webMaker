@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 
 interface TxtFile {
   name: string;
@@ -16,6 +16,16 @@ export default function Download() {
   const [uploadLoading, setUploadLoading] = useState<string | null>(null);
   const [downloadLoading, setDownloadLoading] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"local" | "drive">("local");
+
+  const sortedDriveFiles = useMemo(() => {
+    return [...driveFiles].sort((a, b) => {
+      const timeA = a?.modifiedTime ? new Date(a.modifiedTime).getTime() : 0;
+      const timeB = b?.modifiedTime ? new Date(b.modifiedTime).getTime() : 0;
+      return timeB - timeA;
+    });
+  }, [driveFiles]);
+
+  const latestDriveFileId = sortedDriveFiles[0]?.id ?? null;
 
   // 저장된 txt 파일 목록 불러오기
   const loadTxtFiles = useCallback(async () => {
@@ -262,10 +272,16 @@ export default function Download() {
                   </tr>
                 </thead>
                 <tbody>
-                  {driveFiles.map((file, index) => (
-                    <tr key={`drive-${file.id}-${index}`}>
+                  {sortedDriveFiles.map((file, index) => (
+                    <tr
+                      key={`drive-${file.id}-${index}`}
+                      className={file.id === latestDriveFileId ? "latest-row" : ""}
+                    >
                       <td>
                         <strong>{file.name}</strong>
+                        {file.id === latestDriveFileId && (
+                          <span className="latest-badge">최신</span>
+                        )}
                       </td>
                       <td>{file.size ? Math.round(file.size / 1024) : 0}KB</td>
                       <td>{new Date(file.modifiedTime).toLocaleString()}</td>
@@ -405,6 +421,22 @@ export default function Download() {
 
         .file-table tr:hover {
         background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .file-table tr.latest-row {
+          background-color: rgba(210, 81, 60, 0.18);
+        }
+
+        .latest-badge {
+          display: inline-block;
+          margin-left: 8px;
+          padding: 2px 8px;
+          border-radius: 999px;
+          background: #d2513c;
+          color: #fff;
+          font-size: 11px;
+          font-weight: 700;
+          vertical-align: middle;
         }
 
         .file-actions {

@@ -63,5 +63,20 @@
     "id": "reactflow__edge-file-글루타메이트 과활성a-file-성상세포b",
     "source": "file-글루타메이트 과활성",
     "target": "file-성상세포"
+  },
+  {
+    "id": "reactflow__edge-file-장기강화a-file-해마b",
+    "source": "file-장기강화",
+    "target": "file-해마"
+  },
+  {
+    "id": "reactflow__edge-file-코르티솔의 필요성과 기능a-file-해마b",
+    "source": "file-코르티솔의 필요성과 기능",
+    "target": "file-해마"
+  },
+  {
+    "id": "reactflow__edge-file-에너지 공급 체계 이해a-file-깁스 자유에너지b",
+    "source": "file-에너지 공급 체계 이해",
+    "target": "file-깁스 자유에너지"
   }
 ]
