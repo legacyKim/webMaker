@@ -78,5 +78,30 @@
     "id": "reactflow__edge-file-에너지 공급 체계 이해a-file-깁스 자유에너지b",
     "source": "file-에너지 공급 체계 이해",
     "target": "file-깁스 자유에너지"
+  },
+  {
+    "id": "reactflow__edge-file-에너지 공급 체계 이해a-file-스트레스 개념 이해b",
+    "source": "file-에너지 공급 체계 이해",
+    "target": "file-스트레스 개념 이해"
+  },
+  {
+    "id": "reactflow__edge-file-글루타메이트와 GABAa-file-글루타메이트 과활성b",
+    "source": "file-글루타메이트와 GABA",
+    "target": "file-글루타메이트 과활성"
+  },
+  {
+    "id": "reactflow__edge-file-에너지 공급 체계 이해a-file-신체회복탄력성b",
+    "source": "file-에너지 공급 체계 이해",
+    "target": "file-신체회복탄력성"
+  },
+  {
+    "id": "reactflow__edge-file-뉴런 발화 조건 및 신경 역치a-file-신체회복탄력성b",
+    "source": "file-뉴런 발화 조건 및 신경 역치",
+    "target": "file-신체회복탄력성"
+  },
+  {
+    "id": "reactflow__edge-file-신체회복탄력성a-file-성향 분기b",
+    "source": "file-신체회복탄력성",
+    "target": "file-성향 분기"
   }
 ]
