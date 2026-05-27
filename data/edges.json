@@ -103,5 +103,15 @@
     "id": "reactflow__edge-file-신체회복탄력성a-file-성향 분기b",
     "source": "file-신체회복탄력성",
     "target": "file-성향 분기"
+  },
+  {
+    "id": "reactflow__edge-file-헤비안 학습과 보상적 환원a-file-뉴런 발화 조건 및 신경 역치b",
+    "source": "file-헤비안 학습과 보상적 환원",
+    "target": "file-뉴런 발화 조건 및 신경 역치"
+  },
+  {
+    "id": "reactflow__edge-file-해마a-file-헤비안 학습과 보상적 환원b",
+    "source": "file-해마",
+    "target": "file-헤비안 학습과 보상적 환원"
   }
 ]

@@ -9,7 +9,7 @@ interface PostData {
 }
 
 // 카테고리 목록
-const CATEGORIES = ["메커니즘", "감각과 성향", "뇌구조", "비고"] as const;
+const CATEGORIES = ["메커니즘", "감각과 성향", "뇌구조", "정신현상", "비고"] as const;
 
 const sanitizeTitle = (value: string) =>
   value.replace(/[^0-9A-Za-z\u3131-\u318e\uac00-\ud7a3\s]/g, "");
