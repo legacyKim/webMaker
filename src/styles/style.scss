@@ -147,11 +147,11 @@ header {
   position: fixed;
   top: 0;
   left: 0;
-  width: calc(100% - 32px);
+  width: calc(100% - 24px);
 
   @include flex-sb;
 
-  padding: 12px 16px;
+  padding: 9px 12px;
   z-index: 99999;
 
   border-bottom: 1px solid $dark-border-line;
@@ -544,198 +544,6 @@ nav a {
   }
 }
 
-.layout {
-  .box {
-    opacity: 0;
-    border: 1px solid rgba($color: #000000, $alpha: 0.3);
-
-    display: flex;
-    flex-direction: column;
-    border: 2px solid $dark-border-line;
-    border-radius: 16px;
-  }
-
-  .box.active {
-    animation: 0.3s ease-in layout_opacity 0.3s forwards;
-  }
-
-  .box_inner {
-    background-color: $dark-box2-bg;
-    height: 100%;
-
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    border-radius: 16px;
-
-    .box_top {
-      @include flex-start();
-      padding: 40px 24px 16px;
-      background-color: $dark-background-color;
-      border-radius: 16px 16px 0 0;
-
-      h1 {
-        margin: 0;
-        font-size: 32px;
-      }
-    }
-
-    .explain {
-      @include font_small();
-      opacity: 0.7;
-      text-align: justify;
-
-      padding: 24px;
-      padding-top: 0;
-      background-color: $dark-background-color;
-      border-radius: 0 0 16px 16px;
-
-      flex: 1;
-    }
-
-    .box_bot {
-      @include flex-start();
-      flex-wrap: wrap;
-      padding: 12px;
-
-      .skill_wrap {
-        @include flex-start();
-        margin-right: 6px;
-        margin-bottom: 6px;
-
-        padding: 8px 10px 6px;
-        border-radius: 8px;
-        background-color: $dark-background-color;
-
-        div.skill_icon {
-          @include flex-center();
-
-          min-width: 24px;
-          height: 24px;
-          border-radius: 4px;
-
-          &:after {
-            content: "";
-            width: 20px;
-            height: 20px;
-            background-repeat: no-repeat !important;
-            background-size: contain !important;
-            background-position: center !important;
-            border-radius: 4px;
-            overflow: hidden;
-          }
-        }
-
-        .HTML5::after {
-          background: url("../img/html5.png");
-        }
-
-        .CSS3::after {
-          background: url("../img/css3.png");
-        }
-
-        .React::after {
-          background: url("../img/react.png");
-        }
-
-        .ReactQuery::after {
-          background: url("../img/ReactQuery.png");
-        }
-
-        .Redux::after {
-          background: url("../img/redux.png");
-        }
-
-        .Zustand::after {
-          background: url("../img/Zustand.png");
-        }
-
-        .Python::after {
-          background: url("../img/python.png");
-        }
-
-        .Mysql::after {
-          background: url("../img/mysql.png");
-        }
-
-        .NextJs::after {
-          background: url("../img/next.js.png");
-        }
-
-        .Vercel::after {
-          background: url("../img/Vercel.png");
-        }
-
-        .Railway::after {
-          background: url("../img/Railway.png");
-        }
-
-        .Recoil::after {
-          background: url("../img/Recoil.png");
-        }
-
-        span {
-          @include font_ssmall();
-          opacity: 0.8;
-          margin-left: 4px;
-          padding-right: 4px;
-        }
-      }
-    }
-  }
-
-  @keyframes layout_opacity {
-    0% {
-      opacity: 0;
-    }
-
-    100% {
-      opacity: 1;
-    }
-  }
-}
-
-.LinkPopup {
-  background-color: $dark-box-bg;
-  border: 1px solid $dark-border-line;
-  border-radius: 8px;
-
-  padding: 5px 5px 6px;
-
-  @include flex-start();
-
-  a:last-child {
-    margin-right: 2px;
-  }
-
-  a {
-    @include relative_block();
-    margin-right: 6px;
-
-    width: 24px;
-    height: 24px;
-
-    i {
-      @include flex-center();
-      position: relative;
-      top: 1px;
-      font-size: 22px;
-      background-repeat: no-repeat !important;
-      background-size: contain !important;
-      width: 100%;
-      height: 100%;
-
-      &.bambueong_logo {
-        background: url("../img/bambueong_logo.png");
-      }
-
-      &.portfolio_logo {
-        background: url("../img/portfolio_logo.png");
-      }
-    }
-  }
-}
-
 .content {
   position: fixed;
   top: 0;
@@ -754,12 +562,11 @@ nav a {
       opacity: 1;
     }
   }
-
 }
 
-  .react-flow__attribution.right {
-    display: none;
-  }
+.react-flow__attribution.right {
+  display: none;
+}
 
 .indexing {
   position: fixed;
@@ -844,7 +651,7 @@ nav a {
 
   &.active {
     border: 1px solid $main-color;
-    box-shadow: 0 0 15px 3px rgba($main-color, 0.7)
+    box-shadow: 0 0 15px 3px rgba($main-color, 0.7);
   }
 
   &.non-active {
@@ -1013,12 +820,12 @@ nav a {
 
 .content_category_btn {
   position: absolute;
-      top: 8px;
-    left: 8px;
+  top: 8px;
+  left: 8px;
   z-index: 9;
   transition: all 0.7s ease-in-out;
 
-  &.open  {
+  &.open {
     left: 220px;
   }
 }
@@ -1057,7 +864,62 @@ nav a {
       color: rgba($color: $main-color, $alpha: 0.8);
     }
   }
+}
 
+.write_meta {
+  @include page;
+  @include flex-sb;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 4px;
+  gap: 12px;
+
+  input,
+  select {
+    flex: 1;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
+    transition: all 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: rgba(102, 126, 234, 0.6);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.4);
+    }
+  }
+
+  select {
+    cursor: pointer;
+    max-width: 180px;
+
+    option {
+      background: #1e1e1e;
+      color: #fff;
+    }
+  }
+
+  .write_meta_item {
+    @include flex-start();
+
+    i {
+      @include font_ssmall();
+      opacity: 0.5;
+      margin-right: 4px;
+    }
+
+    span {
+      @include font_ssmall();
+      opacity: 0.5;
+    }
+  }
 }
 
 .write {
@@ -1088,62 +950,6 @@ nav a {
       line-height: 1.2;
       color: #fff;
       padding-bottom: 8px;
-    }
-  }
-
-  .write_meta {
-    @include page;
-    @include flex-sb;
-    padding: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    border-radius: 4px;
-    gap: 12px;
-
-    input,
-    select {
-      flex: 1;
-      padding: 8px 12px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 4px;
-      color: rgba(255, 255, 255, 0.9);
-      font-size: 14px;
-      transition: all 0.2s ease;
-
-      &:focus {
-        outline: none;
-        border-color: rgba(102, 126, 234, 0.6);
-        background: rgba(255, 255, 255, 0.08);
-      }
-
-      &::placeholder {
-        color: rgba(255, 255, 255, 0.4);
-      }
-    }
-
-    select {
-      cursor: pointer;
-      max-width: 180px;
-
-      option {
-        background: #1e1e1e;
-        color: #fff;
-      }
-    }
-
-    .write_meta_item {
-      @include flex-start();
-
-      i {
-        @include font_ssmall();
-        opacity: 0.5;
-        margin-right: 4px;
-      }
-
-      span {
-        @include font_ssmall();
-        opacity: 0.5;
-      }
     }
   }
 
@@ -1236,8 +1042,8 @@ nav a {
 
       .view_info {
         @include flex-sb();
-              width: 100%;
-      flex-direction: row-reverse;
+        width: 100%;
+        flex-direction: row-reverse;
 
         .view_info_box {
           @include flex-start();
@@ -1308,22 +1114,20 @@ nav a {
       }
     }
   }
-
 }
 
 .view_keywords {
-  @include page;
+  flex: 1;
   padding: 8px 16px;
   border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: 4px;
   outline: none;
- 
+
   &:focus {
     border: 1px solid #d2513c;
   }
 
   button {
-
     color: #fff;
     opacity: 0.78;
     padding: 3px 12px 7px;
@@ -1336,14 +1140,15 @@ nav a {
   bottom: 32px;
   right: 32px;
   margin-bottom: 24px;
-  
+
   @include flex-start;
   flex-direction: column;
   gap: 8px;
 
   font-size: 16px;
 
-  button, a {
+  button,
+  a {
     color: #fff;
     transition: all 0.3s ease-in-out;
 
@@ -1389,7 +1194,12 @@ nav a {
   }
 
   /* 제목 스타일 */
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     margin: 16px 0 8px 0;
     font-weight: 600;
     color: #fff;
@@ -1408,7 +1218,8 @@ nav a {
   }
 
   /* 리스트 스타일 */
-  ul, ol {
+  ul,
+  ol {
     margin: 8px 0;
     padding-left: 24px;
   }
@@ -1431,7 +1242,7 @@ nav a {
     background-color: rgba(0, 0, 0, 0.3);
     padding: 2px 6px;
     border-radius: 3px;
-    font-family: 'Courier New', monospace;
+    font-family: "Courier New", monospace;
     color: #89d93e;
   }
 

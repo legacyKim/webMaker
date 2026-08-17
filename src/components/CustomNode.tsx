@@ -44,7 +44,7 @@ const CustomNode: React.FC<CustomNodeProps> = ({
     >
       <Handle type="source" position={Position.Top} id="a" />
 
-      <Link to={`/content/view/${encodeURIComponent(data.slug || data.id)}`}>
+      <Link to={`/view/${encodeURIComponent(data.slug || data.id)}`}>
         <div className="content_factor_title">
           <svg
             width="16"

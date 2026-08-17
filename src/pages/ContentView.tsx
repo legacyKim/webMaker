@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 
+const CATEGORIES = ["메커니즘", "감각과 성향", "뇌구조", "정신현상", "비고"] as const;
+
 interface PostData {
   title: string;
   subtitle?: string;
@@ -23,7 +25,6 @@ export default function ContentView() {
   const [post, setPost] = useState<PostData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | "">("");
-  const [isEditing, setIsEditing] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isEditorFocused, setIsEditorFocused] = useState(false);
 
@@ -69,7 +70,6 @@ export default function ContentView() {
   }, [slug]);
 
   const handleCancel = () => {
-    setIsEditing(false);
     // 원본 데이터로 복원 (페이지 새로고침으로 처리)
     window.location.reload();
   };
@@ -133,7 +133,6 @@ export default function ContentView() {
             updated_at: new Date().toISOString(),
           });
         }
-        setIsEditing(false);
       } else {
         alert("저장 중 오류가 발생했습니다: " + result.error);
       }
@@ -172,7 +171,7 @@ export default function ContentView() {
       <div className="error-container">
         <h2>오류가 발생했습니다</h2>
         <p>{error}</p>
-        <Link to="/content">목록으로 돌아가기</Link>
+        <Link to="/">목록으로 돌아가기</Link>
       </div>
     );
   }
@@ -182,7 +181,7 @@ export default function ContentView() {
       <div className="not-found-container">
         <h2>포스트를 찾을 수 없습니다</h2>
         <p>요청하신 포스트가 존재하지 않습니다.</p>
-        <Link to="/content">목록으로 돌아가기</Link>
+        <Link to="/">목록으로 돌아가기</Link>
       </div>
     );
   }
@@ -200,7 +199,7 @@ export default function ContentView() {
       </div>
 
       <div className="view_actions">
-        <Link to="/content" className="back-link">
+        <Link to="/" className="back-link">
           <i className="icon-list-bullet"></i>
         </Link>
         <button onClick={handleSave} disabled={isSaving}>
@@ -223,7 +222,7 @@ export default function ContentView() {
         </div>
       </div>
 
-      {isEditing && isEditorFocused && (
+      {isEditorFocused && (
         <div
           className="editor_toolbar"
           onMouseDown={(event) => event.preventDefault()}
@@ -333,12 +332,30 @@ export default function ContentView() {
         />
       </div>
 
-      <div
-        ref={keywordsRef}
-        className="view_keywords"
-        contentEditable="true"
-        dangerouslySetInnerHTML={{ __html: post.keywords || "" }}
-      />
+      <div className="write_meta">
+        <div
+          ref={keywordsRef}
+          className="view_keywords"
+          contentEditable="true"
+          dangerouslySetInnerHTML={{ __html: post.keywords || "" }}
+        />
+
+        <select
+          value={post.category || CATEGORIES[0]}
+          onChange={(e) =>
+            setPost((prev) =>
+              prev ? { ...prev, category: e.target.value } : prev,
+            )
+          }
+          className="category_select"
+        >
+          {CATEGORIES.map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
+          ))}
+        </select>
+      </div>
     </div>
   );
 }

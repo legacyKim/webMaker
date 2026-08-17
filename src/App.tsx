@@ -1,7 +1,6 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
-import Home from "./pages/Home";
 import Content from "./pages/Content";
 import ContentView from "./pages/ContentView";
 import Write from "./pages/Write";
@@ -13,13 +12,11 @@ function App() {
     <div className="App">
       <Header />
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/content" element={<Content />} />
-        <Route path="/content/view/:slug" element={<ContentView />} />
-        <Route path="/content/write" element={<Write />} />
-        <Route path="/content/download" element={<Download />} />
+        <Route path="/" element={<Content />} />
+        <Route path="/view/:slug" element={<ContentView />} />
         <Route path="/write" element={<Write />} />
-        <Route path="/content/correct" element={<ContentCorrect />} />
+        <Route path="/download" element={<Download />} />
+        <Route path="/correct" element={<ContentCorrect />} />
       </Routes>
     </div>
   );

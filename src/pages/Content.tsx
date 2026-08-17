@@ -357,7 +357,7 @@ export default function ContentMap() {
             zIndex: 1000,
           }}
         >
-          <Link to="/content/write">
+          <Link to="/write">
             <i className="icon-pencil-alt"></i>
           </Link>
         </div>

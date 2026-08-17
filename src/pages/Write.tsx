@@ -108,7 +108,7 @@ export default function Write() {
         // 저장된 파일로 이동
         const fileName = result.fileName.replace(".txt", "");
         const slug = `file-${encodeURIComponent(fileName)}`;
-        navigate(`/content/view/${slug}`);
+        navigate(`/view/${slug}`);
       } else {
         alert("저장 중 오류가 발생했습니다: " + result.error);
       }

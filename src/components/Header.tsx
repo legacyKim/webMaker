@@ -5,16 +5,11 @@ export default function Header() {
   return (
     <header className="dark">
       <Link to="/">
-        <div className="img_logo"></div>
+        <div className="icon-link"></div>
       </Link>
 
       <nav>
-        <Link to="/content">
-          <i className="icon-share"></i>
-          <div>Content</div>
-        </Link>
-
-        <Link to="/content/download">
+        <Link to="/download">
           <i className="icon-download"></i>
           <div>Files</div>
         </Link>
